@@ -1,87 +1,152 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { signupUser, signInWithGoogle } from '@/lib/authService';
+import { toast } from 'sonner';
 
-export function Signup() {
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-background px-6 py-32 font-sans">
-            <div className="w-full max-w-[480px] space-y-16 animate-reveal-up">
-                <div className="text-center space-y-4">
-                    <h1 className="text-5xl font-serif text-foreground tracking-tight">
-                        Create Account
-                    </h1>
-                    <p className="text-[10px] text-accent uppercase tracking-[0.3em] font-bold">
-                        Join the world of Lumière
-                    </p>
-                </div>
+export const Signup = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-                <div className="space-y-8">
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <label htmlFor="signup-name" className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">
-                                Full Name
-                            </label>
-                            <input
-                                id="signup-name"
-                                type="text"
-                                className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-primary outline-none transition-all font-light placeholder:text-[10px] placeholder:tracking-widest"
-                                placeholder="YOUR NAME"
-                            />
-                        </div>
+  const handleEmailSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-                        <div className="space-y-2">
-                            <label htmlFor="signup-email" className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">
-                                Email Address
-                            </label>
-                            <input
-                                id="signup-email"
-                                type="email"
-                                className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-primary outline-none transition-all font-light placeholder:text-[10px] placeholder:tracking-widest"
-                                placeholder="YOUR@EMAIL.COM"
-                            />
-                        </div>
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
 
-                        <div className="space-y-2">
-                            <label htmlFor="signup-password" className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">
-                                Password
-                            </label>
-                            <input
-                                id="signup-password"
-                                type="password"
-                                className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-primary outline-none transition-all font-light placeholder:text-[10px] placeholder:tracking-widest"
-                                placeholder="••••••••"
-                            />
-                        </div>
-                    </div>
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
 
-                    <div className="flex items-center gap-3">
-                        <input
-                            type="checkbox"
-                            id="terms"
-                            className="w-4 h-4 border-border/50 rounded-none accent-accent cursor-pointer"
-                        />
-                        <label htmlFor="terms" className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 cursor-pointer">
-                            I agree to the <span className="text-foreground border-b border-foreground/20 italic">Terms of Service</span>
-                        </label>
-                    </div>
+    setLoading(true);
 
-                    <Button
-                        type="button"
-                        className="w-full h-18 text-[10px] font-bold uppercase tracking-[0.3em] text-primary-foreground bg-primary rounded-none transition-all duration-500 hover:bg-primary/90 active:scale-[0.98]"
-                    >
-                        Create Account
-                    </Button>
-                </div>
+    try {
+      await signupUser(email, password);
+      toast.success('Account created successfully!');
+      navigate('/');
+    } catch (error: any) {
+      toast.error(error.message || 'Signup failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                <p className="text-center text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">
-                    Already have an account?{' '}
-                    <Link
-                        to="/login"
-                        className="text-accent hover:underline transition-all"
-                    >
-                        Sign In
-                    </Link>
-                </p>
-            </div>
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+
+    try {
+      await signInWithGoogle();
+      toast.success('Signed up with Google!');
+      navigate('/');
+    } catch (error: any) {
+      toast.error(error.message || 'Google sign-in failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Create your account
+          </h2>
         </div>
-    );
-}
+        
+        <form className="mt-8 space-y-6" onSubmit={handleEmailSignup}>
+          <div className="rounded-md shadow-sm space-y-4">
+            <div>
+              <label htmlFor="email" className="sr-only">Email address</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Email address"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="password" className="sr-only">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Password (min 6 characters)"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="confirm-password" className="sr-only">Confirm Password</label>
+              <input
+                id="confirm-password"
+                name="confirm-password"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Confirm password"
+              />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Creating account...' : 'Sign up'}
+            </button>
+          </div>
+        </form>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-gray-50 text-gray-500">Or continue with</span>
+          </div>
+        </div>
+
+        <button
+          onClick={handleGoogleSignIn}
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-3 py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <img 
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+            alt="Google" 
+            className="w-5 h-5"
+          />
+          Sign up with Google
+        </button>
+
+        <p className="text-center text-sm text-gray-600">
+          Already have an account?{' '}
+          <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            Sign in
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+};
