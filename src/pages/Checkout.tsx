@@ -4,7 +4,8 @@ import { CreditCard, Truck, ShieldCheck, ChevronLeft, Lock, CheckCircle2 } from 
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Link, useNavigate } from "react-router-dom"
-import { useCartStore } from "@/stores"
+import { useCartStore, useOrderStore } from "@/stores"
+import { useAuth } from "@/context/authContext"
 
 export function Checkout() {
     const navigate = useNavigate()
@@ -16,21 +17,41 @@ export function Checkout() {
     const tax = getTax()
     const total = getTotal()
 
+    const { addOrder } = useOrderStore()
+    const { user } = useAuth()
+
     const handlePlaceOrder = async () => {
         setIsProcessing(true)
 
         // Simulate processing
         await new Promise(resolve => setTimeout(resolve, 2000))
 
+        const newOrder: any = {
+            id: Math.random().toString(36).substr(2, 9).toUpperCase(),
+            date: Date.now(),
+            items: [...items],
+            total: total,
+            status: 'Processing',
+            shippingDetails: {
+                firstName: "Guest", // In a real app, these would come from the form
+                lastName: "User",
+                email: user?.email || "guest@example.com",
+                address: "123 Fashion St",
+                city: "New York",
+                postalCode: "10001"
+            }
+        }
+
+        addOrder(newOrder)
         clearCart()
         setIsProcessing(false)
 
         toast.success("Order Placed Successfully!", {
-            description: "Thank you for your purchase. We've sent a confirmation email to you.",
+            description: "Thank you for your purchase. You can view your order in your history.",
             duration: 5000,
         })
 
-        navigate("/")
+        navigate("/orders")
     }
 
     if (items.length === 0) {
@@ -139,8 +160,8 @@ export function Checkout() {
                                         whileTap={{ scale: 0.98 }}
                                         onClick={() => setPaymentMethod("card")}
                                         className={`flex items-center gap-4 p-5 rounded-none border transition-all text-xs font-bold uppercase tracking-widest outline-none ${paymentMethod === "card"
-                                                ? "border-accent bg-accent/5 text-accent"
-                                                : "border-border/50 hover:bg-secondary/30 text-foreground/60"
+                                            ? "border-accent bg-accent/5 text-accent"
+                                            : "border-border/50 hover:bg-secondary/30 text-foreground/60"
                                             }`}
                                     >
                                         <CreditCard className="w-5 h-5" />
@@ -151,8 +172,8 @@ export function Checkout() {
                                         whileTap={{ scale: 0.98 }}
                                         onClick={() => setPaymentMethod("paypal")}
                                         className={`flex items-center gap-4 p-5 rounded-none border transition-all text-xs font-bold uppercase tracking-widest outline-none ${paymentMethod === "paypal"
-                                                ? "border-accent bg-accent/5 text-accent"
-                                                : "border-border/50 hover:bg-secondary/30 text-foreground/60"
+                                            ? "border-accent bg-accent/5 text-accent"
+                                            : "border-border/50 hover:bg-secondary/30 text-foreground/60"
                                             }`}
                                     >
                                         <div className="w-5 h-5 rounded-full border-2 border-current flex items-center justify-center">

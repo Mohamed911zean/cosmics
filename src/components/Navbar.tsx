@@ -242,6 +242,16 @@ export function Navbar() {
               <MobileNavLink to="/skincare" onClick={() => setMenuOpen(false)}>Skincare</MobileNavLink>
               <MobileNavLink to="/makeup" onClick={() => setMenuOpen(false)}>Makeup</MobileNavLink>
               <MobileNavLink to="/fragrance" onClick={() => setMenuOpen(false)}>Fragrance</MobileNavLink>
+              <MobileNavLink to="/wishlist" onClick={() => setMenuOpen(false)}>
+                <div className="flex items-center gap-3">
+                  Wishlist
+                  {wishlistCount > 0 && (
+                    <span className="bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </div>
+              </MobileNavLink>
 
               <div className="border-t border-gray-200 my-4" />
 
@@ -261,6 +271,17 @@ export function Navbar() {
                     <div className="flex items-center gap-3">
                       <Package className="h-5 w-5 text-gray-400" />
                       Orders
+                    </div>
+                  </MobileNavLink>
+                  <MobileNavLink to="/cart" onClick={() => setMenuOpen(false)}>
+                    <div className="flex items-center gap-3">
+                      <ShoppingCart className="h-5 w-5 text-gray-400" />
+                      Shopping Bag
+                      {cartCount > 0 && (
+                        <span className="bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                          {cartCount}
+                        </span>
+                      )}
                     </div>
                   </MobileNavLink>
                 </>
