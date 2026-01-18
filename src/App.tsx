@@ -15,9 +15,12 @@ import { Contact } from "@/pages/Contact"
 import { Footer } from "@/components/Footer"
 import { ProtectedRoute } from "@/components/ProtectedRoute"
 
+import { StoreSynchronizer } from "@/components/StoreSynchronizer"
+
 export default function App() {
   return (
     <AuthProvider>
+      <StoreSynchronizer />
       <Toaster position="top-center" expand={false} richColors />
       <Navbar />
       <Routes>

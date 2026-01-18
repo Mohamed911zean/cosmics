@@ -237,11 +237,7 @@ export function Navbar() {
           <div className="flex-1 overflow-y-auto p-5">
             <nav className="space-y-1">
               <MobileNavLink to="/" onClick={() => setMenuOpen(false)}>Home</MobileNavLink>
-              <MobileNavLink to="/shop" onClick={() => setMenuOpen(false)}>Shop All</MobileNavLink>
-              <MobileNavLink to="/collections" onClick={() => setMenuOpen(false)}>Collections</MobileNavLink>
-              <MobileNavLink to="/skincare" onClick={() => setMenuOpen(false)}>Skincare</MobileNavLink>
-              <MobileNavLink to="/makeup" onClick={() => setMenuOpen(false)}>Makeup</MobileNavLink>
-              <MobileNavLink to="/fragrance" onClick={() => setMenuOpen(false)}>Fragrance</MobileNavLink>
+            
               <MobileNavLink to="/wishlist" onClick={() => setMenuOpen(false)}>
                 <div className="flex items-center gap-3">
                   Wishlist
@@ -255,7 +251,6 @@ export function Navbar() {
 
               <div className="border-t border-gray-200 my-4" />
 
-              <MobileNavLink to="/about" onClick={() => setMenuOpen(false)}>About Us</MobileNavLink>
               <MobileNavLink to="/contact" onClick={() => setMenuOpen(false)}>Contact</MobileNavLink>
 
               {user && (
