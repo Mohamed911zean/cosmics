@@ -6,14 +6,26 @@ import { updateUserData, subscribeToUserData, type UserData } from '@/lib/db';
 export function StoreSynchronizer() {
     const { user, loading } = useAuth();
     const lastRemoteData = useRef<UserData | null>(null);
+    const isSyncingFromRemote = useRef(false);
 
     useEffect(() => {
-        if (loading || !user) return;
+        if (loading) return;
+
+        // If user logged out, clear stores
+        if (!user) {
+            useCartStore.getState().clearCart();
+            useWishlistStore.getState().clearWishlist();
+            useOrderStore.getState().setOrders([]);
+            lastRemoteData.current = null;
+            return;
+        }
 
         let isInitialSync = true;
 
+        // 1. Subscribe to Firestore (Remote -> Local)
         const unsubscribeFirestore = subscribeToUserData(user.uid, (data) => {
             if (data) {
+                isSyncingFromRemote.current = true;
                 lastRemoteData.current = data;
 
                 const currentCart = useCartStore.getState().items;
@@ -34,8 +46,10 @@ export function StoreSynchronizer() {
                     useOrderStore.setState({ orders: remoteOrders });
                 }
 
+                isSyncingFromRemote.current = false;
                 isInitialSync = false;
             } else {
+                // If no remote data exists on first load, push local data to remote
                 if (isInitialSync) {
                     const stateToSync = {
                         cart: useCartStore.getState().items,
@@ -43,7 +57,6 @@ export function StoreSynchronizer() {
                         orders: useOrderStore.getState().orders
                     };
 
-                    // Only sync if we have something to save
                     if (stateToSync.cart.length > 0 || stateToSync.wishlist.length > 0 || stateToSync.orders.length > 0) {
                         updateUserData(user.uid, stateToSync);
                     }
@@ -52,25 +65,29 @@ export function StoreSynchronizer() {
             }
         });
 
+        // 2. Subscribe to Local Stores (Local -> Remote)
         const unsubCart = useCartStore.subscribe((state) => {
+            if (isSyncingFromRemote.current) return;
             const currentItems = state.items;
-            const lastRemoteCart = lastRemoteData.current?.cart || [];
+            const lastRemoteItems = lastRemoteData.current?.cart || [];
 
-            if (JSON.stringify(currentItems) !== JSON.stringify(lastRemoteCart)) {
+            if (JSON.stringify(currentItems) !== JSON.stringify(lastRemoteItems)) {
                 updateUserData(user.uid, { cart: currentItems });
             }
         });
 
         const unsubWishlist = useWishlistStore.subscribe((state) => {
+            if (isSyncingFromRemote.current) return;
             const currentItems = state.items;
-            const lastRemoteWishlist = lastRemoteData.current?.wishlist || [];
+            const lastRemoteItems = lastRemoteData.current?.wishlist || [];
 
-            if (JSON.stringify(currentItems) !== JSON.stringify(lastRemoteWishlist)) {
+            if (JSON.stringify(currentItems) !== JSON.stringify(lastRemoteItems)) {
                 updateUserData(user.uid, { wishlist: currentItems });
             }
         });
 
         const unsubOrders = useOrderStore.subscribe((state) => {
+            if (isSyncingFromRemote.current) return;
             const currentOrders = state.orders;
             const lastRemoteOrders = lastRemoteData.current?.orders || [];
 

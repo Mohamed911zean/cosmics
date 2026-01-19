@@ -1,7 +1,12 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useCartStore } from "@/stores/useCartStore";
+import { useOrderStore } from "@/stores/useOrderStore";
+import { useProductStore } from "@/stores/useProductStore";
+import { useWishlistStore } from "@/stores/useWishlistStore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -17,3 +22,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Global Authentication Listener
+onAuthStateChanged(auth, (user) => {
+  // 1. Update Auth Store
+  useAuthStore.getState().setUser(user);
+
+  // 2. Notify other stores about user change
+  // This allows them to clear data on logout or prepare for sync
+  useCartStore.getState().setUser(user);
+  useOrderStore.getState().setUser(user);
+  useProductStore.getState().setUser(user);
+  useWishlistStore.getState().setUser(user);
+
+  // Note: Actual data syncing is handled by StoreSynchronizer component
+  // which provides real-time bi-directional sync with Firestore.
+});

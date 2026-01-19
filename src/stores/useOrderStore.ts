@@ -23,7 +23,10 @@ export interface Order {
 interface OrderState {
     orders: Order[]
     addOrder: (order: Order) => void
+    setOrders: (orders: Order[]) => void
     getOrders: () => Order[]
+    setUser: (user: any) => void
+    fetchFromFirestore: () => Promise<void>
 }
 
 export const useOrderStore = create<OrderState>()(
@@ -35,7 +38,24 @@ export const useOrderStore = create<OrderState>()(
                 set((state) => ({ orders: [order, ...state.orders] }))
                 console.log('After addOrder:', get().orders)
             },
+            setOrders: (orders) => set({ orders }),
             getOrders: () => get().orders,
+            setUser: (user) => {
+                if (!user) {
+                    set({ orders: [] })
+                }
+            },
+            fetchFromFirestore: async () => {
+                const { auth } = await import('@/lib/firebase')
+                const { getUserData } = await import('@/lib/db')
+                const user = auth.currentUser
+                if (user) {
+                    const data = await getUserData(user.uid)
+                    if (data?.orders) {
+                        set({ orders: data.orders })
+                    }
+                }
+            },
         }),
         {
             name: 'lumiere-orders',

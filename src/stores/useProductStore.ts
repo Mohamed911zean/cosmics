@@ -240,6 +240,8 @@ interface ProductState {
     setSelectedProduct: (product: Product | null) => void
     getProductById: (id: number) => Product | undefined
     getProductsByCategory: (category: string) => Product[]
+    setUser: (user: any) => void
+    fetchFromFirestore: () => Promise<void>
 }
 
 export const useProductStore = create<ProductState>((set, get) => ({
@@ -257,4 +259,8 @@ export const useProductStore = create<ProductState>((set, get) => ({
         get().products.filter(
             (p) => p.category.toLowerCase() === category.toLowerCase()
         ),
+
+    setUser: () => { },
+
+    fetchFromFirestore: async () => { },
 }))

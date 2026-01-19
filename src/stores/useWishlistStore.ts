@@ -16,7 +16,10 @@ interface WishlistState {
     toggleItem: (item: WishlistItem) => void
     isInWishlist: (id: number) => boolean
     clearWishlist: () => void
+    setItems: (items: WishlistItem[]) => void
     getItemCount: () => number
+    setUser: (user: any) => void
+    fetchFromFirestore: () => Promise<void>
 }
 
 export const useWishlistStore = create<WishlistState>()(
@@ -49,7 +52,27 @@ export const useWishlistStore = create<WishlistState>()(
 
             clearWishlist: () => set({ items: [] }),
 
+            setItems: (items) => set({ items }),
+
             getItemCount: () => get().items.length,
+
+            setUser: (user) => {
+                if (!user) {
+                    set({ items: [] })
+                }
+            },
+
+            fetchFromFirestore: async () => {
+                const { auth } = await import('@/lib/firebase')
+                const { getUserData } = await import('@/lib/db')
+                const user = auth.currentUser
+                if (user) {
+                    const data = await getUserData(user.uid)
+                    if (data?.wishlist) {
+                        set({ items: data.wishlist })
+                    }
+                }
+            },
         }),
         {
             name: 'lumiere-wishlist',

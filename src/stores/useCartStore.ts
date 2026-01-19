@@ -16,10 +16,13 @@ interface CartState {
     removeItem: (id: number) => void
     updateQuantity: (id: number, quantity: number) => void
     clearCart: () => void
+    setItems: (items: CartItem[]) => void
     getSubtotal: () => number
     getTax: () => number
     getTotal: () => number
     getItemCount: () => number
+    fetchFromFirestore: () => Promise<void>
+    setUser: (user: any) => void
 }
 
 export const useCartStore = create<CartState>()(
@@ -53,6 +56,26 @@ export const useCartStore = create<CartState>()(
                 })),
 
             clearCart: () => set({ items: [] }),
+
+            setItems: (items) => set({ items }),
+
+            fetchFromFirestore: async () => {
+                const { auth } = await import('@/lib/firebase')
+                const { getUserData } = await import('@/lib/db')
+                const user = auth.currentUser
+                if (user) {
+                    const data = await getUserData(user.uid)
+                    if (data?.cart) {
+                        set({ items: data.cart })
+                    }
+                }
+            },
+
+            setUser: (user) => {
+                if (!user) {
+                    set({ items: [] })
+                }
+            },
 
             getSubtotal: () =>
                 get().items.reduce((acc, item) => acc + item.price * item.quantity, 0),
