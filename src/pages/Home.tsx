@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { ArrowRight, Star, Truck, Shield, RefreshCcw, Leaf, Heart, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react"
+import { ArrowRight,  Truck, Shield, RefreshCcw, Leaf, Heart,  ShoppingCart } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -55,39 +55,12 @@ const collections = [
   },
 ]
 
-// Testimonials
-const testimonials = [
-  {
-    id: 1,
-    name: "Sarah Mitchell",
-    role: "Beauty Enthusiast",
-    content: "The quality of these products is absolutely amazing. My skin has never looked better! Highly recommend to everyone.",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    rating: 5,
-  },
-  {
-    id: 2,
-    name: "Emily Chen",
-    role: "Makeup Artist",
-    content: "As a professional, I only use the best. Lumière products are now my go-to for all my clients.",
-    avatar: "https://i.pravatar.cc/150?img=5",
-    rating: 5,
-  },
-  {
-    id: 3,
-    name: "Jessica Williams",
-    role: "Skincare Expert",
-    content: "Finally found a brand that delivers on its promises. Beautiful packaging and even better results.",
-    avatar: "https://i.pravatar.cc/150?img=9",
-    rating: 5,
-  },
-]
+
 
 
 export function Home() {
   const featuredProducts = useProductStore((state) => state.featuredProducts)
   const addToCart = useCartStore((state) => state.addItem)
-  const [currentTestimonial, setCurrentTestimonial] = useState(0)
 
   const handleAddToCart = (product: typeof featuredProducts[0]) => {
     addToCart({
@@ -459,8 +432,6 @@ export function Home() {
           </div>
         </div>
       </section>
-
-     
     </main>
   )
 }
