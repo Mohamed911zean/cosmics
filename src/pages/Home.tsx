@@ -2,7 +2,6 @@ import { motion } from "framer-motion"
 import { ArrowRight,  Truck, Shield, RefreshCcw, Leaf, Heart,  ShoppingCart } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
 import { useProductStore, useCartStore } from "@/stores"
 import { toast } from "sonner"
 
