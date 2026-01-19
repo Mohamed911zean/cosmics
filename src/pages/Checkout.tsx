@@ -35,7 +35,7 @@ export function Checkout() {
             shippingDetails: {
                 firstName: "Guest", // In a real app, these would come from the form
                 lastName: "User",
-                email: user?.email || "guest@example.com",
+                email: user?.email || "Guest",
                 address: "123 Fashion St",
                 city: "New York",
                 postalCode: "10001"
@@ -47,7 +47,7 @@ export function Checkout() {
         setIsProcessing(false)
 
         toast.success("Order Placed Successfully!", {
-            description: "Thank you for your purchase. You can view your order in your history.",
+            description: "Thank you for your purchase. You can view your order in orders history.",
             duration: 5000,
         })
 

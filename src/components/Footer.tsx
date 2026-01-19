@@ -74,7 +74,7 @@ export function Footer() {
               ].map((link) => (
                 <li key={link.label}>
                   <Link
-                    to={link.to}
+                    to={`/shop?category=${encodeURIComponent(link.label)}`}
                     className="text-gray-400 hover:text-rose-400 transition-colors text-sm flex items-center gap-2 group"
                   >
                     <span className="w-0 group-hover:w-2 h-0.5 bg-rose-500 transition-all duration-300" />

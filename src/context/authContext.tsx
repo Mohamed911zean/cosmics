@@ -27,27 +27,20 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const unsubscribe = observeAuthState((user) => {
-      setUser(user);
-      setLoading(false);
-    });
-
-    return unsubscribe;
-  }, []);
-
-  const value = {
-    user,
-    loading,
-    logout: logoutUser,
-  };
+      setUser(user)
+      setLoading(false)
+    })
+    return unsubscribe
+  }, [])
 
   return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, loading, logout: logoutUser }}>
+      {children}
     </AuthContext.Provider>
-  );
-};
+  )
+}

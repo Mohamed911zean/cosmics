@@ -17,6 +17,14 @@ import { ProtectedRoute } from "@/components/ProtectedRoute"
 
 import { StoreSynchronizer } from "@/components/StoreSynchronizer"
 
+import { Shop } from "@/pages/Shop"
+import { OrderSuccess } from "@/pages/OrderSuccess"
+import { NotFound } from "@/pages/NotFound"
+import { Privacy } from "@/pages/legal/Privacy"
+import { Terms } from "@/pages/legal/Terms"
+import { Shipping } from "@/pages/legal/Shipping"
+import { FAQ } from "@/pages/legal/FAQ"
+
 export default function App() {
   return (
     <AuthProvider>
@@ -25,12 +33,22 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/collections" element={<Shop />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/contact" element={<Contact />} />
+
+        {/* Support Pages */}
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/shipping" element={<Shipping />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
+
         <Route
           path="/checkout"
           element={
@@ -48,6 +66,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </AuthProvider>

@@ -30,7 +30,11 @@ export const useOrderStore = create<OrderState>()(
     persist(
         (set, get) => ({
             orders: [],
-            addOrder: (order) => set((state) => ({ orders: [order, ...state.orders] })),
+            addOrder: (order) => {
+                console.log('Before addOrder:', get().orders)
+                set((state) => ({ orders: [order, ...state.orders] }))
+                console.log('After addOrder:', get().orders)
+            },
             getOrders: () => get().orders,
         }),
         {

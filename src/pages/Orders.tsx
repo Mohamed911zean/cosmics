@@ -4,9 +4,11 @@ import { Package, Clock, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import { useOrderStore } from "@/stores"
+import { useAuthStore } from "@/stores/useAuthStore"
 
 export function Orders() {
     const { orders } = useOrderStore()
+    const { user } = useAuthStore()
 
     if (orders.length === 0) {
         return (
