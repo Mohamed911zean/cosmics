@@ -34,6 +34,7 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/collections" element={<Shop />} />
         <Route path="/login" element={<Login />} />
