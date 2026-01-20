@@ -119,7 +119,7 @@ export function Navbar() {
               </div>
 
               <div className="flex-1 flex flex-col gap-8">
-                {["Shop", "Collections", "Our Story", "Wishlist", "Account", "Cart", "Contact"].map((item, idx) => (
+                {["Shop", "Collections", "Our Story", "Wishlist", "Account", "Cart", "Contact", "Orders"].map((item, idx) => (
                   <motion.div
                     key={item}
                     initial={{ opacity: 0, x: -20 }}
@@ -138,10 +138,7 @@ export function Navbar() {
               </div>
 
               <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between gap-6 pb-4">
-                <div className="flex gap-8 text-xs font-bold uppercase tracking-widest text-taupe">
-                  <Link to="/account" onClick={() => setMenuOpen(false)}>My Account</Link>
-                  <Link to="/orders" onClick={() => setMenuOpen(false)}>Orders</Link>
-                </div>
+                
                 {user && (
                   <button onClick={handleLogout} className="text-xs font-bold uppercase tracking-widest text-accent text-left">
                     Sign Out
