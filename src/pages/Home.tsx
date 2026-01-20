@@ -9,6 +9,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { useCartStore, useWishlistStore } from "@/stores"
+import { toast } from "sonner"
 
 
 
@@ -79,6 +81,38 @@ const bestSellers = [
 ]
 
 export default function Home() {
+  const addToCart = useCartStore((state) => state.addItem)
+  const { toggleItem, isInWishlist } = useWishlistStore()
+
+  const handleAddToCart = (e: React.MouseEvent, product: any) => {
+    e.preventDefault()
+    e.stopPropagation()
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      category: product.category,
+    })
+    toast.success(`${product.name} added to bag`)
+  }
+
+  const handleToggleWishlist = (e: React.MouseEvent, product: any) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const inWishlist = isInWishlist(product.id)
+    toggleItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      category: product.category,
+    })
+    toast(inWishlist ? "Removed from wishlist" : "Added to wishlist", {
+      icon: inWishlist ? "💔" : "❤️"
+    })
+  }
+
   return (
     <main className="bg-ivory text-foreground font-sans selection:bg-accent selection:text-foreground">
 
@@ -204,36 +238,50 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {bestSellers.map((product, idx) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="group relative"
-              >
-                <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-white mb-6 border border-border/50 group-hover:shadow-2xl group-hover:shadow-taupe/10 transition-all duration-500">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <button className="absolute bottom-4 left-4 right-4 py-3 bg-white/95 backdrop-blur-sm text-foreground rounded-xl opacity-100 translate-y-0 lg:opacity-0 lg:translate-y-2 lg:group-hover:opacity-100 lg:group-hover:translate-y-0 transition-all duration-300 font-medium flex items-center justify-center gap-2">
-                    <ShoppingBag className="w-4 h-4" />
-                    Add to Cart
-                  </button>
-                  <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                    <Star className="w-4 h-4 text-gold fill-gold" />
+            {bestSellers.map((product, idx) => {
+              const inWishlist = isInWishlist(product.id)
+              return (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="group relative"
+                >
+                  <Link to={`/product/${product.id}`}>
+                    <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-white mb-6 border border-border/50 group-hover:shadow-2xl group-hover:shadow-taupe/10 transition-all duration-500">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                      <button
+                        onClick={(e) => handleAddToCart(e, product)}
+                        className="absolute bottom-4 left-4 right-4 py-3 bg-white/95 backdrop-blur-sm text-foreground rounded-xl opacity-100 translate-y-0 lg:opacity-0 lg:translate-y-2 lg:group-hover:opacity-100 lg:group-hover:translate-y-0 transition-all duration-300 font-medium flex items-center justify-center gap-2 z-10"
+                      >
+                        <ShoppingBag className="w-4 h-4" />
+                        Add to Cart
+                      </button>
+                      <button
+                        onClick={(e) => handleToggleWishlist(e, product)}
+                        className={`absolute top-4 right-4 w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all z-10 ${inWishlist ? "bg-accent/20 text-accent" : "bg-white/80 text-foreground/40 hover:text-accent"
+                          } opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity`}
+                      >
+                        <Heart className={`w-4 h-4 ${inWishlist ? "fill-current" : ""}`} />
+                      </button>
+                    </div>
+                  </Link>
+                  <div className="px-2">
+                    <span className="text-xs uppercase tracking-wider text-taupe font-medium">{product.category}</span>
+                    <Link to={`/product/${product.id}`}>
+                      <h3 className="text-lg font-serif mt-1 mb-2 hover:text-accent transition-colors">{product.name}</h3>
+                    </Link>
+                    <p className="text-xl font-medium text-foreground">${product.price.toFixed(2)}</p>
                   </div>
-                </div>
-                <div className="px-2">
-                  <span className="text-xs uppercase tracking-wider text-taupe font-medium">{product.category}</span>
-                  <h3 className="text-lg font-serif mt-1 mb-2">{product.name}</h3>
-                  <p className="text-xl font-medium text-foreground">${product.price.toFixed(2)}</p>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              )
+            })}
           </div>
         </div>
       </section>
