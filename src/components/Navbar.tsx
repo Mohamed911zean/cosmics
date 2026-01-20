@@ -119,7 +119,7 @@ export function Navbar() {
               </div>
 
               <div className="flex-1 flex flex-col gap-8">
-                {["Shop", "Collections", "Our Story", "Journal", "Contact"].map((item, idx) => (
+                {["Shop", "Collections", "Our Story", "Wishlist", "Account", "Cart", "Contact"].map((item, idx) => (
                   <motion.div
                     key={item}
                     initial={{ opacity: 0, x: -20 }}
