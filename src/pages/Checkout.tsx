@@ -51,7 +51,7 @@ export function Checkout() {
             duration: 5000,
         })
 
-        navigate("/orders")
+        navigate("/order-success")
     }
 
     if (items.length === 0) {

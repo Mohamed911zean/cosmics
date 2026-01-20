@@ -1,436 +1,328 @@
 import { motion } from "framer-motion"
-import { ArrowRight,  Truck, Shield, RefreshCcw, Leaf, Heart,  ShoppingCart } from "lucide-react"
 import { Link } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { useProductStore, useCartStore } from "@/stores"
-import { toast } from "sonner"
+import { ArrowRight, ShoppingBag, Star, Instagram, ChevronRight, Play, Sparkles, Heart, ShieldCheck, Leaf } from "lucide-react"
+import heroBg from "@/assets/Gemini_Generated_Image_a5ahsxa5ahsxa5ah.png"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
-// Features
-const features = [
-  {
-    icon: <Truck className="w-6 h-6" />,
-    title: "Free Shipping",
-    description: "Free shipping on all orders over $50"
-  },
-  {
-    icon: <Shield className="w-6 h-6" />,
-    title: "Secure Payment",
-    description: "100% secure payment processing"
-  },
-  {
-    icon: <RefreshCcw className="w-6 h-6" />,
-    title: "Easy Returns",
-    description: "30-day hassle-free returns"
-  },
-  {
-    icon: <Leaf className="w-6 h-6" />,
-    title: "Natural Ingredients",
-    description: "Cruelty-free & eco-friendly"
-  },
-]
 
-// Collections
-const collections = [
+
+const services = [
   {
     id: 1,
-    name: "Matte Vibes",
-    image: "/elegant-matte-lipstick-on-soft-background.jpg",
-    products: 24,
-    color: "from-rose-100 to-rose-200",
+    title: "Virtual Consultation",
+    description: "Personalized beauty advice from our experts, tailored to your unique skin profile.",
+    icon: <Sparkles className="w-8 h-8" />,
+    image: "/brand_story_hero_1768887993377.png"
   },
   {
     id: 2,
-    name: "Skin Elegance",
-    image: "/face_cream_product_mockup_1766625009300.png",
-    products: 18,
-    color: "from-amber-100 to-amber-200",
+    title: "Custom Formulation",
+    description: "Bespoke skincare solutions crafted specifically for your skin's needs and goals.",
+    icon: <ShieldCheck className="w-8 h-8" />,
+    image: "/majestic_face_cream_1768888244741.png"
   },
   {
     id: 3,
-    name: "Glow Goals",
-    image: "/eyeshadow_palette_product_mockup_1766625024551.png",
-    products: 32,
-    color: "from-orange-100 to-orange-200",
+    title: "Ritual Workshops",
+    description: "Master the art of the perfect skincare routine with our guided masterclasses.",
+    icon: <Leaf className="w-8 h-8" />,
+    image: "/skincare_category_1768886611429.png"
   },
+  {
+    id: 4,
+    title: "Gifting Experience",
+    description: "Premium packaging and personalized notes to make every gift truly majestic.",
+    icon: <Heart className="w-8 h-8" />,
+    image: "/makeup_category_1768886635160.png"
+  }
 ]
 
-
-
-
-export function Home() {
-  const featuredProducts = useProductStore((state) => state.featuredProducts)
-  const addToCart = useCartStore((state) => state.addItem)
-
-  const handleAddToCart = (product: typeof featuredProducts[0]) => {
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      category: product.category,
-    })
-    toast.success(`${product.name} added to bag`)
+const bestSellers = [
+  {
+    id: 1,
+    name: "Radiant Essence Serum",
+    price: 84.00,
+    category: "Skincare",
+    image: "/luxury_cosmetics_hero_1768886590255.png",
+    rating: 4.9
+  },
+  {
+    id: 2,
+    name: "Silk Foundation No. 02",
+    price: 62.00,
+    category: "Makeup",
+    image: "/skincare_category_1768886611429.png",
+    rating: 4.8
+  },
+  {
+    id: 3,
+    name: "Velvet Lip Tint",
+    price: 32.00,
+    category: "Makeup",
+    image: "/makeup_category_1768886635160.png",
+    rating: 5.0
+  },
+  {
+    id: 4,
+    name: "Rose Quartz Roller",
+    price: 45.00,
+    category: "Tools",
+    image: "/tools_category_1768886662535.png",
+    rating: 4.7
   }
+]
 
+export default function Home() {
   return (
-    <main className="overflow-hidden">
-      {/* ===== HERO SECTION ===== */}
-      <section className="relative min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 pt-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+    <main className="bg-ivory text-foreground font-sans selection:bg-accent selection:text-foreground">
 
-            {/* Left Content */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="space-y-8"
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm">
-                <span className="w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
-                <span className="text-sm font-medium text-gray-600">New Collection Available</span>
-              </div>
-
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold text-gray-900 leading-tight">
-                Discover Your{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500">
-                  Perfect Shade
-                </span>
-              </h1>
-
-              <p className="text-lg text-gray-600 max-w-lg leading-relaxed">
-                Elevate your beauty routine with our premium collection of cosmetics. Natural ingredients, stunning results.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/shop">
-                  <Button className="h-14 px-8 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white border-0 text-base font-medium group">
-                    Shop Now
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-                <Link to="/collections">
-                  <Button variant="outline" className="h-14 px-8 rounded-full border-2 border-gray-300 hover:border-rose-500 hover:text-rose-500 text-base font-medium">
-                    View Collections
-                  </Button>
-                </Link>
-              </div>
-
-            </motion.div>
-
-            {/* Right - Hero Images */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="relative"
-            >
-              {/* Main Product Image */}
-              <div className="relative">
-                <div className="aspect-square max-w-md mx-auto lg:max-w-none">
-                  <img
-                    src="/face_cream_product_mockup_1766625009300.png"
-                    alt="Featured Product"
-                    className="w-full h-full object-contain drop-shadow-2xl"
-                  />
-                </div>
-
-                {/* Price Tag */}
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.6, duration: 0.5, type: "spring" }}
-                  className="absolute top-10 right-0 lg:right-10 bg-white rounded-2xl shadow-xl p-4 sm:p-5"
-                >
-                  <p className="text-xs text-gray-500 uppercase tracking-widest">Starting at</p>
-                  <p className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500">$14.99</p>
-                </motion.div>
-
-                {/* Floating Elements */}
-                <motion.div
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute -left-4 top-1/3 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-rose-400 to-orange-400 rounded-full opacity-20 blur-xl"
-                />
-                <motion.div
-                  animate={{ y: [0, 10, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute -right-8 bottom-1/4 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-orange-400 to-amber-400 rounded-full opacity-20 blur-xl"
-                />
-              </div>
-            </motion.div>
-          </div>
+      {/* HERO SECTION */}
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden pt-20">
+        <div className="absolute inset-0 z-0 opacity-70">
+          <img
+            src={heroBg}
+            alt="Hero Background"
+            className="w-full h-full object-cover scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-ivory via-ivory/80 to-transparent" />
         </div>
 
-        {/* Wave Divider */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" fill="none" className="w-full">
-            <path
-              d="M0,64 C480,120 960,0 1440,64 L1440,120 L0,120 Z"
-              className="fill-white"
-            />
-          </svg>
-        </div>
-      </section>
-
-      {/* ===== WHAT WE OFFER SECTION ===== */}
-      <section className="py-16 sm:py-24 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-6 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="max-w-2xl"
           >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-gray-900 mb-4">
-              What We Offer
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Experience the difference with our premium beauty essentials
+            <span className="inline-block text-taupe tracking-widest uppercase text-xs mb-4 font-semibold">
+              The Art of Self-Care
+            </span>
+            <h1 className="text-6xl md:text-8xl font-serif text-foreground leading-[1.1] mb-8">
+              Elegance in <br />
+              Every <span className="italic text-taupe font-light">Ritual</span>
+            </h1>
+            <p className="text-xl text-taupe max-w-lg mb-10 leading-relaxed">
+              Curated beauty collections designed to celebrate your unique radiance. Minimal, natural, and timeless.
             </p>
-          </motion.div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {features.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="text-center p-6 rounded-2xl bg-gray-50 hover:shadow-lg transition-shadow"
-              >
-                <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-br from-rose-100 to-orange-100 flex items-center justify-center text-rose-500">
-                  {feature.icon}
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-sm text-gray-600">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== ABOUT US SECTION ===== */}
-      <section className="py-16 sm:py-24 bg-gradient-to-br from-rose-50 to-orange-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-
-            {/* Images */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="relative"
-            >
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-rose-200">
-                    <img
-                      src="/elegant_skincare_hero_1766623620773.png"
-                      alt="Skincare"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="aspect-square rounded-2xl overflow-hidden bg-orange-200">
-                    <img
-                      src="/eyeshadow_palette_product_mockup_1766625024551.png"
-                      alt="Makeup"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-                <div className="pt-8">
-                  <div className="aspect-[3/4] rounded-2xl overflow-hidden bg-amber-200">
-                    <img
-                      src="/luxury_makeup_hero_1766623636272.png"
-                      alt="Luxury Makeup"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Content */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="space-y-6"
-            >
-              <span className="text-rose-500 font-medium">About Us</span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-gray-900">
-                Beauty That Inspires Confidence
-              </h2>
-              <p className="text-gray-600 leading-relaxed">
-                At Lumière, we believe beauty should be accessible, sustainable, and empowering.
-                Our products are crafted with the finest natural ingredients, ensuring your skin
-                gets the care it deserves.
-              </p>
-              <p className="text-gray-600 leading-relaxed">
-                Every product in our collection is dermatologically tested, cruelty-free, and
-                designed to bring out your natural radiance. Join thousands of satisfied customers
-                who have made Lumière their beauty destination.
-              </p>
-
-              <div className="grid grid-cols-3 gap-6 pt-6">
-                <div className="text-center">
-                  <p className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500">50K+</p>
-                  <p className="text-sm text-gray-600">Happy Customers</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500">100+</p>
-                  <p className="text-sm text-gray-600">Products</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500">4.9</p>
-                  <p className="text-sm text-gray-600">Avg Rating</p>
-                </div>
-              </div>
-
-              <Link to="/about">
-                <Button className="mt-6 h-12 px-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white font-medium group">
-                  Learn More
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
+            <div className="flex flex-wrap gap-6 items-center">
+              <Link to="/shop">
+                <button className="px-10 py-4 bg-foreground text-ivory rounded-full hover:bg-taupe transition-colors duration-300 flex items-center gap-2 group shadow-lg shadow-foreground/5">
+                  Explore Collection
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
               </Link>
-            </motion.div>
-          </div>
+              <Link to="/about">
+                <button className="flex items-center gap-3 text-foreground font-medium group">
+                  <span className="w-12 h-12 rounded-full border border-border flex items-center justify-center group-hover:bg-accent group-hover:border-accent transition-all">
+                    <Play className="w-4 h-4 fill-current ml-0.5" />
+                  </span>
+                  Watch Our Story
+                </button>
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ===== EXPLORE COLLECTIONS SECTION ===== */}
-      <section className="py-16 sm:py-24 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
+      {/* SERVICES CAROUSEL */}
+      <section className="py-24 bg-white overflow-hidden">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div className="max-w-xl">
+              <span className="text-taupe tracking-widest uppercase text-xs mb-3 block font-semibold">Our Expertise</span>
+              <h2 className="text-4xl md:text-5xl font-serif mb-4">Exclusive Services</h2>
+              <p className="text-taupe">Experience beauty beyond products. Discover our range of personalized services designed for your well-being.</p>
+            </div>
+            <div className="hidden md:flex gap-4">
+              {/* Controls will be tied to carousel if we add more UI, for now standard arrows are inside container */}
+            </div>
+          </div>
+
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full relative"
           >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-gray-900 mb-4">
-              Explore Our Collections
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Curated collections for every mood and occasion
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {collections.map((collection, index) => (
-              <motion.div
-                key={collection.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-              >
-                <Link to={`/collections/${collection.id}`} className="block group">
-                  <div className={`relative aspect-[4/5] rounded-3xl overflow-hidden bg-gradient-to-br ${collection.color}`}>
-                    <img
-                      src={collection.image}
-                      alt={collection.name}
-                      className="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <div className="mt-4 text-center">
-                    <h3 className="text-xl font-semibold text-gray-900">{collection.name}</h3>
-                    <p className="text-sm text-gray-500">{collection.products} Products</p>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Link to="/collections">
-              <Button variant="outline" className="h-12 px-8 rounded-full border-2 hover:bg-gray-100 text-base font-medium group">
-                View All Collections
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
+            <CarouselContent className="-ml-4 md:-ml-8">
+              {services.map((service) => (
+                <CarouselItem key={service.id} className="pl-4 md:pl-8 md:basis-1/2 lg:basis-1/3">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="group cursor-pointer h-full"
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden rounded-[2.5rem] bg-muted mb-8 shadow-sm group-hover:shadow-xl transition-all duration-700">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                      />
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                      <div className="absolute top-6 left-6 w-14 h-14 rounded-2xl bg-white/90 backdrop-blur-md flex items-center justify-center text-foreground shadow-sm">
+                        {service.icon}
+                      </div>
+                    </div>
+                    <div className="px-4">
+                      <h3 className="text-2xl font-serif mb-3 flex items-center gap-3">
+                        {service.title}
+                      </h3>
+                      <p className="text-taupe text-sm mb-6 leading-relaxed">
+                        {service.description}
+                      </p>
+                      <button className="text-xs font-bold uppercase tracking-widest text-foreground flex items-center gap-2 group-hover:text-accent transition-colors">
+                        Learn More <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    </div>
+                  </motion.div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex justify-end gap-4 mt-12 pr-6">
+              <CarouselPrevious className="static translate-y-0" />
+              <CarouselNext className="static translate-y-0" />
+            </div>
+          </Carousel>
         </div>
       </section>
 
-      {/* ===== FEATURED PRODUCTS SECTION ===== */}
-      <section className="py-16 sm:py-24 bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-gray-900 mb-4">
-              About Product
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Discover our bestselling products loved by thousands
-            </p>
-          </motion.div>
+      {/* BEST SELLERS */}
+      <section className="py-24 bg-ivory overflow-hidden">
+        <div className="container mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-taupe tracking-widest uppercase text-xs mb-3 block font-semibold">Favorites</span>
+            <h2 className="text-4xl md:text-5xl font-serif mb-4">The Best Sellers</h2>
+            <p className="text-taupe">Loved by our community for their exceptional results and premium feel.</p>
+          </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {featuredProducts.map((product, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {bestSellers.map((product, idx) => (
               <motion.div
                 key={product.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="group"
+                transition={{ delay: idx * 0.1 }}
+                className="group relative"
               >
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-white mb-4 shadow-sm">
-                  <Link to={`/product/${product.id}`}>
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </Link>
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 pointer-events-none">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault()
-                        handleAddToCart(product)
-                      }}
-                      className="w-12 h-12 rounded-full bg-white text-gray-900 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-colors pointer-events-auto"
-                    >
-                      <ShoppingCart className="w-5 h-5" />
-                    </button>
-                    <button className="w-12 h-12 rounded-full bg-white text-gray-900 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-colors pointer-events-auto">
-                      <Heart className="w-5 h-5" />
-                    </button>
+                <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-white mb-6 border border-border/50 group-hover:shadow-2xl group-hover:shadow-taupe/10 transition-all duration-500">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <button className="absolute bottom-4 left-4 right-4 py-3 bg-white/95 backdrop-blur-sm text-foreground rounded-xl opacity-100 translate-y-0 lg:opacity-0 lg:translate-y-2 lg:group-hover:opacity-100 lg:group-hover:translate-y-0 transition-all duration-300 font-medium flex items-center justify-center gap-2">
+                    <ShoppingBag className="w-4 h-4" />
+                    Add to Cart
+                  </button>
+                  <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                    <Star className="w-4 h-4 text-gold fill-gold" />
                   </div>
                 </div>
-                <div className="text-center">
-                  <p className="text-xs text-rose-500 uppercase tracking-widest mb-1">{product.category}</p>
-                  <Link to={`/product/${product.id}`}>
-                    <h3 className="font-medium text-gray-900 mb-1 hover:text-rose-500 transition-colors">{product.name}</h3>
-                  </Link>
-                  <p className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500">
-                    ${product.price.toFixed(2)}
-                  </p>
+                <div className="px-2">
+                  <span className="text-xs uppercase tracking-wider text-taupe font-medium">{product.category}</span>
+                  <h3 className="text-lg font-serif mt-1 mb-2">{product.name}</h3>
+                  <p className="text-xl font-medium text-foreground">${product.price.toFixed(2)}</p>
                 </div>
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="text-center mt-12">
-            <Link to="/shop">
-              <Button className="h-12 px-8 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white border-0 text-base font-medium group">
-                Shop All Products
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
+      {/* FEATURED PRODUCT HIGHLIGHT */}
+      <section className="py-32 bg-white relative overflow-hidden">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1 }}
+              className="relative"
+            >
+              <div className="absolute -inset-10 bg-accent/20 rounded-full blur-[100px] z-0" />
+              <img
+                src="/skincare_category_1768886611429.png"
+                alt="Featured Product"
+                className="relative z-10 w-full rounded-[3rem] shadow-2xl"
+              />
+              <div className="absolute -bottom-6 -right-4 md:bottom-8 md:-right-8 bg-white p-4 md:p-8 rounded-3xl shadow-xl z-20 max-w-[160px] md:max-w-[200px]">
+                <div className="flex gap-1 mb-2">
+                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 md:w-4 md:h-4 fill-gold text-gold" />)}
+                </div>
+                <p className="text-[10px] md:text-sm font-medium italic leading-snug">"The most luxurious serum I've ever used. My skin is glowing."</p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1 }}
+            >
+              <span className="text-taupe tracking-widest uppercase text-xs mb-4 block font-semibold">Featured Ritual</span>
+              <h2 className="text-5xl md:text-7xl font-serif mb-8 leading-tight">The Midnight <br /> <span className="italic font-light">Revival Elixir</span></h2>
+              <p className="text-lg text-taupe mb-10 leading-relaxed max-w-lg">
+                Harnessing the power of cold-pressed botanicals and rare minerals to stimulate nocturnal restoration. Wake up to skin that feels reborn, hydrated, and luminous.
+              </p>
+
+              <ul className="space-y-4 mb-10">
+                {["100% Organic Ingredients", "Clinically Proven Results", "Sustainable Glass Packaging"].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-foreground font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <button className="px-12 py-5 bg-foreground text-ivory rounded-full hover:bg-taupe transition-colors duration-300 flex items-center gap-2 group shadow-xl">
+                Discover More
+                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </motion.div>
           </div>
         </div>
       </section>
+
+      {/* BRAND VALUES / STATEMENT */}
+      <section className="py-32 bg-ivory">
+        <div className="container mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto"
+          >
+            <h2 className="text-4xl md:text-6xl font-serif mb-12 leading-relaxed">
+              "We believe that beauty is a reflection of <span className="italic text-taupe font-light">well-being</span> and <span className="text-accent underline decoration-1 underline-offset-[12px]">authenticity</span>."
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-12 pt-12 border-t border-border/50">
+              {[
+                { label: "Founded", value: "2024" },
+                { label: "Community", value: "120k+" },
+                { label: "Ingredients", value: "Pure" },
+                { label: "Ethics", value: "Vegan" }
+              ].map((stat, i) => (
+                <div key={i}>
+                  <p className="text-taupe text-sm uppercase tracking-widest mb-1">{stat.label}</p>
+                  <p className="text-2xl font-serif">{stat.value}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+
     </main>
   )
 }

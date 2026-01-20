@@ -1,126 +1,88 @@
-import { Instagram, Facebook, Twitter, Youtube, Mail, MapPin, Phone } from "lucide-react"
+import { Instagram, Mail, ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
 
 export function Footer() {
-
   return (
-    <footer className="bg-gray-900 text-white">
-      {/* Main Footer */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+    <footer className="bg-white pt-24 pb-12 border-t border-border">
+      <div className="container mx-auto px-6">
+        <div className="grid md:grid-cols-4 gap-12 mb-20">
 
-          {/* Brand */}
-          <div className="space-y-6">
-            <Link to="/" className="inline-block">
-              <h2 className="text-3xl font-serif font-bold tracking-wide">Lumière</h2>
+          {/* Brand & Social */}
+          <div className="md:col-span-1">
+            <Link to="/">
+              <h3 className="text-2xl font-serif mb-6 tracking-[0.2em] font-medium text-foreground">LUX CO.</h3>
             </Link>
-            <p className="text-gray-400 leading-relaxed text-sm">
-              Elevate your beauty routine with our curated collection of premium cosmetics and skincare essentials.
+            <p className="text-taupe text-sm leading-relaxed mb-8 max-w-[240px]">
+              Crafting moments of luxury for your daily beauty rituals. Pure, natural, and timeless essentials.
             </p>
-            <div className="flex items-center gap-3">
-              {[
-                { icon: Instagram, href: "#" },
-                { icon: Facebook, href: "#" },
-                { icon: Twitter, href: "#" },
-                { icon: Youtube, href: "#" },
-              ].map((social, index) => (
+            <div className="flex gap-4">
+              {[Instagram, Mail].map((Icon, idx) => (
                 <motion.a
-                  key={index}
-                  href={social.href}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-rose-500 hover:to-orange-500 hover:text-white transition-all duration-300"
+                  key={idx}
+                  href="#"
+                  whileHover={{ y: -2 }}
+                  className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-taupe hover:text-foreground hover:border-taupe transition-all"
                 >
-                  <social.icon className="h-4 w-4" />
+                  <Icon className="w-4 h-4" />
                 </motion.a>
               ))}
+              <motion.a
+                href="#"
+                whileHover={{ y: -2 }}
+                className="px-4 h-10 rounded-full border border-border flex items-center justify-center text-[10px] font-bold uppercase tracking-widest text-taupe hover:text-foreground hover:border-taupe transition-all"
+              >
+                Pinterest
+              </motion.a>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-6">
-            <h3 className="text-sm font-semibold uppercase tracking-widest">Quick Links</h3>
-            <ul className="space-y-3">
-              {[
-                { label: "Home", to: "/" },
-                { label: "Shop", to: "/shop" },
-                { label: "Collections", to: "/collections" },
-                { label: "About Us", to: "/about" },
-                { label: "Contact", to: "/contact" },
-              ].map((link) => (
-                <li key={link.label}>
-                  <Link
-                    to={link.to}
-                    className="text-gray-400 hover:text-rose-400 transition-colors text-sm flex items-center gap-2 group"
-                  >
-                    <span className="w-0 group-hover:w-2 h-0.5 bg-rose-500 transition-all duration-300" />
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+          {/* Shop Links */}
+          <div>
+            <h4 className="font-bold mb-8 uppercase text-[10px] tracking-[0.3em] text-foreground">Support</h4>
+            <ul className="space-y-4 text-sm text-taupe font-medium">
+              <li><Link to="/faq" className="hover:text-foreground transition-colors">Faq</Link></li>
+              <li><Link to="/shipping" className="hover:text-foreground transition-colors">Shipping</Link></li>
+              <li><Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
 
-          {/* Categories */}
-          <div className="space-y-6">
-            <h3 className="text-sm font-semibold uppercase tracking-widest">Categories</h3>
-            <ul className="space-y-3">
-              {[
-                { label: "Skincare", to: "/skincare" },
-                { label: "Makeup", to: "/makeup" },
-                { label: "Fragrance", to: "/fragrance" },
-                { label: "Hair Care", to: "/haircare" },
-                { label: "Accessories", to: "/accessories" },
-              ].map((link) => (
-                <li key={link.label}>
-                  <Link
-                    to={`/shop?category=${encodeURIComponent(link.label)}`}
-                    className="text-gray-400 hover:text-rose-400 transition-colors text-sm flex items-center gap-2 group"
-                  >
-                    <span className="w-0 group-hover:w-2 h-0.5 bg-rose-500 transition-all duration-300" />
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+          {/* About Links */}
+          <div>
+            <h4 className="font-bold mb-8 uppercase text-[10px] tracking-[0.3em] text-foreground">Company</h4>
+            <ul className="space-y-4 text-sm text-taupe font-medium">
+              <li><Link to="/about" className="hover:text-foreground transition-colors">Our Story</Link></li>
+              <li><Link to="/contact" className="hover:text-foreground transition-colors">Contact Us</Link></li>
             </ul>
           </div>
 
-          {/* Contact */}
-          <div className="space-y-6">
-            <h3 className="text-sm font-semibold uppercase tracking-widest">Contact Us</h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-                <span className="text-gray-400 text-sm">123 Beauty Boulevard, Fashion District, NY 10001</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-rose-400 shrink-0" />
-                <span className="text-gray-400 text-sm">+1 (800) LUMIERE</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-rose-400 shrink-0" />
-                <span className="text-gray-400 text-sm">hello@lumiere.com</span>
-              </li>
-            </ul>
+          {/* Newsletter */}
+          <div>
+            <h4 className="font-bold mb-8 uppercase text-[10px] tracking-[0.3em] text-foreground">The Journal</h4>
+            <p className="text-xs text-taupe mb-6 leading-relaxed">Join our inner circle for exclusive updates and beauty insights.</p>
+            <div className="relative">
+              <input
+                type="email"
+                placeholder="EMAIL ADDRESS"
+                className="w-full pb-3 bg-transparent border-b border-border focus:outline-none focus:border-taupe transition-colors text-[10px] font-bold tracking-widest placeholder:text-taupe/50"
+              />
+              <button className="absolute right-0 bottom-3 text-taupe hover:text-foreground transition-colors">
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-[9px] text-taupe/60 mt-4 leading-relaxed uppercase tracking-wider">
+              By joining, you agree to our Terms and Privacy Policy.
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-gray-500 text-sm">
-              © 2025 Lumière. All rights reserved.
-            </p>
-            <div className="flex items-center gap-6">
-              <Link to="/privacy" className="text-gray-500 hover:text-rose-400 text-sm transition-colors">
-                Privacy Policy
-              </Link>
-              <Link to="/terms" className="text-gray-500 hover:text-rose-400 text-sm transition-colors">
-                Terms of Service
-              </Link>
-            </div>
+        {/* Copyright */}
+        <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-border/50 text-[10px] text-taupe font-bold uppercase tracking-[0.2em] gap-6">
+          <p>© 2026 Lux Cosmetics. All Rights Reserved.</p>
+          <div className="flex gap-8">
+            <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>
