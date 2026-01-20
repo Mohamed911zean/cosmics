@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
-import { ArrowRight, ShoppingBag, Star, Instagram, ChevronRight, Play, Sparkles, Heart, ShieldCheck, Leaf } from "lucide-react"
+import { ArrowRight, ShoppingBag, Star, ChevronRight, Play, Sparkles, Heart, ShieldCheck, Leaf } from "lucide-react"
 import heroBg from "@/assets/Gemini_Generated_Image_a5ahsxa5ahsxa5ah.png"
 import {
   Carousel,
