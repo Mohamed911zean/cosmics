@@ -68,16 +68,16 @@ export function ProductCard({ id, name, price, image, category }: ProductCardPro
                 size="icon"
                 variant="ghost"
                 className={`absolute top-4 right-4 backdrop-blur-md border transition-all z-10 rounded-none ${inWishlist
-                    ? "bg-accent/30 border-accent/50 text-white"
-                    : "bg-white/10 border-white/20 hover:bg-white/30 text-white"
+                  ? "bg-accent/30 border-accent/50 text-white"
+                  : "bg-white/10 border-white/20 hover:bg-white/30 text-white"
                   }`}
                 onClick={handleToggleWishlist}
               >
                 <Heart className={`h-4 w-4 transition-all ${inWishlist ? "fill-current scale-110" : ""}`} />
               </Button>
 
-              {/* Add to cart button */}
-              <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out">
+              {/* Add to cart button - Visible on mobile/tablet, hover-revealed on desktop */}
+              <div className="absolute inset-x-0 bottom-0 p-4 translate-y-0 lg:translate-y-full lg:group-hover:translate-y-0 transition-transform duration-500 ease-out">
                 <Button
                   className="w-full bg-primary/95 text-primary-foreground hover:bg-primary rounded-none transition-all duration-300 backdrop-blur-sm"
                   size="sm"

@@ -187,8 +187,8 @@ export function Shop() {
                                                 />
                                             </Link>
 
-                                            {/* Quick Actions */}
-                                            <div className="absolute inset-x-0 bottom-4 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0 text-white">
+                                            {/* Quick Actions - Visible on mobile, hover on desktop */}
+                                            <div className="absolute inset-x-0 bottom-4 flex items-center justify-center gap-3 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 translate-y-0 lg:translate-y-4 lg:group-hover:translate-y-0 text-white">
                                                 <button
                                                     onClick={(e) => handleAddToCart(e, product)}
                                                     className="w-10 h-10 rounded-full bg-white text-gray-900 flex items-center justify-center hover:bg-rose-500 hover:text-white shadow-lg transition-colors"

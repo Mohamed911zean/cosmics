@@ -1,4 +1,5 @@
 import { motion } from "framer-motion"
+import { Link } from "react-router-dom"
 import { ArrowRight, Leaf, ShieldCheck, Heart, Sparkles } from "lucide-react"
 import aboutHero from "@/assets/brand_story_hero_1768887993377.png"
 import img from "@/assets/majestic_face_cream_1768888244741.png"
@@ -48,24 +49,15 @@ export default function About() {
                             viewport={{ once: true }}
                             transition={{ duration: 1 }}
                         >
-                            <h2 className="text-4xl md:text-5xl font-serif mb-8 leading-tight">Crafted with Pure <br /> <span className="italic font-light">Botanical Wisdom</span></h2>
+                            <h2 className="text-4xl md:text-5xl font-serif mb-8 leading-tight">All what you need here</h2>
                             <p className="text-lg text-taupe mb-8 leading-relaxed">
-                                Everything we create begins in nature. We source only the finest organic ingredients from sustainable gardens around the world, ensuring that every drop of our elixirs is as potent as it is pure.
+                                We Don't Have these Products we just sell all kinds of comsitics products so you can find what you need
                             </p>
                             <p className="text-lg text-taupe mb-10 leading-relaxed">
                                 Our formulation process is a delicate balance of patience and precision. We don't believe in shortcuts—only in the transformative power of time-tested rituals and dermatological excellence.
                             </p>
 
-                            <div className="grid grid-cols-2 gap-8">
-                                <div>
-                                    <h4 className="font-serif text-xl mb-2">Sustainable</h4>
-                                    <p className="text-sm text-taupe">Eco-friendly packaging and ethical sourcing at every step.</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-serif text-xl mb-2">Cruelty-Free</h4>
-                                    <p className="text-sm text-taupe">Never tested on animals, always kind to our planet.</p>
-                                </div>
-                            </div>
+                           
                         </motion.div>
 
                         <motion.div
@@ -158,10 +150,12 @@ export default function About() {
                         <p className="text-ivory/70 max-w-lg mx-auto mb-10 text-lg">
                             Experience the harmony of nature and science. Discover the collection that’s designed for you.
                         </p>
+                        <Link to="/shop">
                         <button className="px-12 py-5 bg-ivory text-foreground rounded-full hover:bg-accent transition-colors duration-300 flex items-center gap-2 group mx-auto font-bold shadow-xl">
                             Shop The Collection
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </button>
+                        </Link>
                     </motion.div>
                 </div>
             </section>
