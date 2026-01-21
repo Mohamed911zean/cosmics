@@ -1,13 +1,13 @@
-import { ShoppingBag, Menu, User, X, Heart, Search, ChevronRight } from "lucide-react"
+import { ShoppingBag, Menu, User, X, Heart, Search, ChevronRight, Home, Grid3x3 } from "lucide-react"
 import { useState, useEffect, useRef, useMemo } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import { useCartStore, useWishlistStore, useUIStore, useProductStore } from "@/stores"
 import { useAuth } from "@/context/authContext"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
 
 export function Navbar() {
-  const { brand, products } = useProductStore()
+  const { products } = useProductStore()
   const cartCount = useCartStore((state) => state.getItemCount())
   const wishlistCount = useWishlistStore((state) => state.getItemCount())
   const { isMenuOpen, setMenuOpen } = useUIStore()
@@ -18,8 +18,9 @@ export function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
+  const location = useLocation()
 
-  const brandName = brand?.name || "Majestics"
+  const brandName = "Majestics"
 
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return []
@@ -53,8 +54,11 @@ export function Navbar() {
     }
   }
 
+  const isActive = (path: string) => location.pathname === path
+
   return (
     <>
+      {/* Top Navbar */}
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${isScrolled
           ? "bg-ivory/90 backdrop-blur-md py-4 border-b border-border/50"
@@ -62,67 +66,139 @@ export function Navbar() {
           }`}
       >
         <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between">
+          <div className="relative flex items-center justify-between">
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-10">
-              <NavLink to="/home">Home</NavLink>
-              <NavLink to="/about">Our Story</NavLink>
-              <NavLink to="/collections">Collections</NavLink>
-              <NavLink to="/contact">Contact</NavLink>
+            {/* 1. Left Section: Desktop Nav / Mobile Menu */}
+            <div className="flex-1 flex items-center justify-start gap-4">
+              {/* Desktop Navigation */}
+              <div className="hidden xl:flex items-center gap-8">
+                <NavLink to="/home">Home</NavLink>
+                <NavLink to="/about">Our Story</NavLink>
+                <NavLink to="/collections">Collections</NavLink>
+                <NavLink to="/contact">Contact</NavLink>
+              </div>
+
+              {/* Mobile Menu Toggle */}
+              <button
+                onClick={() => setMenuOpen(true)}
+                className="xl:hidden p-2 -ml-2 text-foreground hover:text-taupe transition-colors"
+                aria-label="Menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
             </div>
 
-            {/* Mobile Menu Toggle */}
-            <button
-              onClick={() => setMenuOpen(true)}
-              className="lg:hidden p-2 text-foreground hover:text-taupe transition-colors"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+            {/* 2. Center Section: Logo (Absolute Centered) */}
+            <div className="absolute left-1/2 -translate-x-1/2 flex-shrink-0 z-10">
+              <Link to="/" className="group block">
+                <h1 className="text-xl md:text-2xl xl:text-3xl font-serif tracking-[0.2em] font-medium text-foreground group-hover:text-taupe transition-colors duration-500 whitespace-nowrap">
+                  {brandName}
+                </h1>
+              </Link>
+            </div>
 
-            {/* Centered Logo */}
-            <Link to="/" className="absolute left-1/2 -translate-x-1/2 text-center group">
-              <h1 className="text-2xl md:text-3xl font-serif tracking-[0.2em] font-medium text-foreground group-hover:text-taupe transition-colors duration-500">
-                {brandName}
-              </h1>
-            </Link>
-
-            {/* Right Side Icons */}
-            <div className="flex items-center gap-2 md:gap-6">
+            {/* 3. Right Section: Actions */}
+            <div className="flex-1 flex items-center justify-end gap-1 md:gap-4">
+              {/* Search is always visible for accessibility */}
               <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 text-foreground hover:text-taupe transition-colors"
+                aria-label="Search"
               >
-                <Search className="w-5 h-5" />
+                <Search className="w-5 h-5 md:w-6 md:h-6" />
               </button>
 
-              <Link to="/wishlist" className="relative group p-2">
-                <Heart className="w-5 h-5 text-foreground group-hover:text-taupe transition-colors" />
-                {wishlistCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-accent text-foreground text-[8px] font-bold rounded-full flex items-center justify-center border border-ivory">
-                    {wishlistCount}
-                  </span>
-                )}
-              </Link>
+              {/* These are hidden on mobile as they are moved to bottom nav */}
+              <div className="hidden xl:flex items-center gap-4">
+                <Link to="/wishlist" className="relative group p-2">
+                  <Heart className="w-5 h-5 text-foreground group-hover:text-taupe transition-colors" />
+                  {wishlistCount > 0 && (
+                    <span className="absolute top-1 right-1 w-4 h-4 bg-accent text-foreground text-[8px] font-bold rounded-full flex items-center justify-center border border-ivory">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Link>
 
-              <div className="relative" ref={userMenuRef}>
-                <Link to={user ? "/account" : "/login"} className="p-2 block text-foreground hover:text-taupe transition-colors">
-                  <User className="w-5 h-5" />
+                <div className="relative" ref={userMenuRef}>
+                  <Link to={user ? "/account" : "/login"} className="p-2 block text-foreground hover:text-taupe transition-colors">
+                    <User className="w-5 h-5" />
+                  </Link>
+                </div>
+
+                <Link to="/cart" className="relative group p-2">
+                  <ShoppingBag className="w-5 h-5 text-foreground group-hover:text-taupe transition-colors" />
+                  {cartCount > 0 && (
+                    <span className="absolute top-1 right-1 w-4 h-4 bg-foreground text-ivory text-[8px] font-bold rounded-full flex items-center justify-center border border-ivory transition-transform group-hover:scale-110">
+                      {cartCount}
+                    </span>
+                  )}
                 </Link>
               </div>
-
-              <Link to="/cart" className="relative group p-2">
-                <ShoppingBag className="w-5 h-5 text-foreground group-hover:text-taupe transition-colors" />
-                {cartCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-foreground text-ivory text-[8px] font-bold rounded-full flex items-center justify-center border border-ivory transition-transform group-hover:scale-110">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
             </div>
+
           </div>
         </div>
       </nav>
+
+      {/* Bottom Navigation Bar for Mobile/Tablet */}
+      <div className="xl:hidden fixed bottom-0 left-0 right-0 z-50 bg-ivory/95 backdrop-blur-md border-t border-border/50 pb-safe">
+        <div className="grid grid-cols-5 h-16">
+          <Link
+            to="/home"
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${isActive('/home') ? 'text-foreground' : 'text-taupe'
+              }`}
+          >
+            <Home className="w-5 h-5" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Home</span>
+          </Link>
+
+          <Link
+            to="/collections"
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${isActive('/collections') ? 'text-foreground' : 'text-taupe'
+              }`}
+          >
+            <Grid3x3 className="w-5 h-5" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Shop</span>
+          </Link>
+
+          <Link
+            to="/wishlist"
+            className={`flex flex-col items-center justify-center gap-1 transition-colors relative ${isActive('/wishlist') ? 'text-foreground' : 'text-taupe'
+              }`}
+          >
+            <Heart className="w-5 h-5" />
+            {wishlistCount > 0 && (
+              <span className="absolute top-2 right-1/2 translate-x-3 w-4 h-4 bg-accent text-foreground text-[8px] font-bold rounded-full flex items-center justify-center border border-ivory">
+                {wishlistCount}
+              </span>
+            )}
+            <span className="text-[10px] font-bold uppercase tracking-wider">Wishlist</span>
+          </Link>
+
+          <Link
+            to="/cart"
+            className={`flex flex-col items-center justify-center gap-1 transition-colors relative ${isActive('/cart') ? 'text-foreground' : 'text-taupe'
+              }`}
+          >
+            <ShoppingBag className="w-5 h-5" />
+            {cartCount > 0 && (
+              <span className="absolute top-2 right-1/2 translate-x-3 w-4 h-4 bg-foreground text-ivory text-[8px] font-bold rounded-full flex items-center justify-center border border-ivory">
+                {cartCount}
+              </span>
+            )}
+            <span className="text-[10px] font-bold uppercase tracking-wider">Cart</span>
+          </Link>
+
+          <Link
+            to={user ? "/account" : "/login"}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${isActive('/account') || isActive('/login') ? 'text-foreground' : 'text-taupe'
+              }`}
+          >
+            <User className="w-5 h-5" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Account</span>
+          </Link>
+        </div>
+      </div>
 
       <AnimatePresence>
         {isSearchOpen && (
