@@ -1,7 +1,6 @@
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { ArrowRight, ShoppingBag, Star, ChevronRight, Play, Sparkles, Heart, ShieldCheck, Leaf } from "lucide-react"
-import heroBg from "@/assets/Gemini_Generated_Image_a5ahsxa5ahsxa5ah.png"
 import {
   Carousel,
   CarouselContent,
@@ -9,78 +8,20 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { useCartStore, useWishlistStore } from "@/stores"
+import { useCartStore, useWishlistStore, useProductStore } from "@/stores"
 import { toast } from "sonner"
 
 
 
-const services = [
-  {
-    id: 1,
-    title: "Virtual Consultation",
-    description: "Personalized beauty advice from our experts, tailored to your unique skin profile.",
-    icon: <Sparkles className="w-8 h-8" />,
-    image: "/brand_story_hero_1768887993377.png"
-  },
-  {
-    id: 2,
-    title: "Custom Formulation",
-    description: "Bespoke skincare solutions crafted specifically for your skin's needs and goals.",
-    icon: <ShieldCheck className="w-8 h-8" />,
-    image: "/majestic_face_cream_1768888244741.png"
-  },
-  {
-    id: 3,
-    title: "Ritual Workshops",
-    description: "Master the art of the perfect skincare routine with our guided masterclasses.",
-    icon: <Leaf className="w-8 h-8" />,
-    image: "/skincare_category_1768886611429.png"
-  },
-  {
-    id: 4,
-    title: "Gifting Experience",
-    description: "Premium packaging and personalized notes to make every gift truly majestic.",
-    icon: <Heart className="w-8 h-8" />,
-    image: "/makeup_category_1768886635160.png"
-  }
-]
-
-const bestSellers = [
-  {
-    id: 1,
-    name: "Radiant Essence Serum",
-    price: 84.00,
-    category: "Skincare",
-    image: "/luxury_cosmetics_hero_1768886590255.png",
-    rating: 4.9
-  },
-  {
-    id: 2,
-    name: "Silk Foundation No. 02",
-    price: 62.00,
-    category: "Makeup",
-    image: "/skincare_category_1768886611429.png",
-    rating: 4.8
-  },
-  {
-    id: 3,
-    name: "Velvet Lip Tint",
-    price: 32.00,
-    category: "Makeup",
-    image: "/makeup_category_1768886635160.png",
-    rating: 5.0
-  },
-  {
-    id: 4,
-    name: "Rose Quartz Roller",
-    price: 45.00,
-    category: "Tools",
-    image: "/tools_category_1768886662535.png",
-    rating: 4.7
-  }
-]
+const iconMap: Record<string, React.ReactNode> = {
+  Sparkles: <Sparkles className="w-8 h-8" />,
+  ShieldCheck: <ShieldCheck className="w-8 h-8" />,
+  Leaf: <Leaf className="w-8 h-8" />,
+  Heart: <Heart className="w-8 h-8" />
+}
 
 export default function Home() {
+  const { featuredProducts, services, brand } = useProductStore()
   const addToCart = useCartStore((state) => state.addItem)
   const { toggleItem, isInWishlist } = useWishlistStore()
 
@@ -120,7 +61,7 @@ export default function Home() {
       <section className="relative min-h-[90vh] flex items-center overflow-hidden pt-20">
         <div className="absolute inset-0 z-0 opacity-70">
           <img
-            src={heroBg}
+            src="https://e-majestic.com/cdn/shop/files/WhatsAppImage2025-09-01at15.31.20.jpg?v=1756738172&width=900"
             alt="Hero Background"
             className="w-full h-full object-cover scale-105"
           />
@@ -135,19 +76,19 @@ export default function Home() {
             className="max-w-2xl"
           >
             <span className="inline-block text-taupe tracking-widest uppercase text-xs mb-4 font-semibold">
-              The Art of Self-Care
+              {brand.tagline}
             </span>
             <h1 className="text-6xl md:text-8xl font-serif text-foreground leading-[1.1] mb-8">
-              Elegance in <br />
-              Every <span className="italic text-taupe font-light">Ritual</span>
+              Nourish <br />
+              Your <span className="italic text-taupe font-light">Natural</span> Glow
             </h1>
             <p className="text-xl text-taupe max-w-lg mb-10 leading-relaxed">
-              Curated beauty collections designed to celebrate your unique radiance. Minimal, natural, and timeless.
+              {brand.description}
             </p>
             <div className="flex flex-wrap gap-6 items-center">
               <Link to="/shop">
                 <button className="px-10 py-4 bg-foreground text-ivory rounded-full hover:bg-taupe transition-colors duration-300 flex items-center gap-2 group shadow-lg shadow-foreground/5">
-                  Explore Collection
+                  Shop All Creams
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </Link>
@@ -156,7 +97,7 @@ export default function Home() {
                   <span className="w-12 h-12 rounded-full border border-border flex items-center justify-center group-hover:bg-accent group-hover:border-accent transition-all">
                     <Play className="w-4 h-4 fill-current ml-0.5" />
                   </span>
-                  Watch Our Story
+                  Our Philosophy
                 </button>
               </Link>
             </div>
@@ -170,8 +111,8 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <div className="max-w-xl">
               <span className="text-taupe tracking-widest uppercase text-xs mb-3 block font-semibold">Our Expertise</span>
-              <h2 className="text-4xl md:text-5xl font-serif mb-4">Exclusive Services</h2>
-              <p className="text-taupe">Experience beauty beyond products. Discover our range of personalized services designed for your well-being.</p>
+              <h2 className="text-4xl md:text-5xl font-serif mb-4">Dedicated Care</h2>
+              <p className="text-taupe">Experience wellness beyond products. Discover our range of personalized skincare services designed for your skin's health.</p>
             </div>
             <div className="hidden md:flex gap-4">
               {/* Controls will be tied to carousel if we add more UI, for now standard arrows are inside container */}
@@ -202,7 +143,7 @@ export default function Home() {
                       />
                       <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
                       <div className="absolute top-6 left-6 w-14 h-14 rounded-2xl bg-white/90 backdrop-blur-md flex items-center justify-center text-foreground shadow-sm">
-                        {service.icon}
+                        {iconMap[service.icon]}
                       </div>
                     </div>
                     <div className="px-4">
@@ -234,11 +175,11 @@ export default function Home() {
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-taupe tracking-widest uppercase text-xs mb-3 block font-semibold">Favorites</span>
             <h2 className="text-4xl md:text-5xl font-serif mb-4">The Best Sellers</h2>
-            <p className="text-taupe">Loved by our community for their exceptional results and premium feel.</p>
+            <p className="text-taupe">Loved by our community for their exceptional hydration and nourishing results.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {bestSellers.map((product, idx) => {
+            {featuredProducts.map((product: any, idx: number) => {
               const inWishlist = isInWishlist(product.id)
               return (
                 <motion.div
@@ -299,7 +240,7 @@ export default function Home() {
             >
               <div className="absolute -inset-10 bg-accent/20 rounded-full blur-[100px] z-0" />
               <img
-                src="/skincare_category_1768886611429.png"
+                src="https://e-majestic.com/cdn/shop/files/retinol_pirlome.png?v=1764809595&width=900"
                 alt="Featured Product"
                 className="relative z-10 w-full rounded-[3rem] shadow-2xl"
               />
@@ -307,7 +248,7 @@ export default function Home() {
                 <div className="flex gap-1 mb-2">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 md:w-4 md:h-4 fill-gold text-gold" />)}
                 </div>
-                <p className="text-[10px] md:text-sm font-medium italic leading-snug">"The most luxurious serum I've ever used. My skin is glowing."</p>
+                <p className="text-[10px] md:text-sm font-medium italic leading-snug">"The most effective night serum I've ever used. My skin feels reborn."</p>
               </div>
             </motion.div>
 
@@ -318,13 +259,13 @@ export default function Home() {
               transition={{ duration: 1 }}
             >
               <span className="text-taupe tracking-widest uppercase text-xs mb-4 block font-semibold">Featured Ritual</span>
-              <h2 className="text-5xl md:text-7xl font-serif mb-8 leading-tight">The Midnight <br /> <span className="italic font-light">Revival Elixir</span></h2>
+              <h2 className="text-5xl md:text-7xl font-serif mb-8 leading-tight">The Midnight <br /> <span className="italic font-light">Renewal Serum</span></h2>
               <p className="text-lg text-taupe mb-10 leading-relaxed max-w-lg">
-                Harnessing the power of cold-pressed botanicals and rare minerals to stimulate nocturnal restoration. Wake up to skin that feels reborn, hydrated, and luminous.
+                Harnessing the power of pure Retinol and rare minerals to stimulate nocturnal restoration. Wake up to skin that feels reborn, hydrated, and luminous.
               </p>
 
               <ul className="space-y-4 mb-10">
-                {["100% Organic Ingredients", "Clinically Proven Results", "Sustainable Glass Packaging"].map((item, i) => (
+                {["100% Organic Ingredients", "Clinically Proven Results", "Eco-Friendly Glass Packaging"].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-foreground font-medium">
                     <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                     {item}
@@ -351,7 +292,7 @@ export default function Home() {
             className="max-w-4xl mx-auto"
           >
             <h2 className="text-4xl md:text-6xl font-serif mb-12 leading-relaxed">
-              "We believe that beauty is a reflection of <span className="italic text-taupe font-light">well-being</span> and <span className="text-accent underline decoration-1 underline-offset-[12px]">authenticity</span>."
+              "We believe that skincare is a reflection of <span className="italic text-taupe font-light">well-being</span> and <span className="text-accent underline decoration-1 underline-offset-[12px]">authenticity</span>."
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 pt-12 border-t border-border/50">
               {[

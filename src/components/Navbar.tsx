@@ -46,10 +46,10 @@ export function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-10">
-              <NavLink to="/shop">Shop</NavLink>
-              <NavLink to="/collections">Collections</NavLink>
-              <NavLink to="/about">Our Story</NavLink>
               <NavLink to="/home">Home</NavLink>
+              <NavLink to="/about">Our Story</NavLink>
+              <NavLink to="/collections">Collections</NavLink>
+              <NavLink to="/contact">Contact</NavLink>
             </div>
 
             {/* Mobile Menu Toggle */}
@@ -69,9 +69,7 @@ export function Navbar() {
 
             {/* Right Side Icons */}
             <div className="flex items-center gap-2 md:gap-6">
-              <button className="hidden md:block p-2 text-foreground hover:text-taupe transition-colors">
-                <Search className="w-5 h-5" />
-              </button>
+             
 
               <Link to="/wishlist" className="relative group p-2">
                 <Heart className="w-5 h-5 text-foreground group-hover:text-taupe transition-colors" />

@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom"
 import { Toaster } from "sonner"
 import { AuthProvider } from "@/context/authContext"
 import { Navbar } from "@/components/Navbar"
-import Home from "@/pages/Home"
+import  Home  from "@/pages/Home"
 import { Login } from "@/pages/Login"
 import { Signup } from "@/pages/Signup"
 import { Cart } from "@/pages/Cart"
@@ -14,8 +14,7 @@ import { Account } from "@/pages/Account"
 import { Contact } from "@/pages/Contact"
 import { Footer } from "@/components/Footer"
 import { ProtectedRoute } from "@/components/ProtectedRoute"
-import About from "@/pages/About"
-
+import About from "./pages/About"
 import { StoreSynchronizer } from "@/components/StoreSynchronizer"
 
 import { Shop } from "@/pages/Shop"
@@ -33,8 +32,9 @@ export default function App() {
       <Toaster position="top-center" expand={false} richColors />
       <Navbar />
       <Routes>
-        <Route path="/home" element={<Home />} />
         <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/about" element={<About/>}  />
         <Route path="/shop" element={<Shop />} />
         <Route path="/collections" element={<Shop />} />
         <Route path="/login" element={<Login />} />
@@ -43,8 +43,6 @@ export default function App() {
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/our-story" element={<About />} />
 
         {/* Support Pages */}
         <Route path="/privacy" element={<Privacy />} />

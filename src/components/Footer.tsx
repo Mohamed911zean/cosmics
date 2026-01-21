@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom"
+import { useProductStore } from "@/stores"
 
 export function Footer() {
+  const { brand } = useProductStore()
+  if (!brand) return null
+
   return (
     <footer className="bg-white pt-24 pb-12 border-t border-border">
       <div className="container mx-auto px-6">
@@ -9,12 +13,12 @@ export function Footer() {
           {/* Brand & Social */}
           <div className="md:col-span-1">
             <Link to="/home">
-              <h3 className="text-2xl font-serif mb-6 tracking-[0.2em] font-medium text-foreground">Majestics.</h3>
+              <h3 className="text-2xl font-serif mb-6 tracking-[0.2em] font-medium text-foreground">{brand.name}.</h3>
             </Link>
             <p className="text-taupe text-sm leading-relaxed mb-8 max-w-[240px]">
-              Crafting moments of luxury for your daily beauty rituals. Pure, natural, and timeless essentials.
+              {brand.description}
             </p>
-           
+
           </div>
 
           {/* Shop Links */}
@@ -37,36 +41,36 @@ export function Footer() {
             </ul>
           </div>
 
-         {/* Contact Info */}
-<div>
-  <h4 className="font-bold mb-8 uppercase text-[10px] tracking-[0.3em] text-foreground">
-    Contact
-  </h4>
+          {/* Contact Info */}
+          <div>
+            <h4 className="font-bold mb-8 uppercase text-[10px] tracking-[0.3em] text-foreground">
+              Contact
+            </h4>
 
-  <ul className="space-y-4 text-sm text-taupe font-medium">
-    <li>
-      <a
-        href="mailto:hello@majestics.com"
-        className="hover:text-foreground transition-colors"
-      >
-        elkonmohamed911@gmail.com    [Owner Email] 
-      </a>
-    </li>
+            <ul className="space-y-4 text-sm text-taupe font-medium">
+              <li>
+                <a
+                  href={`mailto:${brand.links.email}`}
+                  className="hover:text-foreground transition-colors"
+                >
+                  {brand.links.email} [Owner Email]
+                </a>
+              </li>
 
-    <li>
-      <a
-        href="mailto:support@majestics.com"
-        className="hover:text-foreground transition-colors"
-      >
-        el3shmawy911gt3rs@gmail.com    [Support Email]
-      </a>
-    </li>
+              <li>
+                <a
+                  href={`mailto:${brand.links.support}`}
+                  className="hover:text-foreground transition-colors"
+                >
+                  {brand.links.support} [Support Email]
+                </a>
+              </li>
 
-    <li className="text-taupe/80">
-      Dakahlia , Mansoura , Egypt
-    </li>
-  </ul>
-</div>
+              <li className="text-taupe/80">
+                {brand.links.address}
+              </li>
+            </ul>
+          </div>
 
         </div>
 

@@ -85,7 +85,7 @@ export function Shop() {
                         Shop All
                     </h1>
                     <p className="text-gray-600 max-w-2xl mx-auto">
-                        Explore our complete collection of premium beauty essentials
+                        Explore our complete collection of premium skincare and body care essentials
                     </p>
                 </div>
 

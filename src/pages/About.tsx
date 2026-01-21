@@ -1,8 +1,6 @@
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { ArrowRight, Leaf, ShieldCheck, Heart, Sparkles } from "lucide-react"
-import aboutHero from "@/assets/brand_story_hero_1768887993377.png"
-import img from "@/assets/majestic_face_cream_1768888244741.png"
 export default function About() {
     return (
         <main className="bg-ivory text-foreground font-sans selection:bg-accent selection:text-foreground">
@@ -11,7 +9,7 @@ export default function About() {
             <section className="relative min-h-[70vh] flex items-center overflow-hidden pt-20">
                 <div className="absolute inset-0 z-0 opacity-60">
                     <img
-                        src={aboutHero}
+                        src="https://e-majestic.com/cdn/shop/files/WhatsApp_Image_2025-11-09_at_1.11.14_PM_1.jpg?v=1767270855&width=900"
                         alt="Our Story Hero"
                         className="w-full h-full object-cover"
                     />
@@ -29,11 +27,11 @@ export default function About() {
                             The Majestic Journey
                         </span>
                         <h1 className="text-5xl md:text-7xl font-serif text-foreground leading-tight mb-8">
-                            Redefining Beauty <br />
+                            Redefining Care <br />
                             Through <span className="italic text-taupe font-light">Intention</span>
                         </h1>
                         <p className="text-xl text-taupe leading-relaxed">
-                            Founded on the belief that skincare is a sacred ritual, Majestic combines botanical wisdom with modern science to create products that honor your natural radiance.
+                            Founded on the belief that body care is a sacred ritual, Majestic combines botanical wisdom with modern science to create products that honor your natural radiance.
                         </p>
                     </motion.div>
                 </div>
@@ -49,15 +47,15 @@ export default function About() {
                             viewport={{ once: true }}
                             transition={{ duration: 1 }}
                         >
-                            <h2 className="text-4xl md:text-5xl font-serif mb-8 leading-tight">All what you need here</h2>
+                            <h2 className="text-4xl md:text-5xl font-serif mb-8 leading-tight">Everything your skin needs</h2>
                             <p className="text-lg text-taupe mb-8 leading-relaxed">
-                                We Don't Have these Products we just sell all kinds of comsitics products so you can find what you need
+                                We specialize in high-quality skincare and body care products, curated to provide the ultimate nourishment for your skin.
                             </p>
                             <p className="text-lg text-taupe mb-10 leading-relaxed">
                                 Our formulation process is a delicate balance of patience and precision. We don't believe in shortcuts—only in the transformative power of time-tested rituals and dermatological excellence.
                             </p>
 
-                           
+
                         </motion.div>
 
                         <motion.div
@@ -69,7 +67,7 @@ export default function About() {
                         >
                             <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl">
                                 <img
-                                    src={img}
+                                    src="https://e-majestic.com/cdn/shop/files/ss_cica.png?v=1754243318&width=900"
                                     alt="Our Philosophy"
                                     className="w-full h-full object-cover"
                                 />
@@ -146,15 +144,15 @@ export default function About() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h2 className="text-4xl md:text-6xl font-serif mb-8 text-white">Start Your Own <br /> <span className="italic font-light">Beauty Ritual</span></h2>
+                        <h2 className="text-4xl md:text-6xl font-serif mb-8 text-white">Start Your Own <br /> <span className="italic font-light">Skin Ritual</span></h2>
                         <p className="text-ivory/70 max-w-lg mx-auto mb-10 text-lg">
                             Experience the harmony of nature and science. Discover the collection that’s designed for you.
                         </p>
                         <Link to="/shop">
-                        <button className="px-12 py-5 bg-ivory text-foreground rounded-full hover:bg-accent transition-colors duration-300 flex items-center gap-2 group mx-auto font-bold shadow-xl">
-                            Shop The Collection
-                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </button>
+                            <button className="px-12 py-5 bg-ivory text-foreground rounded-full hover:bg-accent transition-colors duration-300 flex items-center gap-2 group mx-auto font-bold shadow-xl">
+                                Shop The Collection
+                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </button>
                         </Link>
                     </motion.div>
                 </div>

@@ -1,0 +1,226 @@
+{
+    "brand": {
+        "name": "Majestic",
+        "tagline": "The Art of Skincare",
+        "description": "Crafting moments of luxury for your daily skincare rituals. Pure, natural, and timeless essentials.",
+        "links": {
+            "email": "elkonmohamed911@gmail.com",
+            "support": "el3shmawy911gt3rs@gmail.com",
+            "address": "Dakahlia, Mansoura, Egypt"
+        }
+    },
+    "products": [
+        {
+            "id": 1,
+            "name": "Copper Peptide Serum",
+            "price": 89.0,
+            "category": "Skincare",
+            "image": "https://e-majestic.com/cdn/shop/files/copperpeptide_pirlome.png?v=1764808274&width=900",
+            "description": "A potent serum infused with copper peptides to promote skin elasticity and target signs of aging. This advanced formula helps to firm and revitalize your complexion.",
+            "rating": 4.9,
+            "reviews": 128,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/copperpeptide_pirlome.png?v=1764808274&width=900"
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Hyaluronic Acid B5",
+            "price": 45.0,
+            "category": "Skincare",
+            "image": "https://e-majestic.com/cdn/shop/files/hyaluronic_pirlome.png?v=1764809364&width=900",
+            "description": "Intense hydration for all skin types. This serum combines pure hyaluronic acid with Vitamin B5 to lock in moisture and plump the skin.",
+            "rating": 4.8,
+            "reviews": 215,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/hyaluronic_pirlome.png?v=1764809364&width=900"
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Niacinamide 10% + Zinc 1%",
+            "price": 38.0,
+            "category": "Skincare",
+            "image": "https://e-majestic.com/cdn/shop/files/niacinamide_pirlome.png?v=1764809157&width=900",
+            "description": "Target blemishes and balance sebum production with this high-strength vitamin and mineral formula. Perfect for refining skin texture.",
+            "rating": 4.7,
+            "reviews": 184,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/niacinamide_pirlome.png?v=1764809157&width=900"
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Retinol 1% Night Serum",
+            "price": 95.0,
+            "category": "Anti-Aging",
+            "image": "https://e-majestic.com/cdn/shop/files/retinol_pirlome.png?v=1764809595&width=900",
+            "description": "An advanced night serum that stimulates cell turnover and reduces the appearance of fine lines, wrinkles, and hyperpigmentation.",
+            "rating": 4.9,
+            "reviews": 156,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/retinol_pirlome.png?v=1764809595&width=900"
+            ]
+        },
+        {
+            "id": 5,
+            "name": "Vitamin C Brightening Serum",
+            "price": 75.0,
+            "category": "Skincare",
+            "image": "https://e-majestic.com/cdn/shop/files/VITC_pirlome.png?v=1764808863&width=900",
+            "description": "Brighten your skin tone and protect against environmental stressors with our stabilized Vitamin C formula. Reveals a more radiant complexion.",
+            "rating": 4.6,
+            "reviews": 92,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/VITC_pirlome.png?v=1764808863&width=900"
+            ]
+        },
+        {
+            "id": 6,
+            "name": "Gentle Milky Cleanser",
+            "price": 32.0,
+            "category": "Skincare",
+            "image": "https://e-majestic.com/cdn/shop/files/milkycleanser.png?v=1767271067&width=900",
+            "description": "A nourishing milk cleanser that removes impurities and makeup while maintaining the skin's natural moisture barrier.",
+            "rating": 4.8,
+            "reviews": 145,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/milkycleanser.png?v=1767271067&width=900"
+            ]
+        },
+        {
+            "id": 7,
+            "name": "Cica Repair Sunscreen SPF 50",
+            "price": 48.0,
+            "category": "Sun Protection",
+            "image": "https://e-majestic.com/cdn/shop/files/ss_cica.png?v=1754243318&width=900",
+            "description": "High-performance sun protection infused with Cica to soothe and repair the skin barrier while shielding from UV rays.",
+            "rating": 4.9,
+            "reviews": 310,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/ss_cica.png?v=1754243318&width=900"
+            ]
+        },
+        {
+            "id": 8,
+            "name": "Deep Hydration Body Lotion",
+            "price": 42.0,
+            "category": "Body Care",
+            "image": "https://e-majestic.com/cdn/shop/files/lotion_586dd13f-6b94-40eb-b93c-f0677846a133.png?v=1767268104&width=900",
+            "description": "A luxury body lotion that provides 48-hour hydration. Its non-greasy formula leaves skin feeling silky smooth and gently scented.",
+            "rating": 4.7,
+            "reviews": 125,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/lotion_586dd13f-6b94-40eb-b93c-f0677846a133.png?v=1767268104&width=900"
+            ]
+        },
+        {
+            "id": 9,
+            "name": "Triple Action Deodorant",
+            "price": 24.0,
+            "category": "Body Care",
+            "image": "https://e-majestic.com/cdn/shop/files/tripledeo.png?v=1767270647&width=900",
+            "description": "Long-lasting protection with a gentle, skin-friendly formula. Keeps you fresh all day while nourishing the delicate underarm skin.",
+            "rating": 4.5,
+            "reviews": 88,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/tripledeo.png?v=1767270647&width=900"
+            ]
+        },
+        {
+            "id": 10,
+            "name": "Argireline Complex 10%",
+            "price": 54.0,
+            "category": "Anti-Aging",
+            "image": "https://e-majestic.com/cdn/shop/files/argireline_456d43e9-3e04-4138-8e99-c6ff504414dc.png?v=1767270913&width=900",
+            "description": "Target dynamic folds and wrinkles with this advanced peptide formula, often called 'Botox in a bottle' for its smoothing effects.",
+            "rating": 4.8,
+            "reviews": 75,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/argireline_456d43e9-3e04-4138-8e99-c6ff504414dc.png?v=1767270913&width=900"
+            ]
+        },
+        {
+            "id": 11,
+            "name": "Caffeine Eye Serum",
+            "price": 29.0,
+            "category": "Skincare",
+            "image": "https://e-majestic.com/cdn/shop/files/caffeine_4af2b074-1380-4d8c-8d2f-6181a8c34a7e.png?v=1767270931&width=900",
+            "description": "Reduce puffiness and dark circles with this light-textured serum containing high concentration of caffeine and EGCG.",
+            "rating": 4.6,
+            "reviews": 110,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/caffeine_4af2b074-1380-4d8c-8d2f-6181a8c34a7e.png?v=1767270931&width=900"
+            ]
+        },
+        {
+            "id": 12,
+            "name": "Honey Milk Nourishing Cream",
+            "price": 38.0,
+            "category": "Body Care",
+            "image": "https://e-majestic.com/cdn/shop/files/honey_milk_d626f438-cceb-4d17-972d-64c53240db41.png?v=1767270632&width=900",
+            "description": "A comforting body cream infused with honey and milk extracts to deeply nourish and soften dry skin.",
+            "rating": 4.9,
+            "reviews": 64,
+            "images": [
+                "https://e-majestic.com/cdn/shop/files/honey_milk_d626f438-cceb-4d17-972d-64c53240db41.png?v=1767270632&width=900"
+            ]
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "name": "Skincare",
+            "productCount": 15,
+            "image": "https://e-majestic.com/cdn/shop/files/skincare_category.png?width=900"
+        },
+        {
+            "id": 2,
+            "name": "Body Care",
+            "productCount": 8,
+            "image": "https://e-majestic.com/cdn/shop/files/bodycare_category.png?width=900"
+        },
+        {
+            "id": 3,
+            "name": "Anti-Aging",
+            "productCount": 5,
+            "image": "https://e-majestic.com/cdn/shop/files/antiaging_category.png?width=900"
+        },
+        {
+            "id": 4,
+            "name": "Sun Protection",
+            "productCount": 4,
+            "image": "https://e-majestic.com/cdn/shop/files/sunprotection_category.png?width=900"
+        }
+    ],
+    "services": [
+        {
+            "id": 1,
+            "title": "Skin Analysis",
+            "description": "Personalized skincare advice from our dermatologists, tailored to your unique skin profile.",
+            "icon": "Sparkles",
+            "image": "https://e-majestic.com/cdn/shop/files/WhatsAppImage2025-09-01at15.34.10.jpg?v=1756736823&width=900"
+        },
+        {
+            "id": 2,
+            "title": "Eco-Friendly Packing",
+            "description": "Sustainable glass packaging designed for reuse and minimal environmental impact.",
+            "icon": "ShieldCheck",
+            "image": "https://e-majestic.com/cdn/shop/files/ss_cica.png?v=1754243318&width=900"
+        },
+        {
+            "id": 3,
+            "title": "Daily Rituals",
+            "description": "Master the art of the perfect body care routine with our guided masterclasses.",
+            "icon": "Leaf",
+            "image": "https://e-majestic.com/cdn/shop/files/lotion_586dd13f-6b94-40eb-b93c-f0677846a133.png?v=1767268104&width=900"
+        },
+        {
+            "id": 4,
+            "title": "Pure Ingredients",
+            "description": "Every product is crafted with 100% organic and clinically proven botanicals.",
+            "icon": "Heart",
+            "image": "https://e-majestic.com/cdn/shop/files/copperpeptide_pirlome.png?v=1764808274&width=900"
+        }
+    ]
+}
