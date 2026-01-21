@@ -1,4 +1,4 @@
-import { ShoppingBag, Menu, User, X, Heart, Search } from "lucide-react"
+import { ShoppingBag, Menu, User, X, Heart } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useCartStore, useWishlistStore, useUIStore } from "@/stores"
