@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Star, Shield, Truck, RefreshCcw, Heart, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react"
+import { Shield, Truck, RefreshCcw, Heart, Minus, Plus, ShoppingBag, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FeaturedProducts } from "@/components/FeaturedProducts"
 import { toast } from "sonner"
@@ -148,12 +148,6 @@ export function ProductPage() {
                                 <span className="text-[10px] text-accent uppercase tracking-[0.3em] font-bold bg-accent/10 px-3 py-1.5">
                                     Best Seller
                                 </span>
-                                <div className="flex items-center gap-1.5">
-                                    {[...Array(5)].map((_, i) => (
-                                        <Star key={i} className={`w-3.5 h-3.5 ${i < 5 ? "fill-accent text-accent" : "text-border"}`} />
-                                    ))}
-                                    <span className="ml-3 text-[11px] text-foreground/40 uppercase tracking-widest">({product.reviews || 128} reviews)</span>
-                                </div>
                             </div>
                             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif text-foreground leading-[0.95] tracking-tight">
                                 {product.name}

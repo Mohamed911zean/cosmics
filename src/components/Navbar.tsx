@@ -1,5 +1,5 @@
-import { ShoppingBag, Menu, User, X, Heart } from "lucide-react"
-import { useState, useEffect, useRef } from "react"
+import { ShoppingBag, Menu, User, X, Heart, Search, ChevronRight } from "lucide-react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useCartStore, useWishlistStore, useUIStore, useProductStore } from "@/stores"
 import { useAuth } from "@/context/authContext"
@@ -7,16 +7,27 @@ import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
 
 export function Navbar() {
-  const { brand } = useProductStore()
+  const { brand, products } = useProductStore()
   const cartCount = useCartStore((state) => state.getItemCount())
   const wishlistCount = useWishlistStore((state) => state.getItemCount())
   const { isMenuOpen, setMenuOpen } = useUIStore()
   const { user, logout } = useAuth()
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
   const userMenuRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
 
   const brandName = brand?.name || "Majestics"
+
+  const filteredProducts = useMemo(() => {
+    if (!searchQuery.trim()) return []
+    return products.filter(product =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase())
+    ).slice(0, 5)
+  }, [searchQuery, products])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,6 +36,12 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }, [isSearchOpen])
 
   const handleLogout = async () => {
     try {
@@ -38,7 +55,7 @@ export function Navbar() {
 
   return (
     <>
-     <nav
+      <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${isScrolled
           ? "bg-ivory/90 backdrop-blur-md py-4 border-b border-border/50"
           : "bg-transparent py-6"
@@ -72,7 +89,12 @@ export function Navbar() {
 
             {/* Right Side Icons */}
             <div className="flex items-center gap-2 md:gap-6">
-
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="p-2 text-foreground hover:text-taupe transition-colors"
+              >
+                <Search className="w-5 h-5" />
+              </button>
 
               <Link to="/wishlist" className="relative group p-2">
                 <Heart className="w-5 h-5 text-foreground group-hover:text-taupe transition-colors" />
@@ -102,6 +124,79 @@ export function Navbar() {
         </div>
       </nav>
 
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-[110] bg-ivory/95 backdrop-blur-xl"
+          >
+            <div className="container mx-auto px-6 py-12">
+              <div className="flex justify-between items-center mb-12">
+                <h2 className="text-2xl font-serif">Search Marketplace</h2>
+                <button
+                  onClick={() => {
+                    setIsSearchOpen(false)
+                    setSearchQuery("")
+                  }}
+                  className="p-3 border border-border rounded-full hover:bg-white transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="max-w-3xl mx-auto">
+                <div className="relative mb-12">
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    placeholder="Search for authentic brands, products, categories..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-transparent border-b-2 border-border py-4 text-3xl font-serif focus:outline-none focus:border-accent transition-colors placeholder:text-taupe/30"
+                  />
+                  <Search className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 text-taupe/30" />
+                </div>
+
+                <div className="grid gap-6">
+                  {filteredProducts.map((product) => (
+                    <Link
+                      key={product.id}
+                      to={`/product/${product.id}`}
+                      onClick={() => setIsSearchOpen(false)}
+                      className="flex items-center gap-6 p-4 rounded-3xl hover:bg-white transition-all group"
+                    >
+                      <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white border border-border/50">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-[10px] uppercase tracking-widest text-taupe font-bold mb-1 block">
+                          {product.category}
+                        </span>
+                        <h3 className="text-xl font-serif">{product.name}</h3>
+                        <p className="text-accent font-medium">${product.price.toFixed(2)}</p>
+                      </div>
+                      <ChevronRight className="ml-auto w-5 h-5 text-taupe opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+                  ))}
+                  {searchQuery && filteredProducts.length === 0 && (
+                    <p className="text-center py-20 text-taupe italic">
+                      No products found matching "{searchQuery}"
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Fullscreen Mobile Drawer */}
       <AnimatePresence>
         {isMenuOpen && (
@@ -128,7 +223,7 @@ export function Navbar() {
                     transition={{ delay: idx * 0.1 }}
                   >
                     <Link
-                      to={`/ ${item.toLowerCase().replace(" ", "-")} `}
+                      to={`/${item.toLowerCase().replace(" ", "-")}`}
                       onClick={() => setMenuOpen(false)}
                       className="text-4xl md:text-6xl font-serif hover:text-taupe transition-colors italic"
                     >

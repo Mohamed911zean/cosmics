@@ -47,7 +47,6 @@ export function Shop() {
     }).sort((a, b) => {
         if (sortBy === "price-low") return a.price - b.price
         if (sortBy === "price-high") return b.price - a.price
-        if (sortBy === "rating") return (b.rating || 0) - (a.rating || 0)
         return 0 // featured/default
     })
 
@@ -60,7 +59,12 @@ export function Shop() {
             image: product.image,
             category: product.category,
         })
-        toast.success(`${product.name} added to bag`)
+        toast.success(`${product.name} added to bag`, {
+            action: {
+                label: "Checkout",
+                onClick: () => window.location.href = "/cart"
+            },
+        })
     }
 
     const handleToggleWishlist = (e: React.MouseEvent, product: any) => {
@@ -164,7 +168,6 @@ export function Shop() {
                                 <option value="featured">Featured</option>
                                 <option value="price-low">Price: Low to High</option>
                                 <option value="price-high">Price: High to Low</option>
-                                <option value="rating">Top Rated</option>
                             </select>
                         </div>
 
@@ -216,12 +219,6 @@ export function Shop() {
                                                 <p className="text-lg font-semibold text-gray-900">
                                                     ${product.price.toFixed(2)}
                                                 </p>
-                                                {product.rating && (
-                                                    <div className="flex items-center text-amber-400 text-xs">
-                                                        <span className="font-medium text-gray-500 mr-1">{product.rating}</span>
-                                                        <span className="text-amber-400">★</span>
-                                                    </div>
-                                                )}
                                             </div>
                                         </div>
                                     </motion.div>

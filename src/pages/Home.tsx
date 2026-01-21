@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
-import { Link } from "react-router-dom"
-import { ArrowRight, ShoppingBag, Star, ChevronRight, Play, Sparkles, Heart, ShieldCheck, Leaf } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
+import { ArrowRight, ShoppingBag, ChevronRight, Play, Sparkles, Heart, ShieldCheck, Leaf } from "lucide-react"
 import {
   Carousel,
   CarouselContent,
@@ -21,6 +21,7 @@ const iconMap: Record<string, React.ReactNode> = {
 }
 
 export default function Home() {
+  const navigate = useNavigate()
   const { featuredProducts, services, brand } = useProductStore()
   const addToCart = useCartStore((state) => state.addItem)
   const { toggleItem, isInWishlist } = useWishlistStore()
@@ -35,7 +36,12 @@ export default function Home() {
       image: product.image,
       category: product.category,
     })
-    toast.success(`${product.name} added to bag`)
+    toast.success(`${product.name} added to bag`, {
+      action: {
+        label: "Checkout",
+        onClick: () => navigate("/cart")
+      },
+    })
   }
 
   const handleToggleWishlist = (e: React.MouseEvent, product: any) => {
@@ -244,12 +250,6 @@ export default function Home() {
                 alt="Featured Product"
                 className="relative z-10 w-full rounded-[3rem] shadow-2xl"
               />
-              <div className="absolute -bottom-6 -right-4 md:bottom-8 md:-right-8 bg-white p-4 md:p-8 rounded-3xl shadow-xl z-20 max-w-[160px] md:max-w-[200px]">
-                <div className="flex gap-1 mb-2">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 md:w-4 md:h-4 fill-gold text-gold" />)}
-                </div>
-                <p className="text-[10px] md:text-sm font-medium italic leading-snug">"I finally found a place in Egypt that I can trust for 100% original international beauty products."</p>
-              </div>
             </motion.div>
 
             <motion.div
@@ -272,7 +272,7 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-                              <Link to="/collections">
+              <Link to="/collections">
                 <button className="px-12 py-5 bg-foreground text-ivory rounded-full hover:bg-taupe transition-colors duration-300 flex items-center gap-2 group shadow-xl">
                   Explore The Marketplace
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

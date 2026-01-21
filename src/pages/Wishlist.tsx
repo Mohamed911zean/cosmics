@@ -23,7 +23,12 @@ export function Wishlist() {
             image: item.image,
             category: item.category,
         })
-        toast.success(`${item.name} added to bag`)
+        toast.success(`${item.name} added to bag`, {
+            action: {
+                label: "Checkout",
+                onClick: () => window.location.href = "/cart"
+            },
+        })
     }
 
     if (items.length === 0) {

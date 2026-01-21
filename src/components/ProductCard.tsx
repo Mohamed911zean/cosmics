@@ -31,7 +31,7 @@ export function ProductCard({ id, name, price, image, category }: ProductCardPro
     toast.success(`${name} added to bag`, {
       description: "You've successfully added this item to your shopping bag.",
       action: {
-        label: "View Bag",
+        label: "Checkout",
         onClick: () => window.location.href = "/cart"
       },
     })
