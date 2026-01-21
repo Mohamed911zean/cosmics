@@ -199,7 +199,7 @@ export function Account() {
                                             </div>
                                             <p className="text-foreground/50">No orders placed yet.</p>
                                             <Button asChild variant="link" className="mt-2 text-accent">
-                                                <Link to="/">Start Shopping</Link>
+                                                <Link to="/collections">Start Shopping</Link>
                                             </Button>
                                         </div>
                                     )}
@@ -251,7 +251,7 @@ export function Account() {
                                             </div>
                                             <p className="text-foreground/50">Your bag is empty.</p>
                                             <Button asChild variant="link" className="mt-2 text-accent">
-                                                <Link to="/">Browse Products</Link>
+                                                <Link to="/collections">Browse Products</Link>
                                             </Button>
                                         </div>
                                     )}

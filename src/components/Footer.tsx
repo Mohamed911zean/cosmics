@@ -76,7 +76,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-border/50 text-[10px] text-taupe font-bold uppercase tracking-[0.2em] gap-6">
-          <p>© 2026 majestics. All Rights Reserved.</p>
+          <p>© 2026 {brand.name}. All Rights Reserved.</p>
           <div className="flex gap-8">
             <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>

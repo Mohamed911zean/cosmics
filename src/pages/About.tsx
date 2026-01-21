@@ -1,7 +1,12 @@
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { ArrowRight, Leaf, ShieldCheck, Heart, Sparkles } from "lucide-react"
+import { useProductStore } from "@/stores"
+
 export default function About() {
+    const { brand } = useProductStore()
+    const brandName = brand?.name || "Majestic"
+
     return (
         <main className="bg-ivory text-foreground font-sans selection:bg-accent selection:text-foreground">
 
@@ -24,14 +29,14 @@ export default function About() {
                         className="max-w-3xl mx-auto"
                     >
                         <span className="inline-block text-taupe tracking-widest uppercase text-xs mb-4 font-semibold">
-                            The Majestic Journey
+                            The {brandName} Journey
                         </span>
                         <h1 className="text-5xl md:text-7xl font-serif text-foreground leading-tight mb-8">
                             Redefining Care <br />
                             Through <span className="italic text-taupe font-light">Intention</span>
                         </h1>
                         <p className="text-xl text-taupe leading-relaxed">
-                            Founded on the belief that body care is a sacred ritual, Majestic combines botanical wisdom with modern science to create products that honor your natural radiance.
+                            Founded on the belief that body care is a sacred ritual, {brandName} combines botanical wisdom with modern science to create products that honor your natural radiance.
                         </p>
                     </motion.div>
                 </div>
@@ -83,7 +88,7 @@ export default function About() {
                 <div className="container mx-auto px-6">
                     <div className="text-center max-w-2xl mx-auto mb-16">
                         <h2 className="text-4xl md:text-5xl font-serif mb-4">Our Core Values</h2>
-                        <p className="text-taupe">The pillars that define everything we do at Majestic.</p>
+                        <p className="text-taupe">The pillars that define everything we do at {brandName}.</p>
                     </div>
 
                     <div className="grid md:grid-cols-4 gap-12">
@@ -128,9 +133,9 @@ export default function About() {
                             </div>
 
                             <h2 className="text-3xl md:text-5xl font-serif mb-8 leading-tight italic">
-                                "Our commitment is to transparency, sustainability, and the celebration of authentic beauty."
+                                "Our commitment is to transparency, sustainability, and the celebration of authentic care."
                             </h2>
-                            <p className="text-taupe uppercase tracking-[0.3em] text-xs font-bold">— The Majestic Team</p>
+                            <p className="text-taupe uppercase tracking-[0.3em] text-xs font-bold">— The {brandName} Team</p>
                         </motion.div>
                     </div>
                 </div>
