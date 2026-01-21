@@ -3,7 +3,7 @@ import { useProductStore } from "@/stores"
 
 export function Shipping() {
     const { brand } = useProductStore()
-    const brandName = brand?.name || "Majestic"
+    const brandName = brand?.name || "Majestics"
 
     return (
         <div className="pt-24 pb-16 min-h-screen bg-ivory">
@@ -18,7 +18,7 @@ export function Shipping() {
                     <div className="prose prose-rose max-w-none text-gray-600">
                         <h3 className="text-foreground font-serif">Shipping Overview</h3>
                         <p>
-                            We are proud to offer international shipping to over 200 countries. However, there are some locations we are unable to ship to. If you happen to be from one of those countries we will contact you. Deliverying {brandName}'s skincare rituals worldwide is our mission.
+                            We are proud to offer international shipping to over 200 countries. However, there are some locations we are unable to ship to. If you happen to be from one of those countries we will contact you. Facilitating the worldwide delivery of top skincare brands is our mission.
                         </p>
 
                         <h3 className="text-foreground font-serif">Shipping Times</h3>
@@ -31,6 +31,7 @@ export function Shipping() {
                             <li>Australia, New Zealand: 12-14 Business days</li>
                             <li>Mexico, Central America, South America: 15-20 Business days</li>
                         </ul>
+
 
                         <h3 className="text-foreground font-serif">Tracking Information</h3>
                         <p>

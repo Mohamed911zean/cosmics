@@ -1,8 +1,8 @@
 {
     "brand": {
-        "name": "Majestic",
-        "tagline": "The Art of Skincare",
-        "description": "Crafting moments of luxury for your daily skincare rituals. Pure, natural, and timeless essentials.",
+        "name": "Majestics",
+        "tagline": "Your Trusted Skincare & Beauty Marketplace",
+        "description": "Offering 100% original products from the world's most trusted skincare and beauty brands at competitive prices. As a dedicated reseller marketplace, we bring high-end care within reach.",
         "links": {
             "email": "elkonmohamed911@gmail.com",
             "support": "el3shmawy911gt3rs@gmail.com",
@@ -68,7 +68,7 @@
             "price": 75.0,
             "category": "Skincare",
             "image": "https://e-majestic.com/cdn/shop/files/VITC_pirlome.png?v=1764808863&width=900",
-            "description": "Brighten your skin tone and protect against environmental stressors with our stabilized Vitamin C formula. Reveals a more radiant complexion.",
+            "description": "Brighten your skin tone and protect against environmental stressors with this stabilized Vitamin C formula. Reveals a more radiant complexion.",
             "rating": 4.6,
             "reviews": 92,
             "images": [
@@ -196,29 +196,29 @@
     "services": [
         {
             "id": 1,
-            "title": "Skin Analysis",
-            "description": "Personalized skincare advice from our dermatologists, tailored to your unique skin profile.",
+            "title": "Trusted Guidance",
+            "description": "Expert skincare advice and curated product selections tailored to your unique skin profile.",
             "icon": "Sparkles",
             "image": "https://e-majestic.com/cdn/shop/files/WhatsAppImage2025-09-01at15.34.10.jpg?v=1756736823&width=900"
         },
         {
             "id": 2,
-            "title": "Eco-Friendly Packing",
-            "description": "Sustainable glass packaging designed for reuse and minimal environmental impact.",
+            "title": "Secure Logistics",
+            "description": "All products are handled with care and shipped in original brand packaging for authenticity.",
             "icon": "ShieldCheck",
             "image": "https://e-majestic.com/cdn/shop/files/ss_cica.png?v=1754243318&width=900"
         },
         {
             "id": 3,
-            "title": "Daily Rituals",
-            "description": "Master the art of the perfect body care routine with our guided masterclasses.",
+            "title": "Beauty Expertise",
+            "description": "Learn the best ways to incorporate international brand products into your daily skincare routine.",
             "icon": "Leaf",
             "image": "https://e-majestic.com/cdn/shop/files/lotion_586dd13f-6b94-40eb-b93c-f0677846a133.png?v=1767268104&width=900"
         },
         {
             "id": 4,
-            "title": "Pure Ingredients",
-            "description": "Every product is crafted with 100% organic and clinically proven botanicals.",
+            "title": "Global Originals",
+            "description": "Every product in our marketplace is a 100% original item sourced from verified global suppliers.",
             "icon": "Heart",
             "image": "https://e-majestic.com/cdn/shop/files/copperpeptide_pirlome.png?v=1764808274&width=900"
         }

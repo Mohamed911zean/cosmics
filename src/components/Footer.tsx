@@ -41,11 +41,14 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Disclaimer & Contact */}
           <div>
             <h4 className="font-bold mb-8 uppercase text-[10px] tracking-[0.3em] text-foreground">
-              Contact
+              Marketplace Disclaimer
             </h4>
+            <p className="text-taupe text-[10px] leading-relaxed mb-6 font-medium italic">
+              Majestics is a reseller marketplace. All product names, trademarks, and brands are the property of their respective owners. We do not own or manufacture the products sold on this platform.
+            </p>
 
             <ul className="space-y-4 text-sm text-taupe font-medium">
               <li>
@@ -53,20 +56,10 @@ export function Footer() {
                   href={`mailto:${brand.links.email}`}
                   className="hover:text-foreground transition-colors"
                 >
-                  {brand.links.email} [Owner Email]
+                  {brand.links.email}
                 </a>
               </li>
-
-              <li>
-                <a
-                  href={`mailto:${brand.links.support}`}
-                  className="hover:text-foreground transition-colors"
-                >
-                  {brand.links.support} [Support Email]
-                </a>
-              </li>
-
-              <li className="text-taupe/80">
+              <li className="text-taupe/80 text-xs">
                 {brand.links.address}
               </li>
             </ul>

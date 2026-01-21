@@ -29,14 +29,14 @@ export default function About() {
                         className="max-w-3xl mx-auto"
                     >
                         <span className="inline-block text-taupe tracking-widest uppercase text-xs mb-4 font-semibold">
-                            The {brandName} Journey
+                            The {brandName} Mission
                         </span>
                         <h1 className="text-5xl md:text-7xl font-serif text-foreground leading-tight mb-8">
-                            Redefining Care <br />
-                            Through <span className="italic text-taupe font-light">Intention</span>
+                            Trust Built on <br />
+                            <span className="italic text-taupe font-light">Authenticity</span>
                         </h1>
                         <p className="text-xl text-taupe leading-relaxed">
-                            Founded on the belief that body care is a sacred ritual, {brandName} combines botanical wisdom with modern science to create products that honor your natural radiance.
+                            {brandName} is a curated marketplace dedicated to bringing you 100% original skincare and beauty products from the world's most trusted brands at competitive prices.
                         </p>
                     </motion.div>
                 </div>
@@ -52,12 +52,15 @@ export default function About() {
                             viewport={{ once: true }}
                             transition={{ duration: 1 }}
                         >
-                            <h2 className="text-4xl md:text-5xl font-serif mb-8 leading-tight">Everything your skin needs</h2>
+                            <h2 className="text-4xl md:text-5xl font-serif mb-8 leading-tight">Your Trusted Reseller Marketplace</h2>
+                            <p className="text-lg text-taupe mb-8 leading-relaxed font-bold">
+                                Important Notice: Majestics is an independent reseller. We do not own, manufacture, or claim ownership of any brand or formula.
+                            </p>
                             <p className="text-lg text-taupe mb-8 leading-relaxed">
-                                We specialize in high-quality skincare and body care products, curated to provide the ultimate nourishment for your skin.
+                                We specialize in sourcing high-quality, authentic skincare and body care products from multiple well-known global brands. Our mission is to make luxury care accessible by providing original products at lower, more competitive prices.
                             </p>
                             <p className="text-lg text-taupe mb-10 leading-relaxed">
-                                Our formulation process is a delicate balance of patience and precision. We don't believe in shortcuts—only in the transformative power of time-tested rituals and dermatological excellence.
+                                Every item in our catalog is verified for authenticity and sourced directly from reputable global suppliers. When you shop with {brandName}, you are choosing a marketplace that prioritizes trust, transparency, and the integrity of the original brand's excellence.
                             </p>
 
 
@@ -87,16 +90,16 @@ export default function About() {
             <section className="py-24 bg-ivory">
                 <div className="container mx-auto px-6">
                     <div className="text-center max-w-2xl mx-auto mb-16">
-                        <h2 className="text-4xl md:text-5xl font-serif mb-4">Our Core Values</h2>
-                        <p className="text-taupe">The pillars that define everything we do at {brandName}.</p>
+                        <h2 className="text-4xl md:text-5xl font-serif mb-4">Our Core Pillars</h2>
+                        <p className="text-taupe">The values that define {brandName} as your trusted beauty marketplace.</p>
                     </div>
 
                     <div className="grid md:grid-cols-4 gap-12">
                         {[
-                            { icon: Leaf, title: "Pure Ingredients", desc: "No synthetic fragrances, parabens, or harmful chemicals. Ever." },
-                            { icon: ShieldCheck, title: "Scientific Rigor", desc: "Every formula is dermatologically tested for safety and efficacy." },
-                            { icon: Heart, title: "Compassion", desc: "We believe in beauty that radiates kindness to yourself and others." },
-                            { icon: Sparkles, title: "Radiance", desc: "Our goal is to help you wake up to skin that feels reborn and luminous." }
+                            { icon: Leaf, title: "100% Original", desc: "We guarantee that every product sold is an authentic item from its respective brand." },
+                            { icon: ShieldCheck, title: "Verified Sourcing", desc: "Products are sourced exclusively from verified and reputable global suppliers." },
+                            { icon: Heart, title: "Lower Prices", desc: "We believe in making high-end skincare more accessible through competitive pricing." },
+                            { icon: Sparkles, title: "Global Selection", desc: "Our marketplace features a curated variety of the world's most trusted skincare brands." }
                         ].map((value, idx) => (
                             <motion.div
                                 key={idx}
@@ -133,9 +136,9 @@ export default function About() {
                             </div>
 
                             <h2 className="text-3xl md:text-5xl font-serif mb-8 leading-tight italic">
-                                "Our commitment is to transparency, sustainability, and the celebration of authentic care."
+                                "Our commitment is to transparency, authenticity, and bridging the gap between luxury brands and those who value them."
                             </h2>
-                            <p className="text-taupe uppercase tracking-[0.3em] text-xs font-bold">— The {brandName} Team</p>
+                            <p className="text-taupe uppercase tracking-[0.3em] text-xs font-bold">— The {brandName} Marketplace Team</p>
                         </motion.div>
                     </div>
                 </div>

@@ -1,19 +1,23 @@
 import { ShoppingBag, Menu, User, X, Heart } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { useCartStore, useWishlistStore, useUIStore } from "@/stores"
+import { useCartStore, useWishlistStore, useUIStore, useProductStore } from "@/stores"
 import { useAuth } from "@/context/authContext"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
 
 export function Navbar() {
+  const { brand } = useProductStore()
   const cartCount = useCartStore((state) => state.getItemCount())
   const wishlistCount = useWishlistStore((state) => state.getItemCount())
   const { isMenuOpen, setMenuOpen } = useUIStore()
   const { user, logout } = useAuth()
   const [isScrolled, setIsScrolled] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const navigate = useNavigate()
+
+  const brandName = brand?.name || "Majestics"
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,10 +40,10 @@ export function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${isScrolled
+        className={`fixed top - 0 left - 0 right - 0 z - 50 transition - all duration - 700 ${isScrolled
           ? "bg-ivory/90 backdrop-blur-md py-4 border-b border-border/50"
           : "bg-transparent py-6"
-          }`}
+          } `}
       >
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between">
@@ -63,13 +67,13 @@ export function Navbar() {
             {/* Centered Logo */}
             <Link to="/" className="absolute left-1/2 -translate-x-1/2 text-center group">
               <h1 className="text-2xl md:text-3xl font-serif tracking-[0.2em] font-medium text-foreground group-hover:text-taupe transition-colors duration-500">
-                Majestic
+                {brandName}
               </h1>
             </Link>
 
             {/* Right Side Icons */}
             <div className="flex items-center gap-2 md:gap-6">
-             
+
 
               <Link to="/wishlist" className="relative group p-2">
                 <Heart className="w-5 h-5 text-foreground group-hover:text-taupe transition-colors" />
@@ -125,7 +129,7 @@ export function Navbar() {
                     transition={{ delay: idx * 0.1 }}
                   >
                     <Link
-                      to={`/${item.toLowerCase().replace(" ", "-")}`}
+                      to={`/ ${item.toLowerCase().replace(" ", "-")} `}
                       onClick={() => setMenuOpen(false)}
                       className="text-4xl md:text-6xl font-serif hover:text-taupe transition-colors italic"
                     >
@@ -136,7 +140,7 @@ export function Navbar() {
               </div>
 
               <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between gap-6 pb-4">
-                
+
                 {user && (
                   <button onClick={handleLogout} className="text-xs font-bold uppercase tracking-widest text-accent text-left">
                     Sign Out

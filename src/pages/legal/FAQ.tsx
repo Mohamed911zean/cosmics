@@ -5,12 +5,12 @@ import { useProductStore } from "@/stores"
 
 const faqData = [
     {
-        question: "Are your ingredients organic?",
-        answer: "Yes, we prioritize pure, botanical, and organic ingredients. Every formula is dermatologically tested for safety and efficacy without synthetic fragrances or parabens."
+        question: "Are the products organic?",
+        answer: "Many of the brands we feature prioritize pure, botanical, and organic ingredients. Every formula is dermatologically tested by its respective brand for safety and efficacy without synthetic fragrances or parabens."
     },
     {
         question: "What is the best order to use my skincare products?",
-        answer: "Generally, we recommend applying products from thinnest to thickest consistency: Cleanser > Serum > Moisturizer > Sunscreen (Daytime)."
+        answer: "Generally, we recommend following the original brand's instructions. Usually, products are applied from thinnest to thickest consistency: Cleanser > Serum > Moisturizer > Sunscreen (Daytime)."
     },
     {
         question: "What payment methods do you accept?",
@@ -18,15 +18,15 @@ const faqData = [
     },
     {
         question: "How long does shipping take?",
-        answer: "Standard shipping within the US typically takes 3-5 business days. International shipping estimates vary from 6-20 business days depending on location."
+        answer: "Standard shipping typically takes 3-5 business days. International shipping estimates vary from 6-20 business days depending on location."
     },
     {
         question: "Do you offer returns?",
-        answer: "Yes! We offer a 30-day hassle-free return policy. If you're not completely satisfied with your skincare ritual, you can return the product for a full refund or exchange."
+        answer: "Yes! We offer a 30-day hassle-free return policy. If you're not completely satisfied with your purchase, you can return the product for a full refund or exchange."
     },
     {
-        question: "Are your products cruelty-free?",
-        answer: "Absolutely. We are proud to be 100% cruelty-free and vegan. We verify that all of our suppliers adhere to these strict standards."
+        question: "Are the products cruelty-free?",
+        answer: "Absolutely. We curate brands that are proud to be 100% cruelty-free and vegan. We verify that all our suppliers adhere to these strict standards."
     }
 ]
 

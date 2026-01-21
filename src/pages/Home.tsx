@@ -79,11 +79,11 @@ export default function Home() {
               {brand.tagline}
             </span>
             <h1 className="text-6xl md:text-8xl font-serif text-foreground leading-[1.1] mb-8">
-              Nourish <br />
-              Your <span className="italic text-taupe font-light">Natural</span> Glow
+              Global Brands <br />
+              <span className="italic text-taupe font-light">Authenticity</span> Guaranteed
             </h1>
             <p className="text-xl text-taupe max-w-lg mb-10 leading-relaxed">
-              {brand.description}
+              Majestics is your premium marketplace for 100% original skincare and beauty essentials from world-renowned brands, delivered to you at competitive prices.
             </p>
             <div className="flex flex-wrap gap-6 items-center">
               <Link to="/shop">
@@ -175,7 +175,7 @@ export default function Home() {
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-taupe tracking-widest uppercase text-xs mb-3 block font-semibold">Favorites</span>
             <h2 className="text-4xl md:text-5xl font-serif mb-4">The Best Sellers</h2>
-            <p className="text-taupe">Loved by our community for their exceptional hydration and nourishing results.</p>
+            <p className="text-taupe">Loved by our community for their exceptional results from world-class brands.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -265,7 +265,7 @@ export default function Home() {
               </p>
 
               <ul className="space-y-4 mb-10">
-                {["100% Organic Ingredients", "Clinically Proven Results", "Eco-Friendly Glass Packaging"].map((item, i) => (
+                {["100% Original Brand Products", "Sourced from Verified Suppliers", "Original Brand Formulation"].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-foreground font-medium">
                     <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                     {item}
@@ -292,14 +292,14 @@ export default function Home() {
             className="max-w-4xl mx-auto"
           >
             <h2 className="text-4xl md:text-6xl font-serif mb-12 leading-relaxed">
-              "We believe that skincare is a reflection of <span className="italic text-taupe font-light">well-being</span> and <span className="text-accent underline decoration-1 underline-offset-[12px]">authenticity</span>."
+              "We believe that authenticity is the core of true <span className="italic text-taupe font-light">beauty</span> and <span className="text-accent underline decoration-1 underline-offset-[12px]">care</span>."
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 pt-12 border-t border-border/50">
               {[
                 { label: "Founded", value: "2024" },
                 { label: "Community", value: "120k+" },
-                { label: "Ingredients", value: "Pure" },
-                { label: "Ethics", value: "Vegan" }
+                { label: "Products", value: "Original" },
+                { label: "Sourcing", value: "Verified" }
               ].map((stat, i) => (
                 <div key={i}>
                   <p className="text-taupe text-sm uppercase tracking-widest mb-1">{stat.label}</p>

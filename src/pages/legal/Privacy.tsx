@@ -3,7 +3,7 @@ import { useProductStore } from "@/stores"
 
 export function Privacy() {
     const { brand } = useProductStore()
-    const brandName = brand?.name || "Majestic"
+    const brandName = brand?.name || "Majestics"
 
     return (
         <div className="pt-24 pb-16 min-h-screen bg-ivory">
@@ -27,7 +27,7 @@ export function Privacy() {
 
                         <h3 className="text-foreground font-serif">2. How We Use Your Personal Information</h3>
                         <p>
-                            We use the Order Information that we collect generally to fulfill any orders placed through the Site (including processing your payment information, arranging for shipping, and providing you with invoices and/or order confirmations). This helps us delivery your skincare rituals directly to you.
+                            We use the Order Information that we collect generally to fulfill any orders placed through the Site (including processing your payment information, arranging for shipping, and providing you with invoices and/or order confirmations). This helps us facilitate the delivery of your curated skincare products directly to you.
                         </p>
 
                         <h3 className="text-foreground font-serif">3. Sharing Your Personal Information</h3>

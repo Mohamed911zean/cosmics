@@ -3,7 +3,7 @@ import { useProductStore } from "@/stores"
 
 export function Terms() {
     const { brand } = useProductStore()
-    const brandName = brand?.name || "Majestic"
+    const brandName = brand?.name || "Majestics"
 
     return (
         <div className="pt-24 pb-16 min-h-screen bg-ivory">
@@ -25,7 +25,7 @@ export function Terms() {
 
                         <h3 className="text-foreground font-serif">1. Online Store Terms</h3>
                         <p>
-                            By agreeing to these Terms of Service, you represent that you are at least the age of majority in your state or province of residence. You may not use our premium skincare products for any illegal or unauthorized purpose.
+                            By agreeing to these Terms of Service, you represent that you are at least the age of majority in your state or province of residence. You may not use the products purchased through our marketplace for any illegal or unauthorized purpose.
                         </p>
 
                         <h3 className="text-foreground font-serif">2. General Conditions</h3>
