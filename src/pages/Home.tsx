@@ -79,11 +79,11 @@ export default function Home() {
               {brand.tagline}
             </span>
             <h1 className="text-6xl md:text-8xl font-serif text-foreground leading-[1.1] mb-8">
-              Global Brands <br />
-              <span className="italic text-taupe font-light">Authenticity</span> Guaranteed
+              Authentic Beauty <br />
+              <span className="italic text-taupe font-light">Across</span> Egypt
             </h1>
             <p className="text-xl text-taupe max-w-lg mb-10 leading-relaxed">
-              Majestics is your premium marketplace for 100% original skincare and beauty essentials from world-renowned brands, delivered to you at competitive prices.
+              Majestics is your trusted Egyptian marketplace for 100% original skincare and beauty essentials, delivering premium world-class brands to every corner of Egypt.
             </p>
             <div className="flex flex-wrap gap-6 items-center">
               <Link to="/shop">
@@ -248,7 +248,7 @@ export default function Home() {
                 <div className="flex gap-1 mb-2">
                   {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 md:w-4 md:h-4 fill-gold text-gold" />)}
                 </div>
-                <p className="text-[10px] md:text-sm font-medium italic leading-snug">"The most effective night serum I've ever used. My skin feels reborn."</p>
+                <p className="text-[10px] md:text-sm font-medium italic leading-snug">"I finally found a place in Egypt that I can trust for 100% original international beauty products."</p>
               </div>
             </motion.div>
 
@@ -258,25 +258,26 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 1 }}
             >
-              <span className="text-taupe tracking-widest uppercase text-xs mb-4 block font-semibold">Featured Ritual</span>
-              <h2 className="text-5xl md:text-7xl font-serif mb-8 leading-tight">The Midnight <br /> <span className="italic font-light">Renewal Serum</span></h2>
+              <span className="text-taupe tracking-widest uppercase text-xs mb-4 block font-semibold">Curated Collections</span>
+              <h2 className="text-5xl md:text-7xl font-serif mb-8 leading-tight">Global Beauty & <br /> <span className="italic font-light">Wellness Rituals</span></h2>
               <p className="text-lg text-taupe mb-10 leading-relaxed max-w-lg">
-                Harnessing the power of pure Retinol and rare minerals to stimulate nocturnal restoration. Wake up to skin that feels reborn, hydrated, and luminous.
+                We bridge the gap between world-class brands and the Egyptian market. Explore 100% original formulations, from high-performance retinol treatments to essential beauty supplements.
               </p>
 
               <ul className="space-y-4 mb-10">
-                {["100% Original Brand Products", "Sourced from Verified Suppliers", "Original Brand Formulation"].map((item, i) => (
+                {["Authenticity Verified", "Top International Brands", "Fast Delivery Across Egypt"].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-foreground font-medium">
                     <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                     {item}
                   </li>
                 ))}
               </ul>
-
-              <button className="px-12 py-5 bg-foreground text-ivory rounded-full hover:bg-taupe transition-colors duration-300 flex items-center gap-2 group shadow-xl">
-                Discover More
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
+                              <Link to="/collections">
+                <button className="px-12 py-5 bg-foreground text-ivory rounded-full hover:bg-taupe transition-colors duration-300 flex items-center gap-2 group shadow-xl">
+                  Explore The Marketplace
+                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </Link>
             </motion.div>
           </div>
         </div>

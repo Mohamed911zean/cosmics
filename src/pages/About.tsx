@@ -29,14 +29,14 @@ export default function About() {
                         className="max-w-3xl mx-auto"
                     >
                         <span className="inline-block text-taupe tracking-widest uppercase text-xs mb-4 font-semibold">
-                            The {brandName} Mission
+                            Our Mission in Egypt
                         </span>
                         <h1 className="text-5xl md:text-7xl font-serif text-foreground leading-tight mb-8">
-                            Trust Built on <br />
-                            <span className="italic text-taupe font-light">Authenticity</span>
+                            Egypt's Destination for <br />
+                            <span className="italic text-taupe font-light">Original Beauty</span>
                         </h1>
                         <p className="text-xl text-taupe leading-relaxed">
-                            {brandName} is a curated marketplace dedicated to bringing you 100% original skincare and beauty products from the world's most trusted brands at competitive prices.
+                            {brandName} is the premier curated marketplace in Egypt, dedicated to delivering 100% original skincare and beauty products from global brands to every doorstep across the nation.
                         </p>
                     </motion.div>
                 </div>
@@ -52,15 +52,15 @@ export default function About() {
                             viewport={{ once: true }}
                             transition={{ duration: 1 }}
                         >
-                            <h2 className="text-4xl md:text-5xl font-serif mb-8 leading-tight">Your Trusted Reseller Marketplace</h2>
+                            <h2 className="text-4xl md:text-5xl font-serif mb-8 leading-tight">Serving the Egyptian Community</h2>
                             <p className="text-lg text-taupe mb-8 leading-relaxed font-bold">
-                                Important Notice: Majestics is an independent reseller. We do not own, manufacture, or claim ownership of any brand or formula.
+                                Important Notice: Majestics is an Egyptian reseller marketplace. We bring authentic global brands directly to Egypt, ensuring quality and trust.
                             </p>
                             <p className="text-lg text-taupe mb-8 leading-relaxed">
-                                We specialize in sourcing high-quality, authentic skincare and body care products from multiple well-known global brands. Our mission is to make luxury care accessible by providing original products at lower, more competitive prices.
+                                We specialize in sourcing original skincare and body care products from world-renowned brands, making them accessible to beauty enthusiasts across Egypt. Our platform bridge the gap between international excellence and the Egyptian market.
                             </p>
                             <p className="text-lg text-taupe mb-10 leading-relaxed">
-                                Every item in our catalog is verified for authenticity and sourced directly from reputable global suppliers. When you shop with {brandName}, you are choosing a marketplace that prioritizes trust, transparency, and the integrity of the original brand's excellence.
+                                Based in Mansoura and delivering nationwide, we prioritize authenticity above all else. Every item on our marketplace is verified and handled with the utmost care, ensuring that Egyptian customers receive exactly what they expect from their favorite global brands.
                             </p>
 
 
@@ -91,15 +91,15 @@ export default function About() {
                 <div className="container mx-auto px-6">
                     <div className="text-center max-w-2xl mx-auto mb-16">
                         <h2 className="text-4xl md:text-5xl font-serif mb-4">Our Core Pillars</h2>
-                        <p className="text-taupe">The values that define {brandName} as your trusted beauty marketplace.</p>
+                        <p className="text-taupe">The values that make {brandName} Egypt's most trusted beauty marketplace.</p>
                     </div>
 
                     <div className="grid md:grid-cols-4 gap-12">
                         {[
-                            { icon: Leaf, title: "100% Original", desc: "We guarantee that every product sold is an authentic item from its respective brand." },
-                            { icon: ShieldCheck, title: "Verified Sourcing", desc: "Products are sourced exclusively from verified and reputable global suppliers." },
-                            { icon: Heart, title: "Lower Prices", desc: "We believe in making high-end skincare more accessible through competitive pricing." },
-                            { icon: Sparkles, title: "Global Selection", desc: "Our marketplace features a curated variety of the world's most trusted skincare brands." }
+                            { icon: Leaf, title: "100% Original", desc: "We guarantee that every product is an authentic item sourced for the Egyptian market." },
+                            { icon: ShieldCheck, title: "Egyptian Delivery", desc: "Efficient nationwide shipping, delivering directly to your door anywhere in Egypt." },
+                            { icon: Heart, title: "Local Trust", desc: "Built by and for the Egyptian community, focusing on reliability and customer care." },
+                            { icon: Sparkles, title: "Global Access", desc: "Bringing the best of world-renowned beauty brands to the heart of Egypt." }
                         ].map((value, idx) => (
                             <motion.div
                                 key={idx}
@@ -136,9 +136,9 @@ export default function About() {
                             </div>
 
                             <h2 className="text-3xl md:text-5xl font-serif mb-8 leading-tight italic">
-                                "Our commitment is to transparency, authenticity, and bridging the gap between luxury brands and those who value them."
+                                "Our commitment is to bring the world's finest beauty brands to every home in Egypt with complete transparency and trust."
                             </h2>
-                            <p className="text-taupe uppercase tracking-[0.3em] text-xs font-bold">— The {brandName} Marketplace Team</p>
+                            <p className="text-taupe uppercase tracking-[0.3em] text-xs font-bold">— The {brandName} Egyptian Team</p>
                         </motion.div>
                     </div>
                 </div>

@@ -17,8 +17,8 @@ const faqData = [
         answer: "We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and Apple Pay."
     },
     {
-        question: "How long does shipping take?",
-        answer: "Standard shipping typically takes 3-5 business days. International shipping estimates vary from 6-20 business days depending on location."
+        question: "How long does delivery take?",
+        answer: "Delivery typically takes 1-2 business days for Cairo and Giza, and 2-5 business days for other governorates across Egypt."
     },
     {
         question: "Do you offer returns?",

@@ -16,20 +16,20 @@ export function Shipping() {
                     <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gray-900 mb-8">Shipping Policy</h1>
 
                     <div className="prose prose-rose max-w-none text-gray-600">
-                        <h3 className="text-foreground font-serif">Shipping Overview</h3>
+                        <h3 className="text-foreground font-serif">Nationwide Delivery</h3>
                         <p>
-                            We are proud to offer international shipping to over 200 countries. However, there are some locations we are unable to ship to. If you happen to be from one of those countries we will contact you. Facilitating the worldwide delivery of top skincare brands is our mission.
+                            We are proud to offer nationwide delivery to every governorate in Egypt. From the heart of Cairo to the furthest corners of Upper Egypt, we ensure your beauty essentials reach you safely. Facilitating the delivery of top skincare brands across Egypt is our mission.
                         </p>
 
-                        <h3 className="text-foreground font-serif">Shipping Times</h3>
+                        <h3 className="text-foreground font-serif">Estimated Delivery Times</h3>
                         <p>
-                            Shipping time varies by location. These are our estimates:
+                            Delivery times vary by your location in Egypt. These are our estimates:
                         </p>
                         <ul className="list-disc pl-5 space-y-2">
-                            <li>United States: 3-5 Business days</li>
-                            <li>Canada, Europe: 6-10 Business days</li>
-                            <li>Australia, New Zealand: 12-14 Business days</li>
-                            <li>Mexico, Central America, South America: 15-20 Business days</li>
+                            <li>Cairo & Giza: 1-2 Business days</li>
+                            <li>Alexandria & Delta (including Mansoura): 2-3 Business days</li>
+                            <li>Canal Cities & Red Sea: 3-4 Business days</li>
+                            <li>Upper Egypt: 4-5 Business days</li>
                         </ul>
 
 
