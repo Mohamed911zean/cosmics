@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { Apple, LayoutDashboard, Users, Package, ShoppingBag, User, LogOut, X } from "lucide-react"
+import { UserStar, LayoutDashboard, Users, Package, ShoppingBag, User, LogOut, X } from "lucide-react"
 import { useAuthStore } from "@/stores/useAuthStore"
 import { toast } from "sonner"
 
@@ -21,6 +21,12 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
   const { logout } = useAuthStore()
   const navigate = useNavigate()
 
+  const handleNavClick = () => {
+    if (window.innerWidth < 1024) {
+      onClose()
+    }
+  }
+
   const handleLogout = async () => {
     try {
       await logout()
@@ -36,13 +42,13 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
       {isOpen && (
         <div className="fixed inset-0 bg-black/40 z-20 lg:hidden" onClick={onClose} />
       )}
-      <aside className={`fixed inset-y-0 left-0 w-64 xl:w-72 bg-[#4B0082] text-white flex flex-col transition-transform duration-300 z-30 ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
+      <aside className={`fixed inset-y-0 left-0 w-64 xl:w-72 bg-[#4B0082] text-white flex flex-col transition-transform duration-300 z-30 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="h-16 px-6 flex items-center justify-between border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center">
-              <Apple className="w-5 h-5 text-white" />
+              <UserStar className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-semibold tracking-wide">Brand Name</span>
+            <span className="text-lg font-semibold tracking-wide">Admin Page</span>
           </div>
           <button type="button" onClick={onClose} className="lg:hidden w-9 h-9 rounded-full bg-white/10 flex items-center justify-center">
             <X className="w-4 h-4" />
@@ -56,7 +62,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
             const activeClasses = "bg-white/15 text-white"
             const inactiveClasses = "text-white/80 hover:bg-white/10"
             return (
-              <Link key={item.label} to={item.to} className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`} onClick={onClose}>
+              <Link key={item.label} to={item.to} className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`} onClick={handleNavClick}>
                 <Icon className="w-5 h-5" />
                 {item.label}
               </Link>

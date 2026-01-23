@@ -3,13 +3,14 @@ import { useAuthStore } from "@/stores/useAuthStore"
 
 type DashboardTopbarProps = {
   onMenuClick: () => void
+  isSidebarOpen: boolean
 }
 
-export function DashboardTopbar({ onMenuClick }: DashboardTopbarProps) {
+export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarProps) {
   const { user } = useAuthStore()
 
   return (
-    <header className="fixed top-0 left-0 lg:left-64 xl:left-72 right-0 h-16 bg-white shadow-sm flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10">
+    <header className={`fixed top-0 left-0 right-0 h-16 bg-white shadow-sm flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 ${isSidebarOpen ? "lg:left-64 xl:left-72" : "lg:left-0"}`}>
       <div className="flex items-center gap-3 flex-1">
         <button type="button" onClick={onMenuClick} className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-[#4B0082] transition-colors">
           <Menu className="w-5 h-5" />
