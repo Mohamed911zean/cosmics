@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { Apple, LayoutDashboard, Users, MessageSquare, HelpCircle, Settings, Lock, LogOut, X } from "lucide-react"
+import { Apple, LayoutDashboard, Users, Package, ShoppingBag, User, LogOut, X } from "lucide-react"
 import { useAuthStore } from "@/stores/useAuthStore"
 import { toast } from "sonner"
 
@@ -10,11 +10,10 @@ type DashboardSidebarProps = {
 
 const menuItems = [
   { label: "Dashboard", icon: LayoutDashboard, to: "/dashboard/dashHome" },
+  { label: "Orders", icon: ShoppingBag, to: "/dashboard/orders" },
   { label: "Customers", icon: Users, to: "/dashboard/customers" },
-  { label: "Messages", icon: MessageSquare, to: "/dashboard/messages" },
-  { label: "Help", icon: HelpCircle, to: "/dashboard/help" },
-  { label: "Settings", icon: Settings, to: "/dashboard/settings" },
-  { label: "Password", icon: Lock, to: "/dashboard/password" },
+  { label: "Products", icon: Package, to: "/dashboard/products" },
+  { label: "Account", icon: User, to: "/dashboard/account" },
 ]
 
 export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {

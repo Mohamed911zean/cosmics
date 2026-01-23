@@ -36,6 +36,10 @@ import { FAQ } from "@/pages/legal/FAQ"
 
 // Dashboard
 import DashHome from "@/pages/dashboard/DashboardHome"
+import DashboardOrders from "@/pages/dashboard/Orders"
+import DashboardCustomers from "@/pages/dashboard/Customers"
+import DashboardProducts from "@/pages/dashboard/Products"
+import DashboardAccount from "@/pages/dashboard/Account"
 
 // Utils
 import { useAuthStore } from "@/stores/useAuthStore"
@@ -87,6 +91,10 @@ export default function App() {
             <Route path="/dashboard">
               <Route index element={<Navigate to="dashHome" replace />} />
               <Route path="dashHome" element={<DashHome />} />
+              <Route path="orders" element={<DashboardOrders />} />
+              <Route path="customers" element={<DashboardCustomers />} />
+              <Route path="products" element={<DashboardProducts />} />
+              <Route path="account" element={<DashboardAccount />} />
 
               <Route element={<SuperAdminRoute />}>
                 {/* superadmin routes */}
