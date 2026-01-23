@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import { Toaster } from "sonner"
 
 import { StoreSynchronizer } from "@/components/shop/StoreSynchronizer"

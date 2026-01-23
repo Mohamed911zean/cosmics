@@ -11,14 +11,14 @@ import {
 } from 'firebase/auth'
 import { auth, db } from '@/lib/firebase'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
-
+type userRole = 'user' | 'admin' | 'superadmin' | null
 interface AuthState {
-    role: 'user' | 'admin' | 'superadmin' | null
+    role: userRole
     user: User | null
     isLoading: boolean
     isAuthenticated: boolean
     error: string | null
-    setUser: (user: User | null, role?: 'user' | 'admin' | 'superadmin' | null) => void
+    setUser: (user: User | null, role?: userRole) => void
     login: (email: string, password: string) => Promise<boolean>
     signup: (email: string, password: string) => Promise<boolean>
     googleLogin: () => Promise<boolean>
@@ -50,7 +50,7 @@ export const useAuthStore = create<AuthState>()(
                     const userCredential = await signInWithEmailAndPassword(auth, email, password)
                     const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid))
                     const dbRole = userDoc.exists() ? userDoc.data()?.role : 'user'
-                    const userRole = dbRole ? String(dbRole).toLowerCase().trim() : 'user'
+                    const userRole = dbRole ? String(dbRole).toLowerCase().trim() as userRole : 'user'
                     set({
                         user: userCredential.user,
                         role: userRole,
@@ -97,11 +97,11 @@ export const useAuthStore = create<AuthState>()(
                 try {
                     const result = await signInWithPopup(auth, new GoogleAuthProvider())
                     const userDoc = await getDoc(doc(db, 'users', result.user.uid))
-                    let userRole = 'user'
+                    let userRole = 'user' as userRole
 
                     if (userDoc.exists()) {
                         const dbRole = userDoc.data()?.role
-                        userRole = dbRole ? String(dbRole).toLowerCase().trim() : 'user'
+                        userRole = dbRole ? String(dbRole).toLowerCase().trim() as userRole : 'user'
                     } else {
                         await setDoc(doc(db, 'users', result.user.uid), {
                             email: result.user.email,
@@ -112,7 +112,7 @@ export const useAuthStore = create<AuthState>()(
 
                     set({
                         user: result.user,
-                        role: userRole as any,
+                        role: userRole as userRole,
                         isAuthenticated: true,
                         isLoading: false,
                     })
@@ -145,7 +145,6 @@ export const useAuthStore = create<AuthState>()(
 
   initializeAuth: () => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        console.log('🔥 onAuthStateChanged fired, user:', user?.uid)
         
         if (user) {
             // Keep loading true while we fetch the role
@@ -154,7 +153,7 @@ export const useAuthStore = create<AuthState>()(
             try {
                 const userDoc = await getDoc(doc(db, 'users', user.uid))
                 const dbRole = userDoc.exists() ? userDoc.data()?.role : 'user'
-                const userRole = dbRole ? String(dbRole).toLowerCase().trim() : 'user'
+                const userRole = dbRole ? String(dbRole).toLowerCase().trim() as userRole : 'user'
                 
                 set({
                     role: userRole,

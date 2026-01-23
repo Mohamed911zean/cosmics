@@ -152,7 +152,7 @@ export function Navbar() {
           </Link>
 
           <Link
-            to="/collections"
+            to="/shop"
             className={`flex flex-col items-center justify-center gap-1 transition-colors ${isActive('/collections') ? 'text-foreground' : 'text-taupe'
               }`}
           >
@@ -290,7 +290,7 @@ export function Navbar() {
               </div>
 
               <div className="flex-1 flex flex-col gap-8">
-                {["Our Story", "Contact", "Orders"].map((item, idx) => (
+                {["About", "Contact", "Orders"].map((item, idx) => (
                   <motion.div
                     key={item}
                     initial={{ opacity: 0, x: -20 }}
