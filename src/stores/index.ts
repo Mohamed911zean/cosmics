@@ -1,7 +1,7 @@
 // Central export for all stores
-export { useCartStore, type CartItem } from './useCartStore'
+export { useCartStore, type CartItem } from './ecommerceStores/useCartStore'
 export { useAuthStore } from './useAuthStore'
-export { useWishlistStore, type WishlistItem } from './useWishlistStore'
-export { useUIStore } from './useUIStore'
-export { useProductStore, type Product, type Category } from './useProductStore'
-export { useOrderStore, type Order } from './useOrderStore'
+export { useWishlistStore, type WishlistItem } from './ecommerceStores/useWishlistStore'
+export { useUIStore } from './ecommerceStores/useUIStore'
+export { useProductStore, type Product, type Category } from './ecommerceStores/useProductStore'
+export { useOrderStore, type Order } from './ecommerceStores/useOrderStore'

@@ -1,17 +1,16 @@
 import { useEffect, useRef } from 'react';
-import { useAuth } from '@/context/authContext';
-import { useCartStore, useWishlistStore, useOrderStore } from '@/stores';
+import { useAuthStore, useCartStore, useWishlistStore, useOrderStore } from '@/stores';
 import { updateUserData, subscribeToUserData, type UserData } from '@/lib/db';
 
 export function StoreSynchronizer() {
-    const { user, loading } = useAuth();
+    const { user, isLoading } = useAuthStore();
     const lastRemoteData = useRef<UserData | null>(null);
     const isSyncingFromRemote = useRef(false);
 
     useEffect(() => {
-        if (loading) return;
+        if (isLoading) return;
 
-        // If user logged out, clear stores
+        //logout logic
         if (!user) {
             useCartStore.getState().clearCart();
             useWishlistStore.getState().clearWishlist();
@@ -103,7 +102,7 @@ export function StoreSynchronizer() {
             unsubOrders();
         };
 
-    }, [user, loading]);
+    }, [user, isLoading]);
 
     return null;
 }

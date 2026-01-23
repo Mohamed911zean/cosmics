@@ -3,10 +3,10 @@ import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useCartStore } from "@/stores/useCartStore";
-import { useOrderStore } from "@/stores/useOrderStore";
-import { useProductStore } from "@/stores/useProductStore";
-import { useWishlistStore } from "@/stores/useWishlistStore";
+import { useCartStore } from "@/stores/ecommerceStores/useCartStore";
+import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore";
+import { useProductStore } from "@/stores/ecommerceStores/useProductStore";
+import { useWishlistStore } from "@/stores/ecommerceStores/useWishlistStore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

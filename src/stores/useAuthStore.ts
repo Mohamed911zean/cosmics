@@ -5,18 +5,23 @@ import {
     createUserWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithPopup,
     type User
 } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
+import { auth, db } from '@/lib/firebase'
+import { doc, setDoc, getDoc } from 'firebase/firestore'
 
 interface AuthState {
+    role: 'user' | 'admin' | 'superadmin' | null
     user: User | null
     isLoading: boolean
     isAuthenticated: boolean
     error: string | null
-    setUser: (user: User | null) => void
+    setUser: (user: User | null, role?: 'user' | 'admin' | 'superadmin' | null) => void
     login: (email: string, password: string) => Promise<boolean>
     signup: (email: string, password: string) => Promise<boolean>
+    googleLogin: () => Promise<boolean>
     logout: () => Promise<void>
     clearError: () => void
     initializeAuth: () => () => void
@@ -25,13 +30,15 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
     persist(
         (set) => ({
+            role: null,
             user: null,
             isLoading: true,
             isAuthenticated: false,
             error: null,
 
-            setUser: (user) =>
+            setUser: (user, role = null) =>
                 set({
+                    role,
                     user,
                     isAuthenticated: !!user,
                     isLoading: false,
@@ -41,8 +48,12 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null })
                 try {
                     const userCredential = await signInWithEmailAndPassword(auth, email, password)
+                    const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid))
+                    const dbRole = userDoc.exists() ? userDoc.data()?.role : 'user'
+                    const userRole = dbRole ? String(dbRole).toLowerCase().trim() : 'user'
                     set({
                         user: userCredential.user,
+                        role: userRole,
                         isAuthenticated: true,
                         isLoading: false,
                     })
@@ -60,8 +71,14 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null })
                 try {
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+                    await setDoc(doc(db, 'users', userCredential.user.uid), {
+                        email,
+                        role: 'user',
+                        cart: []
+                    }, { merge: true })
                     set({
                         user: userCredential.user,
+                        role: 'user',
                         isAuthenticated: true,
                         isLoading: false,
                     })
@@ -75,12 +92,47 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
 
+            googleLogin: async () => {
+                set({ isLoading: true, error: null })
+                try {
+                    const result = await signInWithPopup(auth, new GoogleAuthProvider())
+                    const userDoc = await getDoc(doc(db, 'users', result.user.uid))
+                    let userRole = 'user'
+
+                    if (userDoc.exists()) {
+                        const dbRole = userDoc.data()?.role
+                        userRole = dbRole ? String(dbRole).toLowerCase().trim() : 'user'
+                    } else {
+                        await setDoc(doc(db, 'users', result.user.uid), {
+                            email: result.user.email,
+                            role: 'user',
+                            cart: []
+                        })
+                    }
+
+                    set({
+                        user: result.user,
+                        role: userRole as any,
+                        isAuthenticated: true,
+                        isLoading: false,
+                    })
+                    return true
+                } catch (error) {
+                    set({
+                        error: 'Google login failed',
+                        isLoading: false,
+                    })
+                    return false
+                }
+            },
+
             logout: async () => {
                 set({ isLoading: true })
                 try {
                     await signOut(auth)
                     set({
                         user: null,
+                        role: null,  
                         isAuthenticated: false,
                         isLoading: false,
                     })
@@ -91,21 +143,50 @@ export const useAuthStore = create<AuthState>()(
 
             clearError: () => set({ error: null }),
 
-            initializeAuth: () => {
-                const unsubscribe = onAuthStateChanged(auth, (user) => {
-                    set({
-                        user,
-                        isAuthenticated: !!user,
-                        isLoading: false,
-                    })
+  initializeAuth: () => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        console.log('🔥 onAuthStateChanged fired, user:', user?.uid)
+        
+        if (user) {
+            // Keep loading true while we fetch the role
+            set({ isLoading: true })
+            
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid))
+                const dbRole = userDoc.exists() ? userDoc.data()?.role : 'user'
+                const userRole = dbRole ? String(dbRole).toLowerCase().trim() : 'user'
+                
+                set({
+                    role: userRole,
+                    user,
+                    isAuthenticated: true,
+                    isLoading: false,  
                 })
-                return unsubscribe
-            },
+            } catch (error) {
+                set({
+                    role: 'user',
+                    user,
+                    isAuthenticated: true,
+                    isLoading: false,
+                })
+            }
+        } else {
+            set({
+                user: null,
+                role: null,
+                isAuthenticated: false,
+                isLoading: false,
+            })
+        }
+    })
+    return unsubscribe
+},
         }),
         {
-            name: 'lumiere-auth',
+            name: 'majestics-auth',
             partialize: (state) => ({
-                isAuthenticated: state.isAuthenticated,
+                // Only persist role to reduce loading flash
+                role: state.role,
             }),
         }
     )

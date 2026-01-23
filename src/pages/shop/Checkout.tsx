@@ -4,8 +4,7 @@ import { CreditCard, Truck, ShieldCheck, ChevronLeft, Lock, CheckCircle2 } from 
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Link, useNavigate } from "react-router-dom"
-import { useCartStore, useOrderStore } from "@/stores"
-import { useAuth } from "@/context/authContext"
+import { useAuthStore, useCartStore, useOrderStore } from "@/stores"
 
 export function Checkout() {
     const navigate = useNavigate()
@@ -18,7 +17,7 @@ export function Checkout() {
     const total = getTotal()
 
     const { addOrder } = useOrderStore()
-    const { user } = useAuth()
+    const { user } = useAuthStore()
 
     const handlePlaceOrder = async () => {
         setIsProcessing(true)

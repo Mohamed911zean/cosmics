@@ -1,8 +1,7 @@
 import { ShoppingBag, Menu, User, X, Heart, Search, ChevronRight, Home, Grid3x3 } from "lucide-react"
 import { useState, useEffect, useRef, useMemo } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
-import { useCartStore, useWishlistStore, useUIStore, useProductStore } from "@/stores"
-import { useAuth } from "@/context/authContext"
+import { useCartStore, useWishlistStore, useUIStore, useProductStore, useAuthStore } from "@/stores"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -11,7 +10,7 @@ export function Navbar() {
   const cartCount = useCartStore((state) => state.getItemCount())
   const wishlistCount = useWishlistStore((state) => state.getItemCount())
   const { isMenuOpen, setMenuOpen } = useUIStore()
-  const { user, logout } = useAuth()
+  const { user, logout } = useAuthStore()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
@@ -74,7 +73,7 @@ export function Navbar() {
               <div className="hidden xl:flex items-center gap-8">
                 <NavLink to="/home">Home</NavLink>
                 <NavLink to="/about">Our Story</NavLink>
-                <NavLink to="/collections">Collections</NavLink>
+                <NavLink to="/shop">Collections</NavLink>
                 <NavLink to="/contact">Contact</NavLink>
               </div>
 
@@ -291,7 +290,7 @@ export function Navbar() {
               </div>
 
               <div className="flex-1 flex flex-col gap-8">
-                {[ "Our Story", "Contact", "Orders"].map((item, idx) => (
+                {["Our Story", "Contact", "Orders"].map((item, idx) => (
                   <motion.div
                     key={item}
                     initial={{ opacity: 0, x: -20 }}

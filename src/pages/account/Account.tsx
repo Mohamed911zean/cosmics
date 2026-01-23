@@ -2,8 +2,7 @@
 import { motion } from "framer-motion"
 import { User, Package, ShoppingBag, LogOut, Mail, UserCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/context/authContext"
-import { useCartStore, useOrderStore } from "@/stores"
+import { useAuthStore, useCartStore, useOrderStore } from "@/stores"
 import { Link, useNavigate } from "react-router-dom"
 
 
@@ -11,7 +10,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 
 export function Account() {
-    const { user, logout } = useAuth()
+    const { user, logout } = useAuthStore()
     const navigate = useNavigate()
     const { orders } = useOrderStore()
     const { items: cartItems } = useCartStore()

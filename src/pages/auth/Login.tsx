@@ -1,12 +1,14 @@
+// src/pages/auth/Login.tsx
 import { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { loginUser, signInWithGoogle } from '@/lib/authService';
 import { toast } from 'sonner';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login, googleLogin } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
@@ -16,9 +18,18 @@ export const Login = () => {
     setLoading(true);
 
     try {
-      await loginUser(email, password);
-      toast.success('Logged in successfully!');
-      navigate(from, { replace: true });
+      const success = await login(email, password);
+      if (success) {
+        toast.success('Logged in successfully!');
+        const { role } = useAuthStore.getState();
+        if (role === 'admin' || role === 'superadmin') {
+          navigate('/dashboard/dashHome', { replace: true });
+        } else {
+          navigate(from, { replace: true });
+        }
+      } else {
+        toast.error('Invalid email or password');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Login failed');
     } finally {
@@ -30,9 +41,18 @@ export const Login = () => {
     setLoading(true);
 
     try {
-      await signInWithGoogle();
-      toast.success('Logged in with Google!');
-      navigate(from, { replace: true });
+      const success = await googleLogin();
+      if (success) {
+        toast.success('Logged in with Google!');
+        const { role } = useAuthStore.getState();
+        if (role === 'admin' || role === 'superadmin') {
+          navigate('/dashboard/dashHome', { replace: true });
+        } else {
+          navigate(from, { replace: true });
+        }
+      } else {
+        toast.error('Google sign-in failed');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Google sign-in failed');
     } finally {

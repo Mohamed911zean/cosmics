@@ -1,13 +1,15 @@
+// src/pages/auth/Signup.tsx
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { signupUser, signInWithGoogle } from '@/lib/authService';
 import { toast } from 'sonner';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { signup, googleLogin } = useAuthStore();
   const navigate = useNavigate();
 
   const handleEmailSignup = async (e: React.FormEvent) => {
@@ -26,9 +28,18 @@ export const Signup = () => {
     setLoading(true);
 
     try {
-      await signupUser(email, password);
-      toast.success('Account created successfully!');
-      navigate('/');
+      const success = await signup(email, password);
+      if (success) {
+        toast.success('Account created successfully!');
+        const { role } = useAuthStore.getState();
+        if (role === 'admin' || role === 'superadmin') {
+          navigate('/dashboard/dashHome', { replace: true });
+        } else {
+          navigate('/', { replace: true });
+        }
+      } else {
+        toast.error('Failed to create account');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Signup failed');
     } finally {
@@ -40,9 +51,18 @@ export const Signup = () => {
     setLoading(true);
 
     try {
-      await signInWithGoogle();
-      toast.success('Signed up with Google!');
-      navigate('/');
+      const success = await googleLogin();
+      if (success) {
+        toast.success('Signed up with Google!');
+        const { role } = useAuthStore.getState();
+        if (role === 'admin' || role === 'superadmin') {
+          navigate('/dashboard/dashHome', { replace: true });
+        } else {
+          navigate('/', { replace: true });
+        }
+      } else {
+        toast.error('Google sign-in failed');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Google sign-in failed');
     } finally {
@@ -58,7 +78,7 @@ export const Signup = () => {
             Create your account
           </h2>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleEmailSignup}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
@@ -75,7 +95,7 @@ export const Signup = () => {
                 placeholder="Email address"
               />
             </div>
-            
+
             <div>
               <label htmlFor="password" className="sr-only">Password</label>
               <input
@@ -132,9 +152,9 @@ export const Signup = () => {
           disabled={loading}
           className="w-full flex items-center justify-center gap-3 py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <img 
-            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
-            alt="Google" 
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google"
             className="w-5 h-5"
           />
           Sign up with Google
