@@ -87,7 +87,6 @@ export default function AddProduct() {
         images: additionalUrls.length > 0 ? additionalUrls : undefined,
         rating: 0,
         reviews: 0,
-        sold: 0,
       })
 
       toast.success("Product added successfully!")
