@@ -110,22 +110,24 @@ export const useOrderStore = create<OrderState>()(
 
             getBestSellers: () => {
                 const orders = get().orders
-                const productsMap = new Map<number, BestSellerProduct>()
+                const productsMap = new Map<string | number, BestSellerProduct>()
 
                 orders.forEach((order) => {
+                    if (!order || !order.items) return
                     order.items.forEach((item) => {
+                        if (!item || !item.id) return
                         if (productsMap.has(item.id)) {
                             const product = productsMap.get(item.id)!
-                            product.totalSold += item.quantity
-                            product.revenue += item.price * item.quantity
+                            product.totalSold += (Number(item.quantity) || 0)
+                            product.revenue += (Number(item.price) || 0) * (Number(item.quantity) || 0)
                         } else {
                             productsMap.set(item.id, {
-                                id: item.id,
-                                name: item.name,
-                                category: item.category,
-                                image: item.image,
-                                totalSold: item.quantity,
-                                revenue: item.price * item.quantity
+                                id: Number(item.id),
+                                name: item.name || 'Unknown Product',
+                                category: item.category || 'Uncategorized',
+                                image: item.image || '',
+                                totalSold: Number(item.quantity) || 0,
+                                revenue: (Number(item.price) || 0) * (Number(item.quantity) || 0)
                             })
                         }
                     })
@@ -138,11 +140,11 @@ export const useOrderStore = create<OrderState>()(
             // ===== Admin Functions (use allOrders from all users) =====
 
             getAllOrdersTotalRevenue: () => {
-                return get().allOrders.reduce((sum, order) => sum + order.total, 0)
+                return get().allOrders.reduce((sum, order) => sum + (Number(order?.total) || 0), 0)
             },
 
             getAllOrdersByStatus: (status) => {
-                return get().allOrders.filter((order) => order.status === status)
+                return get().allOrders.filter((order) => order && order.status === status)
             },
 
             getAllCustomers: () => {
@@ -150,19 +152,21 @@ export const useOrderStore = create<OrderState>()(
                 const customersMap = new Map<string, CustomerData>()
 
                 orders.forEach((order) => {
+                    if (!order || !order.shippingDetails) return
                     const { email, firstName, lastName } = order.shippingDetails
-                    const name = `${firstName} ${lastName}`
+                    if (!email) return
+                    const name = `${firstName || ''} ${lastName || ''}`.trim() || 'Unknown Customer'
 
                     if (customersMap.has(email)) {
                         const customer = customersMap.get(email)!
                         customer.ordersCount += 1
-                        customer.totalSpent += order.total
+                        customer.totalSpent += (Number(order.total) || 0)
                     } else {
                         customersMap.set(email, {
                             email,
                             name,
                             ordersCount: 1,
-                            totalSpent: order.total
+                            totalSpent: (Number(order.total) || 0)
                         })
                     }
                 })
@@ -172,22 +176,26 @@ export const useOrderStore = create<OrderState>()(
 
             getGlobalBestSellers: () => {
                 const orders = get().allOrders
-                const productsMap = new Map<number, BestSellerProduct>()
+                const productsMap = new Map<string | number, BestSellerProduct>()
 
                 orders.forEach((order) => {
+                    if (!order || !order.items) return
                     order.items.forEach((item) => {
+                        if (!item || !item.id) return
+                        
+                        // Handle potential type mismatch between string/number IDs
                         if (productsMap.has(item.id)) {
                             const product = productsMap.get(item.id)!
-                            product.totalSold += item.quantity
-                            product.revenue += item.price * item.quantity
+                            product.totalSold += (Number(item.quantity) || 0)
+                            product.revenue += (Number(item.price) || 0) * (Number(item.quantity) || 0)
                         } else {
                             productsMap.set(item.id, {
-                                id: item.id,
-                                name: item.name,
-                                category: item.category,
-                                image: item.image,
-                                totalSold: item.quantity,
-                                revenue: item.price * item.quantity
+                                id: Number(item.id),
+                                name: item.name || 'Unknown Product',
+                                category: item.category || 'Uncategorized',
+                                image: item.image || '',
+                                totalSold: Number(item.quantity) || 0,
+                                revenue: (Number(item.price) || 0) * (Number(item.quantity) || 0)
                             })
                         }
                     })

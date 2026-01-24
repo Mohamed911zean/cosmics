@@ -1,10 +1,11 @@
-import { doc, getDoc, setDoc, onSnapshot, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot, collection, getDocs, query, collectionGroup } from 'firebase/firestore';
 import { db } from './firebase';
 
 export interface UserData {
     cart?: any[];
     wishlist?: any[];
     orders?: any[];
+    role?: string;
 }
 
 export const getUserData = async (uid: string) => {
@@ -41,49 +42,72 @@ export const subscribeToUserData = (uid: string, callback: (data: UserData | nul
 // Fetch all orders from all users (for admin dashboard)
 export const getAllOrdersFromFirestore = async () => {
     try {
-        const usersRef = collection(db, 'users');
-        const usersSnap = await getDocs(usersRef);
-
         const allOrders: any[] = [];
         const seenIds = new Set<string>();
 
-        usersSnap.forEach((userDoc) => {
-            const userData = userDoc.data() as UserData;
-            if (userData.orders && Array.isArray(userData.orders)) {
-                userData.orders.forEach((order: any) => {
-                    const id = typeof order?.id === 'string' ? order.id : undefined;
-                    if (!id || !seenIds.has(id)) {
-                        if (id) seenIds.add(id);
-                        allOrders.push(order);
-                    }
-                });
-            }
-        });
-
-        // Also check if each user has an 'orders' subcollection and aggregate those
-        for (const userDoc of usersSnap.docs) {
-            const subOrdersRef = collection(db, 'users', userDoc.id, 'orders');
-            const subOrdersSnap = await getDocs(subOrdersRef);
-            subOrdersSnap.forEach((orderDoc) => {
-                const orderData = orderDoc.data();
-                const id = typeof orderData?.id === 'string' ? orderData.id : orderDoc.id;
-                if (!seenIds.has(id)) {
-                    seenIds.add(id);
-                    allOrders.push(orderData);
+        // 1. Fetch from 'users' collection documents (legacy/array format)
+        try {
+            const usersRef = collection(db, 'users');
+            const usersSnap = await getDocs(usersRef);
+            
+            usersSnap.forEach((userDoc) => {
+                const userData = userDoc.data() as UserData;
+                if (userData.orders && Array.isArray(userData.orders)) {
+                    userData.orders.forEach((order: any) => {
+                        if (!order) return;
+                        const id = typeof order.id === 'string' ? order.id : undefined;
+                        if (!id || !seenIds.has(id)) {
+                            if (id) seenIds.add(id);
+                            allOrders.push(order);
+                        }
+                    });
                 }
             });
+        } catch (error) {
+            console.error("Error fetching users for orders array:", error);
         }
 
-        // Optional: aggregate from a top-level 'orders' collection if present
+        // 2. Fetch from 'orders' subcollections using collectionGroup (recommended format)
+        try {
+            const subOrdersQuery = query(collectionGroup(db, 'orders'));
+            const subOrdersSnap = await getDocs(subOrdersQuery);
+            
+            subOrdersSnap.forEach((orderDoc) => {
+                const orderData = orderDoc.data();
+                if (!orderData) return;
+                
+                // Use doc ID as fallback if orderData.id is missing or not a string
+                const id = typeof orderData.id === 'string' ? orderData.id : orderDoc.id;
+                
+                if (!seenIds.has(id)) {
+                    seenIds.add(id);
+                    allOrders.push({
+                        ...orderData,
+                        id: id // Ensure id is present
+                    });
+                }
+            });
+        } catch (error) {
+            console.warn("Collection group 'orders' might not have an index yet or is empty:", error);
+        }
+
+        // 3. Fetch from top-level 'orders' collection (if any)
         try {
             const globalOrdersRef = collection(db, 'orders');
             const globalOrdersSnap = await getDocs(globalOrdersRef);
+            
             globalOrdersSnap.forEach((orderDoc) => {
                 const orderData = orderDoc.data();
-                const id = typeof orderData?.id === 'string' ? orderData.id : orderDoc.id;
+                if (!orderData) return;
+                
+                const id = typeof orderData.id === 'string' ? orderData.id : orderDoc.id;
+                
                 if (!seenIds.has(id)) {
                     seenIds.add(id);
-                    allOrders.push(orderData);
+                    allOrders.push({
+                        ...orderData,
+                        id: id
+                    });
                 }
             });
         } catch {
@@ -92,7 +116,7 @@ export const getAllOrdersFromFirestore = async () => {
 
         return allOrders;
     } catch (error) {
-        console.error("Error fetching all orders:", error);
+        console.error("Critical error fetching all orders:", error);
         return [];
     }
 };
