@@ -38,11 +38,13 @@ import { FAQ } from "@/pages/legal/FAQ"
 import DashHome from "@/pages/dashboard/DashboardHome"
 import DashboardOrders from "@/pages/dashboard/Orders"
 import DashboardCustomers from "@/pages/dashboard/Customers"
-import DashboardProducts from "@/pages/dashboard/Products"
+import AllProducts from "@/pages/dashboard/Products"
 import DashboardAccount from "@/pages/dashboard/Account"
 
 // Utils
 import { useAuthStore } from "@/stores/useAuthStore"
+import AddProduct from "./pages/dashboard/AddProduct"
+import BestSellers from "./pages/dashboard/BestSellers"
 
 export default function App() {
   const { initializeAuth } = useAuthStore()
@@ -93,7 +95,9 @@ export default function App() {
               <Route path="dashHome" element={<DashHome />} />
               <Route path="orders" element={<DashboardOrders />} />
               <Route path="customers" element={<DashboardCustomers />} />
-              <Route path="products" element={<DashboardProducts />} />
+              <Route path="products" element={<AllProducts />} />
+              <Route path="products/add" element={<AddProduct />} />
+              <Route path="products/best-sellers" element={<BestSellers />} />
               <Route path="account" element={<DashboardAccount />} />
 
               <Route element={<SuperAdminRoute />}>

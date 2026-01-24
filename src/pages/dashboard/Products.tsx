@@ -1,48 +1,59 @@
-import { Package, Layers, TrendingUp, Tag } from "lucide-react"
+import { Package, Layers, TrendingUp, ShoppingBag, Tag, Edit, Trash2 } from "lucide-react"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
-
-const kpis = [
-  { label: "Total Products", value: "1,920", icon: Package },
-  { label: "Categories", value: "38", icon: Layers },
-  { label: "Top Seller", value: "Glow Serum", icon: TrendingUp },
-  { label: "Low Stock", value: "18", icon: Package },
-]
-
-const products = [
-  { name: "Glow Serum", category: "Skincare", price: "$42", stock: 120, status: "Active" },
-  { name: "Pure Cleanser", category: "Skincare", price: "$28", stock: 80, status: "Active" },
-  { name: "Velvet Lipstick", category: "Makeup", price: "$19", stock: 12, status: "Low Stock" },
-  { name: "Sun Shield SPF 50", category: "Skincare", price: "$35", stock: 0, status: "Out of Stock" },
-]
-
-const statusStyles: Record<string, { bg: string; text: string; dot: string }> = {
-  Active: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
-  "Low Stock": { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-500" },
-  "Out of Stock": { bg: "bg-rose-50", text: "text-rose-700", dot: "bg-rose-500" },
-}
+import { useProductStore } from "@/stores/ecommerceStores/useProductStore"
+import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
+import { useNavigate } from "react-router-dom"
 
 const categoryColors: Record<string, string> = {
   Skincare: "bg-violet-100 text-violet-700",
   Makeup: "bg-pink-100 text-pink-700",
+  Haircare: "bg-blue-100 text-blue-700",
+  Fragrance: "bg-amber-100 text-amber-700",
 }
 
+
+
 export default function Products() {
+  const { getAllProducts, categories } = useProductStore()
+  const { getBestSellers } = useOrderStore()
+  const navigate = useNavigate()
+
+  const allProducts = getAllProducts() // استخدام الدالة الجديدة
+  const bestSellers = getBestSellers()
+  const topSeller = bestSellers[0]
+
+  const kpis = [
+    { label: "Total Products", value: allProducts.length.toString(), icon: Package },
+    { label: "Categories", value: categories.length.toString(), icon: Layers },
+    { label: "Top Seller", value: topSeller?.name || "No Sales", icon: TrendingUp },
+    { label: "Total Orders", value: bestSellers.reduce((sum, p) => sum + p.totalSold, 0).toString(), icon: ShoppingBag },
+  ]
+
   return (
     <div className="space-y-8">
       <DashboardKpiCards items={kpis} />
 
       <section className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
         <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50/80 to-white">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-200">
-              <Package className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-200">
+                <Package className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">All Products</h2>
+                <p className="text-xs text-gray-500">Complete inventory list</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">Products</h2>
-              <p className="text-xs text-gray-500">Inventory and availability</p>
-            </div>
+            <button
+              onClick={() => navigate("/dashboard/products/add")}
+              className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg font-semibold text-sm hover:shadow-lg transition-all"
+            >
+              + Add Product
+            </button>
           </div>
         </div>
+
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -50,20 +61,26 @@ export default function Products() {
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Product</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Stock</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Sold</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Revenue</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {products.map((product) => {
-                const status = statusStyles[product.status] || statusStyles.Active
+              {allProducts.map((product) => {
+                const soldData = bestSellers.find(p => p.id === product.id)
+                const totalSold = soldData?.totalSold || 0
+                const revenue = soldData?.revenue || 0
+
                 return (
-                  <tr key={product.name} className="hover:bg-violet-50/30 transition-colors duration-200">
+                  <tr key={product.id} className="hover:bg-violet-50/30 transition-colors duration-200">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                          <Package className="w-5 h-5 text-gray-500" />
-                        </div>
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-10 h-10 rounded-lg object-cover"
+                        />
                         <span className="font-semibold text-gray-900">{product.name}</span>
                       </div>
                     </td>
@@ -73,17 +90,26 @@ export default function Products() {
                         {product.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-bold text-gray-900">{product.price}</td>
+                    <td className="px-6 py-4 font-bold text-gray-900">${product.price}</td>
                     <td className="px-6 py-4">
-                      <span className={`font-semibold ${product.stock === 0 ? "text-rose-600" : product.stock < 20 ? "text-amber-600" : "text-gray-700"}`}>
-                        {product.stock} units
+                      <span className="font-semibold text-gray-700">
+                        {totalSold} units
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${status.bg} ${status.text}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
-                        {product.status}
+                      <span className="font-bold text-emerald-600">
+                        ${revenue.toFixed(2)}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors">
+                          <Edit className="w-4 h-4 text-blue-600" />
+                        </button>
+                        <button className="p-2 hover:bg-rose-50 rounded-lg transition-colors">
+                          <Trash2 className="w-4 h-4 text-rose-600" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )
