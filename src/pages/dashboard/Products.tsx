@@ -1,4 +1,5 @@
-import { Package, Layers, TrendingUp, ShoppingBag, Tag, Edit, Trash2 } from "lucide-react"
+import { useEffect } from "react"
+import { Package, Layers, TrendingUp, ShoppingBag, Tag, Edit, Trash2, Loader2 } from "lucide-react"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { useProductStore } from "@/stores/ecommerceStores/useProductStore"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
@@ -9,24 +10,31 @@ const categoryColors: Record<string, string> = {
   Makeup: "bg-pink-100 text-pink-700",
   Haircare: "bg-blue-100 text-blue-700",
   Fragrance: "bg-amber-100 text-amber-700",
+  "Body Care": "bg-emerald-100 text-emerald-700",
+  "Anti-Aging": "bg-rose-100 text-rose-700",
+  "Sun Protection": "bg-sky-100 text-sky-700",
 }
-
-
 
 export default function Products() {
   const { getAllProducts, categories } = useProductStore()
-  const { getBestSellers } = useOrderStore()
+  const { getGlobalBestSellers, fetchAllOrdersForAdmin, isLoadingAllOrders, allOrders } = useOrderStore()
   const navigate = useNavigate()
 
-  const allProducts = getAllProducts() // استخدام الدالة الجديدة
-  const bestSellers = getBestSellers()
+  // Fetch all orders from all users when component mounts
+  useEffect(() => {
+    fetchAllOrdersForAdmin()
+  }, [fetchAllOrdersForAdmin])
+
+  const allProducts = getAllProducts()
+  const bestSellers = getGlobalBestSellers()
   const topSeller = bestSellers[0]
+  const totalUnitsSold = bestSellers.reduce((sum, p) => sum + p.totalSold, 0)
 
   const kpis = [
     { label: "Total Products", value: allProducts.length.toString(), icon: Package },
     { label: "Categories", value: categories.length.toString(), icon: Layers },
-    { label: "Top Seller", value: topSeller?.name || "No Sales", icon: TrendingUp },
-    { label: "Total Orders", value: bestSellers.reduce((sum, p) => sum + p.totalSold, 0).toString(), icon: ShoppingBag },
+    { label: "Top Seller", value: topSeller?.name?.split(" - ")[0] || "No Sales", icon: TrendingUp },
+    { label: "Units Sold", value: totalUnitsSold.toString(), icon: ShoppingBag },
   ]
 
   return (
@@ -42,7 +50,9 @@ export default function Products() {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-gray-900">All Products</h2>
-                <p className="text-xs text-gray-500">Complete inventory list</p>
+                <p className="text-xs text-gray-500">
+                  Complete inventory list {isLoadingAllOrders && "(loading sales data...)"}
+                </p>
               </div>
             </div>
             <button
@@ -92,14 +102,22 @@ export default function Products() {
                     </td>
                     <td className="px-6 py-4 font-bold text-gray-900">${product.price}</td>
                     <td className="px-6 py-4">
-                      <span className="font-semibold text-gray-700">
-                        {totalSold} units
-                      </span>
+                      {isLoadingAllOrders ? (
+                        <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                      ) : (
+                        <span className="font-semibold text-gray-700">
+                          {totalSold} units
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-bold text-emerald-600">
-                        ${revenue.toFixed(2)}
-                      </span>
+                      {isLoadingAllOrders ? (
+                        <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                      ) : (
+                        <span className="font-bold text-emerald-600">
+                          ${revenue.toFixed(2)}
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">

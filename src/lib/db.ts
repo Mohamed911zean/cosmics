@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot, collection, getDocs } from 'firebase/firestore';
 import { db } from './firebase';
 
 export interface UserData {
@@ -36,4 +36,26 @@ export const subscribeToUserData = (uid: string, callback: (data: UserData | nul
             callback(null);
         }
     });
+};
+
+// Fetch all orders from all users (for admin dashboard)
+export const getAllOrdersFromFirestore = async () => {
+    try {
+        const usersRef = collection(db, 'users');
+        const usersSnap = await getDocs(usersRef);
+
+        const allOrders: any[] = [];
+
+        usersSnap.forEach((userDoc) => {
+            const userData = userDoc.data() as UserData;
+            if (userData.orders && Array.isArray(userData.orders)) {
+                allOrders.push(...userData.orders);
+            }
+        });
+
+        return allOrders;
+    } catch (error) {
+        console.error("Error fetching all orders:", error);
+        return [];
+    }
 };
