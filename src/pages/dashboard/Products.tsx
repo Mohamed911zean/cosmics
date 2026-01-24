@@ -17,7 +17,7 @@ const categoryColors: Record<string, string> = {
 
 export default function Products() {
   const { getAllProducts, categories } = useProductStore()
-  const { getGlobalBestSellers, fetchAllOrdersForAdmin, isLoadingAllOrders, allOrders } = useOrderStore()
+  const { getGlobalBestSellers, fetchAllOrdersForAdmin, isLoadingAllOrders } = useOrderStore()
   const navigate = useNavigate()
 
   // Fetch all orders from all users when component mounts
