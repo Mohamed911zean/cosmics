@@ -45,13 +45,50 @@ export const getAllOrdersFromFirestore = async () => {
         const usersSnap = await getDocs(usersRef);
 
         const allOrders: any[] = [];
+        const seenIds = new Set<string>();
 
         usersSnap.forEach((userDoc) => {
             const userData = userDoc.data() as UserData;
             if (userData.orders && Array.isArray(userData.orders)) {
-                allOrders.push(...userData.orders);
+                userData.orders.forEach((order: any) => {
+                    const id = typeof order?.id === 'string' ? order.id : undefined;
+                    if (!id || !seenIds.has(id)) {
+                        if (id) seenIds.add(id);
+                        allOrders.push(order);
+                    }
+                });
             }
         });
+
+        // Also check if each user has an 'orders' subcollection and aggregate those
+        for (const userDoc of usersSnap.docs) {
+            const subOrdersRef = collection(db, 'users', userDoc.id, 'orders');
+            const subOrdersSnap = await getDocs(subOrdersRef);
+            subOrdersSnap.forEach((orderDoc) => {
+                const orderData = orderDoc.data();
+                const id = typeof orderData?.id === 'string' ? orderData.id : orderDoc.id;
+                if (!seenIds.has(id)) {
+                    seenIds.add(id);
+                    allOrders.push(orderData);
+                }
+            });
+        }
+
+        // Optional: aggregate from a top-level 'orders' collection if present
+        try {
+            const globalOrdersRef = collection(db, 'orders');
+            const globalOrdersSnap = await getDocs(globalOrdersRef);
+            globalOrdersSnap.forEach((orderDoc) => {
+                const orderData = orderDoc.data();
+                const id = typeof orderData?.id === 'string' ? orderData.id : orderDoc.id;
+                if (!seenIds.has(id)) {
+                    seenIds.add(id);
+                    allOrders.push(orderData);
+                }
+            });
+        } catch {
+            // Ignore if the collection doesn't exist or is inaccessible
+        }
 
         return allOrders;
     } catch (error) {
