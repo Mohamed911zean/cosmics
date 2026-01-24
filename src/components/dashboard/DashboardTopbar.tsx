@@ -1,4 +1,4 @@
-import { Menu, Search, ChevronDown } from "lucide-react"
+import { Menu, Bell } from "lucide-react"
 import { useAuthStore } from "@/stores/useAuthStore"
 
 type DashboardTopbarProps = {
@@ -10,26 +10,36 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
   const { user } = useAuthStore()
 
   return (
-    <header className={`fixed top-0 left-0 right-0 h-16 bg-white shadow-sm flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 ${isSidebarOpen ? "lg:left-64 xl:left-72" : "lg:left-0"}`}>
-      <div className="flex items-center gap-3 flex-1">
-        <button type="button" onClick={onMenuClick} className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-[#4B0082] transition-colors">
+    <header className={`fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 transition-all duration-300 ${isSidebarOpen ? "lg:left-64 xl:left-72" : "lg:left-0"}`}>
+      <div className="flex items-center gap-4">
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-violet-100 flex items-center justify-center text-gray-600 hover:text-violet-700 transition-all duration-200"
+        >
           <Menu className="w-5 h-5" />
         </button>
-        <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            placeholder="Search here"
-            className="h-10 w-full rounded-lg border border-gray-200 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#4B0082]/30"
-          />
+        <div className="hidden sm:block">
+          <h1 className="text-lg font-bold text-gray-900">Dashboard</h1>
+          <p className="text-xs text-gray-500">Welcome back, {user?.displayName?.split(" ")[0] || "Admin"}</p>
         </div>
       </div>
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
-          <span className="text-sm font-semibold">{user?.displayName?.[0] || "U"}</span>
-        </div>
-        <div className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-700">
-          {user?.displayName || "User"}
-          <ChevronDown className="w-4 h-4 text-gray-400" />
+        <button
+          type="button"
+          className="relative w-10 h-10 rounded-xl bg-gray-100 hover:bg-violet-100 flex items-center justify-center text-gray-600 hover:text-violet-700 transition-all duration-200"
+        >
+          <Bell className="w-5 h-5" />
+          <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white" />
+        </button>
+        <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-violet-200">
+            <span className="text-sm font-bold">{user?.displayName?.[0] || "A"}</span>
+          </div>
+          <div className="hidden sm:block">
+            <div className="text-sm font-semibold text-gray-900">{user?.displayName || "Admin"}</div>
+            <div className="text-xs text-gray-500">Administrator</div>
+          </div>
         </div>
       </div>
     </header>

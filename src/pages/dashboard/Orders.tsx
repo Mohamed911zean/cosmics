@@ -1,4 +1,4 @@
-import { ShoppingBag, CheckCircle, Clock, XCircle } from "lucide-react"
+import { ShoppingBag, CheckCircle, Clock, XCircle, Package } from "lucide-react"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 
 const kpis = [
@@ -15,11 +15,16 @@ const orders = [
   { id: "ORD-1027", customer: "Maya Lee", total: "$620", payment: "Due", status: "In Progress" },
 ]
 
-const statusClasses: Record<string, string> = {
-  Delivered: "bg-green-100 text-green-700",
-  Pending: "bg-amber-100 text-amber-700",
-  Return: "bg-red-100 text-red-700",
-  "In Progress": "bg-sky-100 text-sky-700",
+const statusStyles: Record<string, { bg: string; text: string; dot: string }> = {
+  Delivered: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
+  Pending: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-500" },
+  Return: { bg: "bg-rose-50", text: "text-rose-700", dot: "bg-rose-500" },
+  "In Progress": { bg: "bg-sky-50", text: "text-sky-700", dot: "bg-sky-500" },
+}
+
+const paymentStyles: Record<string, string> = {
+  Paid: "text-emerald-600 font-semibold",
+  Due: "text-rose-600 font-semibold",
 }
 
 export default function Orders() {
@@ -27,41 +32,55 @@ export default function Orders() {
     <div className="space-y-8">
       <DashboardKpiCards items={kpis} />
 
-      <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-lg font-semibold text-[#2b2b2b]">Orders</h2>
-            <p className="text-sm text-gray-500">Latest transactions and payment status</p>
+      <section className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
+        <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50/80 to-white">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-200">
+              <Package className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-gray-900">Orders</h2>
+              <p className="text-xs text-gray-500">Latest transactions and payment status</p>
+            </div>
           </div>
-          <button className="px-4 py-2 rounded-lg bg-[#4B0082] text-white text-xs font-semibold">
-            Export
-          </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-gray-500">
-                <th className="pb-4 font-medium">Order ID</th>
-                <th className="pb-4 font-medium">Customer</th>
-                <th className="pb-4 font-medium">Total</th>
-                <th className="pb-4 font-medium">Payment</th>
-                <th className="pb-4 font-medium">Status</th>
+              <tr className="bg-gray-50/50">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Order ID</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Payment</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
-            <tbody className="text-gray-700">
-              {orders.map((order) => (
-                <tr key={order.id} className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
-                  <td className="py-4 font-medium">{order.id}</td>
-                  <td className="py-4">{order.customer}</td>
-                  <td className="py-4">{order.total}</td>
-                  <td className="py-4">{order.payment}</td>
-                  <td className="py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusClasses[order.status]}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+            <tbody className="divide-y divide-gray-100">
+              {orders.map((order) => {
+                const status = statusStyles[order.status] || statusStyles.Pending
+                return (
+                  <tr key={order.id} className="hover:bg-violet-50/30 transition-colors duration-200">
+                    <td className="px-6 py-4">
+                      <span className="font-mono font-semibold text-violet-700 bg-violet-50 px-2 py-1 rounded">
+                        {order.id}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-gray-900">{order.customer}</td>
+                    <td className="px-6 py-4 font-bold text-gray-900">{order.total}</td>
+                    <td className="px-6 py-4">
+                      <span className={paymentStyles[order.payment] || "text-gray-600"}>
+                        {order.payment}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${status.bg} ${status.text}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+                        {order.status}
+                      </span>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
