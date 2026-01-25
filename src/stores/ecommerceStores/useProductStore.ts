@@ -163,7 +163,7 @@ export const useProductStore = create<ProductState>()(
             },
 
             setUser: async () => {
-                const { subscribeToProducts } = await import('@/lib/db')
+                const { subscribeToProducts, getAllProductsFromFirestore, addProductToFirestore } = await import('@/lib/db')
                 set({ isLoading: true })
                 const unsubscribe = subscribeToProducts((items) => {
                     const mapped = items.map((p: any) => ({
@@ -180,6 +180,23 @@ export const useProductStore = create<ProductState>()(
                     }
                 })
                 ;(window as any).__productsUnsub__ = unsubscribe
+
+                try {
+                    const existing = await getAllProductsFromFirestore()
+                    const existingIds = new Set(
+                        existing.map((p: any) =>
+                            typeof p.id === 'string' ? Number(p.id) : p.id
+                        )
+                    )
+                    const localNew = get().newProducts
+                    for (const p of localNew) {
+                        const pid = typeof p.id === 'string' ? Number(p.id) : p.id
+                        if (!existingIds.has(pid)) {
+                            await addProductToFirestore(p)
+                        }
+                    }
+                } catch {
+                }
             },
 
             fetchFromFirestore: async () => {
