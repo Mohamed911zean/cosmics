@@ -1,33 +1,49 @@
-import { ShoppingBag, CheckCircle, Clock, XCircle, Package } from "lucide-react"
+import { useEffect } from "react"
+import { ShoppingBag, CheckCircle, Clock, Package, Loader2 } from "lucide-react"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
-
-const kpis = [
-  { label: "Total Orders", value: "1,204", icon: ShoppingBag },
-  { label: "Delivered", value: "860", icon: CheckCircle },
-  { label: "Pending", value: "220", icon: Clock },
-  { label: "Returns", value: "24", icon: XCircle },
-]
-
-const orders = [
-  { id: "ORD-1024", customer: "David Stone", total: "$1,200", payment: "Paid", status: "Delivered" },
-  { id: "ORD-1025", customer: "Amit Verma", total: "$110", payment: "Due", status: "Pending" },
-  { id: "ORD-1026", customer: "Sara Wood", total: "$1,200", payment: "Paid", status: "Return" },
-  { id: "ORD-1027", customer: "Maya Lee", total: "$620", payment: "Due", status: "In Progress" },
-]
+import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 
 const statusStyles: Record<string, { bg: string; text: string; dot: string }> = {
   Delivered: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
-  Pending: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-500" },
-  Return: { bg: "bg-rose-50", text: "text-rose-700", dot: "bg-rose-500" },
-  "In Progress": { bg: "bg-sky-50", text: "text-sky-700", dot: "bg-sky-500" },
-}
-
-const paymentStyles: Record<string, string> = {
-  Paid: "text-emerald-600 font-semibold",
-  Due: "text-rose-600 font-semibold",
+  Shipped: { bg: "bg-sky-50", text: "text-sky-700", dot: "bg-sky-500" },
+  Processing: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-500" },
 }
 
 export default function Orders() {
+  const {
+    fetchAllOrdersForAdmin,
+    isLoadingAllOrders,
+    allOrders,
+    getAllOrdersByStatus,
+  } = useOrderStore()
+
+  useEffect(() => {
+    fetchAllOrdersForAdmin()
+  }, [fetchAllOrdersForAdmin])
+
+  const deliveredCount = getAllOrdersByStatus("Delivered").length
+  const shippedCount = getAllOrdersByStatus("Shipped").length
+  const processingCount = getAllOrdersByStatus("Processing").length
+  const totalOrders = allOrders.length
+
+  const kpis = [
+    { label: "Total Orders", value: totalOrders.toString(), icon: ShoppingBag },
+    { label: "Delivered", value: deliveredCount.toString(), icon: CheckCircle },
+    { label: "Shipped", value: shippedCount.toString(), icon: Package },
+    { label: "Processing", value: processingCount.toString(), icon: Clock },
+  ]
+
+  if (isLoadingAllOrders) {
+    return (
+      <div className="flex items-center justify-center min-h-[300px]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
+          <p className="text-gray-500 font-medium">Loading orders from all customers...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       <DashboardKpiCards items={kpis} />
@@ -51,13 +67,13 @@ export default function Orders() {
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Order ID</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Payment</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {orders.map((order) => {
-                const status = statusStyles[order.status] || statusStyles.Pending
+              {allOrders.map((order) => {
+                const status = statusStyles[order.status] || statusStyles.Processing
+                const customer = `${order.shippingDetails.firstName} ${order.shippingDetails.lastName}`
                 return (
                   <tr key={order.id} className="hover:bg-violet-50/30 transition-colors duration-200">
                     <td className="px-6 py-4">
@@ -65,13 +81,8 @@ export default function Orders() {
                         {order.id}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-gray-900">{order.customer}</td>
-                    <td className="px-6 py-4 font-bold text-gray-900">{order.total}</td>
-                    <td className="px-6 py-4">
-                      <span className={paymentStyles[order.payment] || "text-gray-600"}>
-                        {order.payment}
-                      </span>
-                    </td>
+                    <td className="px-6 py-4 font-semibold text-gray-900">{customer}</td>
+                    <td className="px-6 py-4 font-bold text-gray-900">${order.total.toFixed(2)}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${status.bg} ${status.text}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
