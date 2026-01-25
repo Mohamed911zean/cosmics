@@ -100,22 +100,17 @@ export const useProductStore = create<ProductState>()(
             setSelectedProduct: (product) =>
                 set({ selectedProduct: product }),
 
-            addProduct: (product) => {
-                const allProducts = get().getAllProducts()
-                const newId =
-                    allProducts.length > 0
-                        ? Math.max(...allProducts.map((p) => p.id)) + 1
-                        : 1
-
+            addProduct: async (product) => {
                 const newProduct: Product = {
                     ...product,
-                    id: newId,
+                    id: Date.now(),
                     sold: 0,
                 }
-
                 set((state) => ({
                     newProducts: [...state.newProducts, newProduct],
                 }))
+                const { addProductToFirestore } = await import('@/lib/db')
+                await addProductToFirestore(newProduct)
             },
 
             updateProduct: (id, updates) => {
@@ -167,9 +162,39 @@ export const useProductStore = create<ProductState>()(
                 return [...products, ...newProducts]
             },
 
-            setUser: () => { },
+            setUser: async () => {
+                const { subscribeToProducts } = await import('@/lib/db')
+                set({ isLoading: true })
+                const unsubscribe = subscribeToProducts((items) => {
+                    const mapped = items.map((p: any) => ({
+                        ...p,
+                        id: typeof p.id === 'string' ? Number(p.id) : p.id,
+                    }))
+                    if (mapped.length > 0) {
+                        set({
+                            products: mapped as Product[],
+                            isLoading: false,
+                        })
+                    } else {
+                        set({ isLoading: false })
+                    }
+                })
+                ;(window as any).__productsUnsub__ = unsubscribe
+            },
 
-            fetchFromFirestore: async () => { },
+            fetchFromFirestore: async () => {
+                const { getAllProductsFromFirestore } = await import('@/lib/db')
+                set({ isLoading: true })
+                const items = await getAllProductsFromFirestore()
+                const mapped = items.map((p: any) => ({
+                    ...p,
+                    id: typeof p.id === 'string' ? Number(p.id) : p.id,
+                }))
+                set({
+                    products: mapped as Product[],
+                    isLoading: false,
+                })
+            },
         }),
         {
             name: 'lumiere-products',

@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, onSnapshot, collection, getDocs, query, collectionGroup } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot, collection, getDocs, query, collectionGroup, addDoc } from 'firebase/firestore';
 import { db } from './firebase';
 
 export interface UserData {
@@ -119,4 +119,23 @@ export const getAllOrdersFromFirestore = async () => {
         console.error("Critical error fetching all orders:", error);
         return [];
     }
+};
+
+export const addProductToFirestore = async (product: any) => {
+    const ref = collection(db, 'products');
+    await addDoc(ref, product);
+};
+
+export const getAllProductsFromFirestore = async () => {
+    const ref = collection(db, 'products');
+    const snap = await getDocs(ref);
+    return snap.docs.map(d => ({ id: d.data().id ?? d.id, ...d.data() }));
+};
+
+export const subscribeToProducts = (callback: (products: any[]) => void) => {
+    const ref = collection(db, 'products');
+    return onSnapshot(ref, (snap) => {
+        const items = snap.docs.map(d => ({ id: d.data().id ?? d.id, ...d.data() }));
+        callback(items);
+    });
 };
