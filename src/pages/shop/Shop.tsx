@@ -7,7 +7,8 @@ import { useProductStore, useCartStore, useWishlistStore } from "@/stores"
 import { toast } from "sonner"
 
 export function Shop() {
-    const { products, categories } = useProductStore()
+    const { getAllProducts, categories } = useProductStore()
+    const products = getAllProducts()
     const addToCart = useCartStore((state) => state.addItem)
     const { toggleItem, isInWishlist } = useWishlistStore()
     const [searchParams, setSearchParams] = useSearchParams()
