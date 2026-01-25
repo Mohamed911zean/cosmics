@@ -25,6 +25,7 @@ export default function Orders() {
   const shippedCount = getAllOrdersByStatus("Shipped").length
   const processingCount = getAllOrdersByStatus("Processing").length
   const totalOrders = allOrders.length
+  const newestOrders = [...allOrders].sort((a, b) => b.date - a.date)
 
   const kpis = [
     { label: "Total Orders", value: totalOrders.toString(), icon: ShoppingBag },
@@ -64,21 +65,24 @@ export default function Orders() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Order ID</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Order</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {allOrders.map((order) => {
+              {newestOrders.map((order) => {
                 const status = statusStyles[order.status] || statusStyles.Processing
                 const customer = `${order.shippingDetails.firstName} ${order.shippingDetails.lastName}`
+                const count = order.items?.length || 0
+                const firstName = count > 0 ? order.items[0].name : "Untitled Order"
+                const orderName = count > 1 ? `${firstName} + ${count - 1} more` : firstName
                 return (
                   <tr key={order.id} className="hover:bg-violet-50/30 transition-colors duration-200">
                     <td className="px-6 py-4">
-                      <span className="font-mono font-semibold text-violet-700 bg-violet-50 px-2 py-1 rounded">
-                        {order.id}
+                      <span className="font-semibold text-gray-900">
+                        {orderName}
                       </span>
                     </td>
                     <td className="px-6 py-4 font-semibold text-gray-900">{customer}</td>
