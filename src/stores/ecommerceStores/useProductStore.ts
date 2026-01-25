@@ -106,9 +106,6 @@ export const useProductStore = create<ProductState>()(
                     id: Date.now(),
                     sold: 0,
                 }
-                set((state) => ({
-                    newProducts: [...state.newProducts, newProduct],
-                }))
                 const { addProductToFirestore } = await import('@/lib/db')
                 await addProductToFirestore(newProduct)
             },
@@ -159,7 +156,16 @@ export const useProductStore = create<ProductState>()(
 
             getAllProducts: () => {
                 const { products, newProducts } = get()
-                return [...products, ...newProducts]
+                const map = new Map<number, Product>()
+                for (const p of products) {
+                    map.set(p.id, p)
+                }
+                for (const p of newProducts) {
+                    if (!map.has(p.id)) {
+                        map.set(p.id, p)
+                    }
+                }
+                return Array.from(map.values())
             },
 
             setUser: async () => {
@@ -174,6 +180,7 @@ export const useProductStore = create<ProductState>()(
                         set({
                             products: mapped as Product[],
                             isLoading: false,
+                            newProducts: [],
                         })
                     } else {
                         set({ isLoading: false })
@@ -195,6 +202,7 @@ export const useProductStore = create<ProductState>()(
                             await addProductToFirestore(p)
                         }
                     }
+                    set({ newProducts: [] })
                 } catch {
                 }
             },

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { motion } from "framer-motion"
 import { Search, ShoppingCart, Heart } from "lucide-react"
 import { Link, useSearchParams } from "react-router-dom"
@@ -37,19 +37,19 @@ export function Shop() {
         setSearchParams(searchParams)
     }
 
-    // Filter products
-    const filteredProducts = products.filter((product) => {
-        const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.description?.toLowerCase().includes(searchQuery.toLowerCase())
-        const matchesCategory = selectedCategory === "All" || product.category === selectedCategory
-        const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1]
-
-        return matchesSearch && matchesCategory && matchesPrice
-    }).sort((a, b) => {
-        if (sortBy === "price-low") return a.price - b.price
-        if (sortBy === "price-high") return b.price - a.price
-        return 0 // featured/default
-    })
+    // Filter products (memoized for performance)
+    const filteredProducts = useMemo(() => {
+        const list = products.filter((product) => {
+            const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                product.description?.toLowerCase().includes(searchQuery.toLowerCase())
+            const matchesCategory = selectedCategory === "All" || product.category === selectedCategory
+            const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1]
+            return matchesSearch && matchesCategory && matchesPrice
+        })
+        if (sortBy === "price-low") return [...list].sort((a, b) => a.price - b.price)
+        if (sortBy === "price-high") return [...list].sort((a, b) => b.price - a.price)
+        return list
+    }, [products, searchQuery, selectedCategory, priceRange, sortBy])
 
     const handleAddToCart = (e: React.MouseEvent, product: any) => {
         e.preventDefault()
