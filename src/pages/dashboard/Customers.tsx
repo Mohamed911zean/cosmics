@@ -1,19 +1,7 @@
-import { Users, UserPlus, Globe, HeartHandshake, MapPin, Mail } from "lucide-react"
+import { useEffect, useMemo } from "react"
+import { Users, UserPlus, Globe, HeartHandshake, MapPin, Mail, Loader2 } from "lucide-react"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
-
-const kpis = [
-  { label: "Total Customers", value: "8,421", icon: Users },
-  { label: "New This Month", value: "312", icon: UserPlus },
-  { label: "Top Countries", value: "24", icon: Globe },
-  { label: "Loyal Customers", value: "1,204", icon: HeartHandshake },
-]
-
-const customers = [
-  { name: "David Stone", country: "Italy", email: "david@email.com", orders: 12, total: "$1,420" },
-  { name: "Amit Verma", country: "India", email: "amit@email.com", orders: 9, total: "$980" },
-  { name: "Sara Wood", country: "USA", email: "sara@email.com", orders: 14, total: "$1,880" },
-  { name: "Maya Lee", country: "Canada", email: "maya@email.com", orders: 6, total: "$420" },
-]
+import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 
 const avatarGradients = [
   "from-violet-500 to-purple-600",
@@ -23,6 +11,73 @@ const avatarGradients = [
 ]
 
 export default function Customers() {
+  const {
+    fetchAllOrdersForAdmin,
+    isLoadingAllOrders,
+    allOrders,
+    getAllOrdersTotalRevenue
+  } = useOrderStore()
+
+  useEffect(() => {
+    fetchAllOrdersForAdmin()
+  }, [fetchAllOrdersForAdmin])
+
+  const customers = useMemo(() => {
+    const map = new Map<string, {
+      name: string
+      email: string
+      address?: string
+      city?: string
+      postalCode?: string
+      orders: number
+      total: number
+    }>()
+
+    for (const order of allOrders) {
+      const s = order.shippingDetails
+      const email = s.email
+      const name = `${s.firstName} ${s.lastName}`
+      const existing = map.get(email)
+      if (existing) {
+        existing.orders += 1
+        existing.total += order.total
+        existing.address = s.address || existing.address
+        existing.city = s.city || existing.city
+        existing.postalCode = s.postalCode || existing.postalCode
+      } else {
+        map.set(email, {
+          name,
+          email,
+          address: s.address,
+          city: s.city,
+          postalCode: s.postalCode,
+          orders: 1,
+          total: order.total
+        })
+      }
+    }
+
+    return Array.from(map.values()).sort((a, b) => b.orders - a.orders)
+  }, [allOrders])
+
+  const kpis = [
+    { label: "Total Customers", value: customers.length.toString(), icon: Users },
+    { label: "Total Orders", value: allOrders.length.toString(), icon: UserPlus },
+    { label: "Total Revenue", value: `$${getAllOrdersTotalRevenue().toFixed(2)}`, icon: HeartHandshake },
+    { label: "Cities", value: new Set(customers.map(c => c.city || "")).size.toString(), icon: Globe },
+  ]
+
+  if (isLoadingAllOrders) {
+    return (
+      <div className="flex items-center justify-center min-h-[300px]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
+          <p className="text-gray-500 font-medium">Loading customers from orders...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       <DashboardKpiCards items={kpis} />
@@ -35,7 +90,7 @@ export default function Customers() {
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-900">Customers</h2>
-              <p className="text-xs text-gray-500">Recent customers and engagement</p>
+              <p className="text-xs text-gray-500">Details from checkout</p>
             </div>
           </div>
         </div>
@@ -43,10 +98,13 @@ export default function Customers() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Contact</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Address</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">City</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Postal Code</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Orders</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Spend</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Spent</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -59,10 +117,7 @@ export default function Customers() {
                       </div>
                       <div>
                         <div className="font-semibold text-gray-900">{customer.name}</div>
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <MapPin className="w-3 h-3" />
-                          {customer.country}
-                        </div>
+                        <div className="text-xs text-gray-500">Customer</div>
                       </div>
                     </div>
                   </td>
@@ -73,12 +128,24 @@ export default function Customers() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-700">{customer.address || "-"}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-gray-700">{customer.city || "-"}</span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-gray-700">{customer.postalCode || "-"}</span>
+                  </td>
+                  <td className="px-6 py-4">
                     <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-violet-100 text-violet-700">
                       {customer.orders} orders
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="font-bold text-gray-900">{customer.total}</span>
+                    <span className="font-bold text-gray-900">${customer.total.toFixed(2)}</span>
                   </td>
                 </tr>
               ))}
