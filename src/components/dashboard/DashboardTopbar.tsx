@@ -10,8 +10,8 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
   const { user } = useAuthStore()
 
   return (
-    <header className={`fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 transition-all duration-300 ${isSidebarOpen ? "lg:left-64 xl:left-72" : "lg:left-0"}`}>
-      <div className="flex items-center gap-4">
+    <header className={`fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-100 transition-all duration-300 ${isSidebarOpen ? "lg:left-64 xl:left-72 " : "lg:left-0 z-10"}`}>
+      <div className="flex items-center gap-4 ">
         <button
           type="button"
           onClick={onMenuClick}

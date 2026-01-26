@@ -13,6 +13,8 @@ type RecentOrdersProps = {
 
 const statusStyles: Record<string, { bg: string; text: string; dot: string }> = {
   Delivered: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
+  Shipped: { bg: "bg-sky-50", text: "text-sky-700", dot: "bg-sky-500" },
+  Processing: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-500" },
   Pending: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-500" },
   Return: { bg: "bg-rose-50", text: "text-rose-700", dot: "bg-rose-500" },
   "In Progress": { bg: "bg-sky-50", text: "text-sky-700", dot: "bg-sky-500" },

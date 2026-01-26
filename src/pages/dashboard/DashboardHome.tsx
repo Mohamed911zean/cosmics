@@ -1,38 +1,91 @@
-import { Eye, ShoppingCart, MessageCircle, DollarSign } from "lucide-react"
+import { useEffect, useMemo } from "react"
+import { Eye, ShoppingCart, MessageCircle, DollarSign, Loader2 } from "lucide-react"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { RecentOrders } from "@/components/dashboard/RecentOrders"
 import { RecentCustomers } from "@/components/dashboard/RecentCustomers"
-
-const kpis = [
-  { label: "Daily Views", value: "1,504", icon: Eye },
-  { label: "Sales", value: "80", icon: ShoppingCart },
-  { label: "Comments", value: "284", icon: MessageCircle },
-  { label: "Earnings", value: "$7,842", icon: DollarSign },
-]
-
-const orders = [
-  { name: "Star Refrigerator", price: "$1,200", payment: "Paid", status: "Delivered" },
-  { name: "Dell Laptop", price: "$110", payment: "Due", status: "Pending" },
-  { name: "Apple Watch", price: "$1,200", payment: "Paid", status: "Return" },
-  { name: "Adidas Shoes", price: "$620", payment: "Due", status: "In Progress" },
-]
-
-const customers = [
-  { name: "David", country: "Italy" },
-  { name: "Amit", country: "India" },
-  { name: "David", country: "Italy" },
-  { name: "Amit", country: "India" },
-  { name: "David", country: "Italy" },
-]
+import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
+import { useProductStore } from "@/stores"
 
 export default function DashboardHome() {
+  const {
+    fetchAllOrdersForAdmin,
+    isLoadingAllOrders,
+    allOrders,
+    getAllOrdersTotalRevenue
+  } = useOrderStore()
+  const { getAllProducts } = useProductStore()
+
+  useEffect(() => {
+    fetchAllOrdersForAdmin()
+  }, [fetchAllOrdersForAdmin])
+
+  const allProducts = getAllProducts()
+
+  const kpis = useMemo(() => {
+    const totalRevenue = getAllOrdersTotalRevenue()
+    const ordersCount = allOrders.length
+    const customersCount = new Set(allOrders.map(o => o.shippingDetails.email)).size
+    const productsCount = allProducts.length
+    return [
+      { label: "Total Revenue", value: `$${totalRevenue.toFixed(2)}`, icon: DollarSign },
+      { label: "Orders", value: ordersCount.toString(), icon: ShoppingCart },
+      { label: "Customers", value: customersCount.toString(), icon: MessageCircle },
+      { label: "Products", value: productsCount.toString(), icon: Eye },
+    ]
+  }, [allOrders, allProducts, getAllOrdersTotalRevenue])
+
+  const recentOrders = useMemo(() => {
+    const sorted = [...allOrders].sort((a, b) => b.date - a.date).slice(0, 6)
+    return sorted.map((order) => {
+      const name =
+        order.items.length === 1
+          ? String(order.items[0].name).split(" - ")[0]
+          : `${order.items.length} items`
+      const payment = order.status === "Processing" ? "Due" : "Paid"
+      return {
+        name,
+        price: `$${order.total.toFixed(2)}`,
+        payment,
+        status: order.status,
+      }
+    })
+  }, [allOrders])
+
+  const recentCustomers = useMemo(() => {
+    const map = new Map<string, { name: string; country: string; date: number }>()
+    for (const order of allOrders) {
+      const email = order.shippingDetails.email
+      const name = `${order.shippingDetails.firstName} ${order.shippingDetails.lastName}`
+      const country = order.shippingDetails.city || ""
+      const prev = map.get(email)
+      if (!prev || order.date > prev.date) {
+        map.set(email, { name, country, date: order.date })
+      }
+    }
+    return Array.from(map.values())
+      .sort((a, b) => b.date - a.date)
+      .slice(0, 6)
+      .map((c) => ({ name: c.name, country: c.country || "Unknown" }))
+  }, [allOrders])
+
+  if (isLoadingAllOrders) {
+    return (
+      <div className="flex items-center justify-center min-h-[300px]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
+          <p className="text-gray-500 font-medium">Loading dashboard data...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       <DashboardKpiCards items={kpis} />
 
       <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-8">
-        <RecentOrders orders={orders} />
-        <RecentCustomers customers={customers} />
+        <RecentOrders orders={recentOrders} />
+        <RecentCustomers customers={recentCustomers} />
       </div>
     </div>
   )
