@@ -32,6 +32,7 @@ export default function Customers() {
       postalCode?: string
       orders: number
       total: number
+      latestDate: number
     }>()
 
     for (const order of allOrders) {
@@ -42,10 +43,14 @@ export default function Customers() {
       if (existing) {
         existing.orders += 1
         existing.total += order.total
-        existing.phone = s.phone || existing.phone
-        existing.address = s.address || existing.address
-        existing.city = s.city || existing.city
-        existing.postalCode = s.postalCode || existing.postalCode
+        if (order.date > existing.latestDate) {
+          existing.name = name
+          existing.phone = s.phone
+          existing.address = s.address
+          existing.city = s.city
+          existing.postalCode = s.postalCode
+          existing.latestDate = order.date
+        }
       } else {
         map.set(email, {
           name,
@@ -55,7 +60,8 @@ export default function Customers() {
           city: s.city,
           postalCode: s.postalCode,
           orders: 1,
-          total: order.total
+          total: order.total,
+          latestDate: order.date
         })
       }
     }
