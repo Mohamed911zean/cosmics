@@ -18,8 +18,27 @@ export function Checkout() {
 
     const { addOrder } = useOrderStore()
     const { user } = useAuthStore()
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [email, setEmail] = useState(user?.email || "")
+    const [address, setAddress] = useState("")
+    const [city, setCity] = useState("")
+    const [postalCode, setPostalCode] = useState("")
 
     const handlePlaceOrder = async () => {
+        const missing =
+            !firstName.trim() ||
+            !lastName.trim() ||
+            !email.trim() ||
+            !address.trim() ||
+            !city.trim() ||
+            !postalCode.trim()
+
+        if (missing) {
+            toast.error("Please fill all shipping details")
+            return
+        }
+
         setIsProcessing(true)
 
         // Simulate processing
@@ -32,12 +51,12 @@ export function Checkout() {
             total: total,
             status: 'Processing',
             shippingDetails: {
-                firstName: "Guest", // In a real app, these would come from the form
-                lastName: "User",
-                email: user?.email || "Guest",
-                address: "123 Fashion St",
-                city: "New York",
-                postalCode: "10001"
+                firstName,
+                lastName,
+                email,
+                address,
+                city,
+                postalCode
             }
         }
 
@@ -116,32 +135,68 @@ export function Checkout() {
                                 <div className="grid grid-cols-2 gap-4 sm:gap-6">
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">First Name</label>
-                                        <input type="text" className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light" />
+                                        <input
+                                            type="text"
+                                            required
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                            className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light"
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Last Name</label>
-                                        <input type="text" className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light" />
+                                        <input
+                                            type="text"
+                                            required
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                            className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light"
+                                        />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Email Address</label>
-                                    <input type="email" className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light" />
+                                    <input
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light"
+                                    />
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Address</label>
-                                    <input type="text" className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light" />
+                                    <input
+                                        type="text"
+                                        required
+                                        value={address}
+                                        onChange={(e) => setAddress(e.target.value)}
+                                        className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light"
+                                    />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 sm:gap-6">
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">City</label>
-                                        <input type="text" className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light" />
+                                        <input
+                                            type="text"
+                                            required
+                                            value={city}
+                                            onChange={(e) => setCity(e.target.value)}
+                                            className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light"
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Postal Code</label>
-                                        <input type="text" className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light" />
+                                        <input
+                                            type="text"
+                                            required
+                                            value={postalCode}
+                                            onChange={(e) => setPostalCode(e.target.value)}
+                                            className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light"
+                                        />
                                     </div>
                                 </div>
                             </div>

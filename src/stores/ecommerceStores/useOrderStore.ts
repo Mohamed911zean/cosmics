@@ -248,7 +248,7 @@ export const useOrderStore = create<OrderState>()(
             },
         }),
         {
-            name: 'lumiere-orders',
+            name: 'majestics-orders',
             partialize: (state) => ({
                 orders: state.orders,
             }),
