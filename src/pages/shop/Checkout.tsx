@@ -41,6 +41,11 @@ export function Checkout() {
             return
         }
 
+        if (phone.trim().length !== 11) {
+            toast.error("Phone number must be exactly 11 characters")
+            return
+        }
+
         setIsProcessing(true)
 
         // Simulate processing
