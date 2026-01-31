@@ -24,12 +24,14 @@ export function Checkout() {
     const [address, setAddress] = useState("")
     const [city, setCity] = useState("")
     const [postalCode, setPostalCode] = useState("")
+    const [phone, setPhone] = useState("")
 
     const handlePlaceOrder = async () => {
         const missing =
             !firstName.trim() ||
             !lastName.trim() ||
             !email.trim() ||
+            !phone.trim() ||
             !address.trim() ||
             !city.trim() ||
             !postalCode.trim()
@@ -54,6 +56,7 @@ export function Checkout() {
                 firstName,
                 lastName,
                 email,
+                phone,
                 address,
                 city,
                 postalCode
@@ -162,6 +165,16 @@ export function Checkout() {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
+                                        className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Phone Number</label>
+                                    <input
+                                        type="tel"
+                                        required
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value)}
                                         className="w-full h-14 px-4 bg-secondary/30 rounded-none border border-border/50 focus:border-accent outline-none transition-all font-light"
                                     />
                                 </div>

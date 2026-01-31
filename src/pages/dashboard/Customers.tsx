@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { Users, UserPlus, Globe, HeartHandshake, MapPin, Mail, Loader2 } from "lucide-react"
+import { Users, UserPlus, Globe, HeartHandshake, MapPin, Mail, Loader2, Phone } from "lucide-react"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 
@@ -26,6 +26,7 @@ export default function Customers() {
     const map = new Map<string, {
       name: string
       email: string
+      phone?: string
       address?: string
       city?: string
       postalCode?: string
@@ -41,6 +42,7 @@ export default function Customers() {
       if (existing) {
         existing.orders += 1
         existing.total += order.total
+        existing.phone = s.phone || existing.phone
         existing.address = s.address || existing.address
         existing.city = s.city || existing.city
         existing.postalCode = s.postalCode || existing.postalCode
@@ -48,6 +50,7 @@ export default function Customers() {
         map.set(email, {
           name,
           email,
+          phone: s.phone,
           address: s.address,
           city: s.city,
           postalCode: s.postalCode,
@@ -100,6 +103,7 @@ export default function Customers() {
               <tr className="bg-gray-50/50">
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Address</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">City</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Postal Code</th>
@@ -125,6 +129,12 @@ export default function Customers() {
                     <div className="flex items-center gap-1.5 text-gray-600">
                       <Mail className="w-3.5 h-3.5 text-gray-400" />
                       {customer.email}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-1.5 text-gray-600">
+                      <Phone className="w-3.5 h-3.5 text-gray-400" />
+                      {customer.phone || "-"}
                     </div>
                   </td>
                   <td className="px-6 py-4">
