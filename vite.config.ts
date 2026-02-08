@@ -12,7 +12,6 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
 
-      // كل الملفات المهمة للأيقونات والفافيكون
       includeAssets: [
         "favicon.ico",
         "favicon-16x16.png",
@@ -22,8 +21,8 @@ export default defineConfig({
       ],
 
       manifest: {
-        name: "My E-Commerce",
-        short_name: "Shop",
+        name: "majestics",
+        short_name: "majestics",
         description: "Modern React E-Commerce PWA",
         theme_color: "#111827",
         background_color: "#ffffff",
@@ -35,12 +34,14 @@ export default defineConfig({
           {
             src: "/android-chrome-192x192.png",
             sizes: "192x192",
-            type: "image/png"
+            type: "image/png",
+            purpose: "any maskable"
           },
           {
             src: "/android-chrome-512x512.png",
             sizes: "512x512",
-            type: "image/png"
+            type: "image/png",
+            purpose: "any maskable"
           },
           {
             src: "/apple-touch-icon.png",
