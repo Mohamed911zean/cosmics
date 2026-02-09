@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuthStore, useCartStore, useOrderStore } from "@/stores"
+import { addDoc, collection } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
 export function Checkout() {
     const navigate = useNavigate()
@@ -66,6 +68,18 @@ export function Checkout() {
                 city,
                 postalCode
             }
+        }
+
+        try {
+            // Write to global 'orders' collection for Admin Dashboard Real-time Alerts
+            // Note: We use the same ID logic, or let Firestore generate one. 
+            // Here we just dump the object. Ideally, we should use setDoc with newOrder.id if we want consistent IDs.
+            // But since 'addOrder' below uses this ID for local state, and 'db.ts' reads from 'users' collection mainly,
+            // we will write to 'orders' just for the admin listener and potential future migration.
+            await addDoc(collection(db, "orders"), newOrder)
+        } catch (error) {
+            console.error("Error writing to global orders:", error)
+            // We don't block the UI flow if this fails, as the main flow is via StoreSynchronizer -> users/{uid}
         }
 
         addOrder(newOrder)
