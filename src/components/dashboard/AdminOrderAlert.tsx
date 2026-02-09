@@ -3,23 +3,25 @@ import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { BellRing } from 'lucide-react';
 
-function playBeep() {
+// External chime URL (replaceable). Short professional chime.
+const CHIME_URL = 'https://assets.mixkit.co/sfx/preview/mixkit-small-bell-ring-605.mp3';
+
+function fallbackBeep() {
     try {
         const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
         const o = ctx.createOscillator();
         const g = ctx.createGain();
         o.type = 'sine';
         o.frequency.value = 880;
-        g.gain.value = 0.05;
+        g.gain.value = 0.03;
         o.connect(g);
         g.connect(ctx.destination);
         o.start();
         setTimeout(() => {
             o.stop();
             ctx.close();
-        }, 250);
+        }, 200);
     } catch (e) {
         console.log('Audio API not available', e);
     }
@@ -51,6 +53,7 @@ export function AdminOrderAlert() {
     const { role } = useAuthStore();
     const processed = useRef(new Set<string>());
     const initialized = useRef(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
         if (role !== 'admin' && role !== 'superadmin') return;
@@ -73,8 +76,17 @@ export function AdminOrderAlert() {
 
                     const data = change.doc.data();
 
-                    // Play a short beep
-                    playBeep();
+                    // Play a short professional chime (external) with fallback
+                    try {
+                        if (!audioRef.current) {
+                            audioRef.current = new Audio(CHIME_URL);
+                            audioRef.current.preload = 'auto';
+                            audioRef.current.volume = 0.5;
+                        }
+                        audioRef.current.play().catch(() => fallbackBeep());
+                    } catch (e) {
+                        fallbackBeep();
+                    }
 
                     // Build a short summary
                     const summary = formatOrderSummary(data) || `Order #${id}`;
