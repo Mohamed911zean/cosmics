@@ -96,24 +96,6 @@ export function AdminOrderAlert() {
                     // Build a short summary
                     const summary = formatOrderSummary(data) || `Order #${id}`;
 
-                    // Show system notification (OS level)
-                    if ('Notification' in window && Notification.permission === 'granted') {
-                        try {
-                            const notif = new Notification('New Order Received!', {
-                                body: summary,
-                                icon: '/android-chrome-192x192.png',
-                                tag: id, // Prevent duplicates
-                                vibrate: [200, 100, 200]
-                            });
-                            notif.onclick = () => {
-                                window.focus();
-                                window.location.href = `/dashboard/orders/${id}`;
-                            };
-                        } catch (e) {
-                            console.error('System notification failed', e);
-                        }
-                    }
-
                     // Show toast with action
                     toast.success('New order received', {
                         description: summary,
@@ -131,6 +113,7 @@ export function AdminOrderAlert() {
                                 icon: '/android-chrome-192x192.png',
                                 tag: `order-${id}`,
                                 renotify: true,
+                                vibrate: [200, 100, 200],
                             } as NotificationOptions);
                             n.onclick = () => {
                                 window.focus();
