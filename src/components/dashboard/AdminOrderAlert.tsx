@@ -108,7 +108,7 @@ export function AdminOrderAlert() {
                                 icon: '/android-chrome-192x192.png',
                                 tag: `order-${id}`,
                                 renotify: true,
-                            });
+                            } as NotificationOptions);
                             n.onclick = () => {
                                 window.focus();
                                 window.location.href = `/dashboard/orders/${id}`;
