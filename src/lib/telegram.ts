@@ -1,81 +1,141 @@
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "./firebase";
+
 // Telegram Notification Utility
 
-// You must add this to your .env file:
-// VITE_TELEGRAM_BOT_TOKEN=your_bot_token_here
+// HARDCODED FALLBACKS (To ensure it works immediately without server restart)
+const FALLBACK_BOT_TOKEN = "8470446860:AAEeM1nbRlLoMvgAkv1tbWti5x5_pxyeUPA";
+const FALLBACK_CHAT_ID = "5931162186";
 
-const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID; // User's Chat ID
+const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN || FALLBACK_BOT_TOKEN;
+
+// Order of priority:
+// 1. Environment Variable
+// 2. Firestore Global Settings
+// 3. LocalStorage (Testing)
+export const getStoredChatId = async () => {
+    // 1. Check Env
+    if (import.meta.env.VITE_TELEGRAM_CHAT_ID) {
+        return import.meta.env.VITE_TELEGRAM_CHAT_ID;
+    }
+
+    // 2. Check Firestore
+    try {
+        const docRef = doc(db, "settings", "telegram");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().chatId) {
+            return docSnap.data().chatId;
+        }
+    } catch (e) {
+        console.log("Error fetching chat ID from Firestore", e);
+    }
+
+    // 3. Check LocalStorage
+    return localStorage.getItem('telegram_chat_id') || "";
+};
+
+export const setStoredChatId = async (id: string) => {
+    localStorage.setItem('telegram_chat_id', id);
+    try {
+        await setDoc(doc(db, "settings", "telegram"), { chatId: id }, { merge: true });
+    } catch (e) {
+        console.error("Failed to save Chat ID to Firestore", e);
+    }
+};
+
+export const checkBotUpdates = async () => {
+    if (!TELEGRAM_BOT_TOKEN) throw new Error("Bot Token is missing");
+    
+    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates`;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (!data.ok) {
+        throw new Error(data.description || "Failed to fetch updates");
+    }
+    
+    return data.result;
+};
 
 export const sendTelegramOrderNotification = async (order: any) => {
+    const chatId = await getStoredChatId();
+    
     if (!TELEGRAM_BOT_TOKEN) {
         console.warn("Telegram Bot Token not found. Skipping notification.");
         return;
     }
+    
+    if (!chatId) {
+        console.warn("Telegram Chat ID not found. Skipping notification.");
+        return;
+    }
 
     const { shippingDetails, items, total, id } = order;
+
+    console.log("Sending Telegram notification for order:", id, "to ChatID:", chatId);
     
-    // Calculate subtotal and tax if not provided directly
-    // Assuming tax is 14% based on typical context or calculate from total
-    // We will iterate items for subtotal
+    // Calculate subtotal
     const subtotal = items.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0);
-    // If total includes tax, we can infer tax, or if we have it explicitly passed.
-    // For now, let's display what we have.
     const tax = total - subtotal;
 
     // Format Items List
     const itemsList = items.map((item: any, index: number) => {
-        return `${index + 1}. <b>${item.name}</b>\n   Qty: ${item.quantity || 1} x $${item.price.toFixed(2)}`;
+        return `${index + 1}. <b>${item.name}</b>\n   الكمية: ${item.quantity || 1} x ${item.price.toFixed(2)} ج.م`;
     }).join('\n');
 
     // Construct Message (HTML format)
     const message = `
-🚨 <b>NEW ORDER RECEIVED!</b> 🚨
-🆔 <b>Order ID:</b> <code>${id}</code>
+🛒 <b>طلب جديد!</b>
 
-👤 <b>CUSTOMER DETAILS</b>
+🆔 <b>رقم الطلب:</b> <code>${id}</code>
+
+👤 <b>بيانات العميل</b>
 ━━━━━━━━━━━━━━━━
-<b>📞 PHONE: ${shippingDetails.phone}</b>  <-- IMPORTANT
-<b>👤 Name:</b> ${shippingDetails.firstName} ${shippingDetails.lastName}
-<b>📧 Email:</b> ${shippingDetails.email}
-<b>📍 Address:</b> ${shippingDetails.address}
-<b>🏙️ City:</b> ${shippingDetails.city}
+<b>📞 الموبايل: ${shippingDetails.phone}</b>
+<b>👤 الاسم:</b> ${shippingDetails.firstName} ${shippingDetails.lastName}
+<b>📧 الإيميل:</b> ${shippingDetails.email}
+<b>📍 العنوان:</b> ${shippingDetails.address}
+<b>🏙️ المدينة:</b> ${shippingDetails.city}
 
-🛒 <b>ORDER SUMMARY</b>
+🛍️ <b>المنتجات</b>
 ━━━━━━━━━━━━━━━━
 ${itemsList}
 
-💰 <b>PAYMENT DETAILS</b>
+💰 <b>التفاصيل المالية</b>
 ━━━━━━━━━━━━━━━━
-<b>💵 Subtotal:</b> $${subtotal.toFixed(2)}
-<b>💸 Tax (Est.):</b> $${tax.toFixed(2)}
-<b>💳 TOTAL: $${total.toFixed(2)}</b>
+<b>💵 المجموع الفرعي:</b> ${subtotal.toFixed(2)} ج.م
+<b>💸 الضريبة:</b> ${tax.toFixed(2)} ج.م
+<b>💳 الإجمالي: ${total.toFixed(2)} ج.م</b>
 
-<i>Please check the dashboard for more details.</i>
+<i>افتح الداشبورد لمزيد من التفاصيل</i>
     `.trim();
 
     try {
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         
-        // We use URLSearchParams to encode the data for a simple POST request
-        // Using 'no-cors' mode allows us to send data from the browser without CORS errors,
-        // but we won't get a response (opaque). This is fine for notifications.
-        const params = new URLSearchParams();
-        params.append('chat_id', TELEGRAM_CHAT_ID);
-        params.append('text', message);
-        params.append('parse_mode', 'HTML');
-
-        // Note: fetch with no-cors and POST requires application/x-www-form-urlencoded
-        await fetch(url, {
+        const response = await fetch(url, {
             method: 'POST',
-            mode: 'no-cors',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/json'
             },
-            body: params
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message,
+                parse_mode: 'HTML'
+            })
         });
 
-        console.log("Telegram notification sent!");
+        const data = await response.json();
+        
+        if (!data.ok) {
+            throw new Error(data.description || "Failed to send Telegram message");
+        }
+
+        console.log("✅ Telegram notification sent successfully!");
+        return data;
+        
     } catch (error) {
-        console.error("Failed to send Telegram notification:", error);
+        console.error("❌ Failed to send Telegram notification:", error);
+        throw error;
     }
 };

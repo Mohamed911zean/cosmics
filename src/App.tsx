@@ -37,6 +37,7 @@ import { FAQ } from "@/pages/legal/FAQ"
 // Dashboard
 import DashHome from "@/pages/dashboard/DashboardHome"
 import DashboardOrders from "@/pages/dashboard/Orders"
+import OrderDetails from "@/pages/dashboard/OrderDetails"
 import DashboardCustomers from "@/pages/dashboard/Customers"
 import AllProducts from "@/pages/dashboard/Products"
 import DashboardAccount from "@/pages/dashboard/Account"
@@ -94,6 +95,7 @@ export default function App() {
               <Route index element={<Navigate to="dashHome" replace />} />
               <Route path="dashHome" element={<DashHome />} />
               <Route path="orders" element={<DashboardOrders />} />
+              <Route path="orders/:id" element={<OrderDetails />} />
               <Route path="customers" element={<DashboardCustomers />} />
               <Route path="products" element={<AllProducts />} />
               <Route path="products/add" element={<AddProduct />} />

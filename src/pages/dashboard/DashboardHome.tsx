@@ -43,6 +43,7 @@ export default function DashboardHome() {
           : `${order.items.length} items`
       const payment = order.status === "Processing" ? "Due" : "Paid"
       return {
+        id: order.id,
         name,
         price: `$${order.total.toFixed(2)}`,
         payment,

@@ -1,6 +1,8 @@
 import { Package } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 type Order = {
+  id: string
   name: string
   price: string
   payment: string
@@ -26,6 +28,7 @@ const paymentStyles: Record<string, string> = {
 }
 
 export function RecentOrders({ orders }: RecentOrdersProps) {
+  const navigate = useNavigate()
   return (
     <section className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
       <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50/80 to-white">
@@ -53,7 +56,11 @@ export function RecentOrders({ orders }: RecentOrdersProps) {
             {orders.map((order, index) => {
               const status = statusStyles[order.status] || statusStyles.Pending
               return (
-                <tr key={`${order.name}-${index}`} className="hover:bg-violet-50/30 transition-colors duration-200">
+                <tr 
+                  key={`${order.name}-${index}`} 
+                  onClick={() => navigate(`/dashboard/orders/${order.id}`)}
+                  className="hover:bg-violet-50/30 transition-colors duration-200 cursor-pointer"
+                >
                   <td className="px-6 py-4">
                     <span className="font-semibold text-gray-900">{order.name}</span>
                   </td>

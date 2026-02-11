@@ -1,5 +1,6 @@
 import { Mail, Shield, MapPin, Phone, Calendar, Briefcase } from "lucide-react"
 import { useAuthStore } from "@/stores/useAuthStore"
+import { TelegramSetup } from "@/components/dashboard/TelegramSetup"
 
 export default function Account() {
   const { user } = useAuthStore()
@@ -28,6 +29,11 @@ export default function Account() {
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Telegram Setup */}
+        <div className="lg:col-span-2">
+            <TelegramSetup />
+        </div>
+
         {/* Contact Details */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50/80 to-white">

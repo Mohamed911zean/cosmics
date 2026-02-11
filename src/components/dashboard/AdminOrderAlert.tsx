@@ -3,6 +3,7 @@ import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useNotificationStore } from '@/stores/useNotificationStore';
 
 // External chime URL (replaceable). Short professional chime.
 const CHIME_URL = 'https://assets.mixkit.co/sfx/preview/mixkit-small-bell-ring-605.mp3';
@@ -51,6 +52,7 @@ function formatOrderSummary(data: any) {
 
 export function AdminOrderAlert() {
     const { role } = useAuthStore();
+    const { addNotification } = useNotificationStore();
     const processed = useRef(new Set<string>());
     const initialized = useRef(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -95,6 +97,15 @@ export function AdminOrderAlert() {
 
                     // Build a short summary
                     const summary = formatOrderSummary(data) || `Order #${id}`;
+
+                    // Add to notification store
+                    addNotification({
+                        id: id,
+                        title: 'New Order Received',
+                        message: summary,
+                        type: 'order',
+                        link: `/dashboard/orders/${id}`
+                    });
 
                     // Show toast with action
                     toast.success('New order received', {

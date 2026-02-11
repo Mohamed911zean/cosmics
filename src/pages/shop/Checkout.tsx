@@ -80,9 +80,9 @@ export function Checkout() {
             await addDoc(collection(db, "orders"), newOrder)
             
             // Send Telegram Notification
-            sendTelegramOrderNotification(newOrder);
+            await sendTelegramOrderNotification(newOrder);
         } catch (error) {
-            console.error("Error writing to global orders:", error)
+            console.error("Error writing to global orders or sending notification:", error)
             // We don't block the UI flow if this fails, as the main flow is via StoreSynchronizer -> users/{uid}
         }
 

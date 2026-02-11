@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { ShoppingBag, CheckCircle, Clock, Package, Loader2 } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 
@@ -10,6 +11,7 @@ const statusStyles: Record<string, { bg: string; text: string; dot: string }> = 
 }
 
 export default function Orders() {
+  const navigate = useNavigate()
   const {
     fetchAllOrdersForAdmin,
     isLoadingAllOrders,
@@ -79,7 +81,11 @@ export default function Orders() {
                 const firstName = count > 0 ? order.items[0].name : "Untitled Order"
                 const orderName = count > 1 ? `${firstName} + ${count - 1} more` : firstName
                 return (
-                  <tr key={order.id} className="hover:bg-violet-50/30 transition-colors duration-200">
+                  <tr 
+                    key={order.id} 
+                    onClick={() => navigate(`/dashboard/orders/${order.id}`)}
+                    className="hover:bg-violet-50/30 transition-colors duration-200 cursor-pointer"
+                  >
                     <td className="px-6 py-4">
                       <span className="font-semibold text-gray-900">
                         {orderName}
