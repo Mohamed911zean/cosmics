@@ -1,29 +1,21 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Send, RefreshCw,  AlertCircle } from "lucide-react";
-import { checkBotUpdates, getStoredChatId, setStoredChatId, sendTelegramOrderNotification } from "@/lib/telegram";
+import { Send, RefreshCw, AlertCircle, CheckCircle2, UserPlus } from "lucide-react";
+import { checkBotUpdates, getSecondaryChatId, setSecondaryChatId, sendTelegramOrderNotification } from "@/lib/telegram";
 
 export function TelegramSetup() {
-    const [chatId, setChatId] = useState("");
+    const [secondaryChatId, setSecondaryChatIdState] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [updates, setUpdates] = useState<any[]>([]);
     
     useEffect(() => {
         const init = async () => {
-            const id = await getStoredChatId();
-            setChatId(id);
+            const id = await getSecondaryChatId();
+            setSecondaryChatIdState(id);
         }
         init();
     }, []);
-
-    const handleSave = async () => {
-        setIsLoading(true);
-        await setStoredChatId(chatId);
-        setIsLoading(false);
-        toast.success("Chat ID saved to Database & LocalStorage!");
-    };
 
     const handleCheckUpdates = async () => {
         setIsLoading(true);
@@ -43,29 +35,34 @@ export function TelegramSetup() {
         }
     };
 
-    const handleSelectChat = (id: string, name: string) => {
-        setChatId(id);
-        toast.success(`Selected chat for ${name}`);
+    const handleSelectChat = async (id: string, name: string) => {
+        setSecondaryChatIdState(id);
+        await setSecondaryChatId(id);
+        toast.success(`Added ${name} as secondary recipient!`);
+    };
+
+    const handleRemoveSecondary = async () => {
+        setSecondaryChatIdState("");
+        await setSecondaryChatId("");
+        toast.success("Secondary recipient removed");
     };
 
     const handleTest = async () => {
-        if (!chatId) return toast.error("Please set a Chat ID first");
-        
         toast.promise(
             sendTelegramOrderNotification({
-                id: "TEST-123",
-                total: 99.99,
+                id: "TEST-" + Math.random().toString(36).substr(2, 5).toUpperCase(),
+                total: 220.00,
                 shippingDetails: {
-                    phone: "+1234567890",
-                    firstName: "Test",
-                    lastName: "User",
+                    phone: "+201234567890",
+                    firstName: "محمد",
+                    lastName: "زين",
                     email: "test@example.com",
-                    address: "123 Test St",
-                    city: "Test City",
+                    address: "شارع السلام",
+                    city: "المنصورة",
                     postalCode: "12345"
                 },
                 items: [
-                    { name: "Test Product", price: 99.99, quantity: 1 }
+                    { name: "Test Product", price: 200.00, quantity: 1 }
                 ]
             }),
             {
@@ -84,30 +81,61 @@ export function TelegramSetup() {
                 </div>
                 <div>
                     <h2 className="text-lg font-bold text-gray-900">Telegram Notifications</h2>
-                    <p className="text-sm text-gray-500">Receive order alerts directly on your phone</p>
+                    <p className="text-sm text-gray-500">Manage order alert recipients</p>
                 </div>
             </div>
 
             <div className="space-y-4">
-                <div className="flex gap-2">
-                    <Input 
-                        placeholder="Chat ID (e.g. 123456789)" 
-                        value={chatId} 
-                        onChange={(e) => setChatId(e.target.value)}
-                    />
-                    <Button onClick={handleSave}>Save</Button>
+                {/* Primary Recipient (انت) */}
+                <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                            <div>
+                                <p className="text-sm font-semibold text-emerald-900">Primary Recipient (You)</p>
+                                <p className="text-xs text-emerald-700">Chat ID: 5931162186</p>
+                            </div>
+                        </div>
+                        <span className="px-3 py-1 bg-emerald-600 text-white text-xs font-bold rounded-full">ACTIVE</span>
+                    </div>
+                    <p className="text-xs text-emerald-600 mt-2">✓ All orders will be sent to this account automatically</p>
+                </div>
+
+                {/* Secondary Recipient (صاحبك) */}
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div className="flex items-center gap-3 mb-3">
+                        <UserPlus className="w-5 h-5 text-gray-600" />
+                        <div>
+                            <p className="text-sm font-semibold text-gray-900">Secondary Recipient (Optional)</p>
+                            <p className="text-xs text-gray-600">Add another person to receive notifications</p>
+                        </div>
+                    </div>
+
+                    {secondaryChatId ? (
+                        <div className="flex items-center justify-between bg-white p-3 rounded border border-gray-200">
+                            <div>
+                                <p className="text-xs text-gray-500">Chat ID:</p>
+                                <p className="text-sm font-semibold text-gray-900">{secondaryChatId}</p>
+                            </div>
+                            <Button size="sm" variant="destructive" onClick={handleRemoveSecondary}>
+                                Remove
+                            </Button>
+                        </div>
+                    ) : (
+                        <p className="text-xs text-gray-500 italic">No secondary recipient added</p>
+                    )}
                 </div>
 
                 <div className="bg-gray-50 p-4 rounded-lg text-sm space-y-2">
                     <h3 className="font-semibold flex items-center gap-2">
                         <AlertCircle className="w-4 h-4" />
-                        How to get your Chat ID:
+                        How to add a secondary recipient:
                     </h3>
                     <ol className="list-decimal list-inside space-y-1 text-gray-600">
-                        <li>Open your bot in Telegram</li>
-                        <li>Send the message <code>/start</code> or any text</li>
+                        <li>Ask them to open your bot in Telegram</li>
+                        <li>They send <code>/start</code> to the bot</li>
                         <li>Click "Find Recent Chats" below</li>
-                        <li>Select your name from the list</li>
+                        <li>Select their name from the list</li>
                     </ol>
                 </div>
 
@@ -116,7 +144,7 @@ export function TelegramSetup() {
                         {isLoading ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <RefreshCw className="w-4 h-4 mr-2" />}
                         Find Recent Chats
                     </Button>
-                    <Button variant="secondary" onClick={handleTest} disabled={!chatId}>
+                    <Button variant="secondary" onClick={handleTest}>
                         Send Test Message
                     </Button>
                 </div>
@@ -125,20 +153,35 @@ export function TelegramSetup() {
                     <div className="border rounded-lg overflow-hidden">
                         <div className="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 uppercase">Recent Messages</div>
                         <div className="divide-y">
-                            {updates.map((update: any) => (
-                                <div key={update.update_id} className="p-3 flex items-center justify-between hover:bg-gray-50">
-                                    <div>
-                                        <div className="font-medium">
-                                            {update.message?.from?.first_name} {update.message?.from?.last_name} 
-                                            <span className="text-gray-400 text-xs ml-2">@{update.message?.from?.username}</span>
+                            {updates.map((update: any) => {
+                                const chatId = String(update.message?.chat?.id);
+                                const isSelected = chatId === secondaryChatId;
+                                const isPrimary = chatId === "5931162186";
+                                
+                                return (
+                                    <div key={update.update_id} className="p-3 flex items-center justify-between hover:bg-gray-50">
+                                        <div>
+                                            <div className="font-medium flex items-center gap-2">
+                                                {update.message?.from?.first_name} {update.message?.from?.last_name}
+                                                {isPrimary && <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">YOU</span>}
+                                                {isSelected && <span className="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded">SELECTED</span>}
+                                                <span className="text-gray-400 text-xs">@{update.message?.from?.username}</span>
+                                            </div>
+                                            <div className="text-xs text-gray-500">ID: {chatId} • "{update.message?.text}"</div>
                                         </div>
-                                        <div className="text-xs text-gray-500">ID: {update.message?.chat?.id} • "{update.message?.text}"</div>
+                                        {!isPrimary && (
+                                            <Button 
+                                                size="sm" 
+                                                variant={isSelected ? "default" : "ghost"}
+                                                onClick={() => handleSelectChat(chatId, update.message?.from?.first_name)}
+                                            >
+                                                {isSelected ? <CheckCircle2 className="w-4 h-4 mr-1" /> : null}
+                                                {isSelected ? "Selected" : "Select"}
+                                            </Button>
+                                        )}
                                     </div>
-                                    <Button size="sm" variant="ghost" onClick={() => handleSelectChat(update.message?.chat?.id, update.message?.from?.first_name)}>
-                                        Select
-                                    </Button>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 )}
