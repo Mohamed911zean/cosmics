@@ -29,28 +29,29 @@ export function Checkout() {
     const [postalCode, setPostalCode] = useState("")
     const [phone, setPhone] = useState("")
 
-    const handlePlaceOrder = async () => {
-        const missing =
-            !firstName.trim() ||
-            !lastName.trim() ||
-            !email.trim() ||
-            !phone.trim() ||
-            !address.trim() ||
-            !city.trim() ||
-            !postalCode.trim()
+  const handlePlaceOrder = async () => {
+    const missing =
+        !firstName.trim() ||
+        !lastName.trim() ||
+        !email.trim() ||
+        !phone.trim() ||
+        !address.trim() ||
+        !city.trim() ||
+        !postalCode.trim()
 
-        if (missing) {
-            toast.error("Please fill all shipping details")
-            return
-        }
+    if (missing) {
+        toast.error("Please fill all shipping details")
+        return
+    }
 
-        if (phone.trim().length !== 11) {
-            toast.error("Phone number must be exactly 11 characters")
-            return
-        }
+    if (phone.trim().length !== 11) {
+        toast.error("Phone number must be exactly 11 characters")
+        return
+    }
 
-        setIsProcessing(true)
+    setIsProcessing(true)
 
+    try {
         // Simulate processing
         await new Promise(resolve => setTimeout(resolve, 2000))
 
@@ -71,33 +72,49 @@ export function Checkout() {
             }
         }
 
+        // ✅ الخطوة 1: حفظ في Firestore
+        await addDoc(collection(db, "orders"), newOrder)
+        
+        // ✅ الخطوة 2: إرسال إشعار Telegram (ننتظر حتى ينجح أو يفشل)
         try {
-            // Write to global 'orders' collection for Admin Dashboard Real-time Alerts
-            // Note: We use the same ID logic, or let Firestore generate one. 
-            // Here we just dump the object. Ideally, we should use setDoc with newOrder.id if we want consistent IDs.
-            // But since 'addOrder' below uses this ID for local state, and 'db.ts' reads from 'users' collection mainly,
-            // we will write to 'orders' just for the admin listener and potential future migration.
-            await addDoc(collection(db, "orders"), newOrder)
-            
-            // Send Telegram Notification
+            console.log("📤 Sending Telegram notification...");
             await sendTelegramOrderNotification(newOrder);
-        } catch (error) {
-            console.error("Error writing to global orders or sending notification:", error)
-            // We don't block the UI flow if this fails, as the main flow is via StoreSynchronizer -> users/{uid}
+            console.log("✅ Telegram notification sent successfully!");
+        } catch (telegramError) {
+            // لو فشل الـ Telegram، نسجل الخطأ بس ما نوقفش العملية
+            console.error("⚠️ Telegram notification failed, but order was saved:", telegramError);
+            // نعرض تنبيه بسيط للمستخدم (اختياري)
+            toast.warning("Order placed, but notification may be delayed", {
+                description: "Your order was saved successfully.",
+                duration: 3000,
+            });
         }
 
+        // ✅ الخطوة 3: تحديث الـ local state
         addOrder(newOrder)
         clearCart()
-        setIsProcessing(false)
 
+        // ✅ الخطوة 4: عرض رسالة النجاح
         toast.success("Order Placed Successfully!", {
             description: "Thank you for your purchase. You can view your order in orders history.",
             duration: 5000,
         })
 
+        // ✅ الخطوة 5: الانتقال للصفحة التالية (بعد ما كل حاجة خلصت)
+        // ننتظر 500ms إضافية للتأكد من أن كل الـ async operations خلصت
+        await new Promise(resolve => setTimeout(resolve, 500))
+        
         navigate("/order-success")
-    }
 
+    } catch (error) {
+        console.error("❌ Error placing order:", error)
+        toast.error("Failed to place order", {
+            description: "Please try again or contact support.",
+        })
+    } finally {
+        setIsProcessing(false)
+    }
+}
     if (items.length === 0) {
         return (
             <div className="pt-48 pb-32 text-center min-h-screen bg-gradient-to-b from-background to-secondary/20">

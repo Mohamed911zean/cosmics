@@ -20,7 +20,7 @@ export function OrderSuccess() {
                     Order Confirmed!
                 </h1>
                 <p className="text-gray-500 mb-8">
-                    Thank you for your purchase. We've received your order and are getting it ready to ship.
+                    Thank you for your purchase. We are going to contact with you in whatssap to confirm the order.
                 </p>
 
                 <div className="space-y-4">

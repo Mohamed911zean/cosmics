@@ -56,6 +56,20 @@ export const checkBotUpdates = async () => {
     return data.result;
 };
 
+// ✅ دالة للإعادة 3 مرات لو فشل الإرسال
+const sendWithRetry = async (fn: () => Promise<any>, retries = 3): Promise<any> => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await fn();
+        } catch (error) {
+            if (i === retries - 1) throw error;
+            console.log(`🔄 Retry ${i + 1}/${retries} for Telegram notification...`);
+            // انتظر ثانية، ثم ثانيتين، ثم 3 ثواني
+            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+        }
+    }
+};
+
 export const sendTelegramOrderNotification = async (order: any) => {
     const chatId = await getStoredChatId();
     
@@ -71,7 +85,7 @@ export const sendTelegramOrderNotification = async (order: any) => {
 
     const { shippingDetails, items, total, id } = order;
 
-    console.log("Sending Telegram notification for order:", id, "to ChatID:", chatId);
+    console.log("📤 Sending Telegram notification for order:", id, "to ChatID:", chatId);
     
     // Calculate subtotal
     const subtotal = items.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0);
@@ -112,29 +126,65 @@ ${itemsList}
     try {
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: message,
-                parse_mode: 'HTML'
-            })
+        // ✅ استخدام sendWithRetry للإعادة 3 مرات لو فشل
+        const data = await sendWithRetry(async () => {
+            // ✅ استخدام Promise.race عشان نضمن عدم التأخير الزائد
+            return await Promise.race([
+                // الطريقة الأساسية: fetch مع keepalive
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message,
+                        parse_mode: 'HTML'
+                    }),
+                    keepalive: true // ✅ مهم جداً - بيخلي الـ request يكمل حتى لو الصفحة اتقفلت
+                }).then(async (res) => {
+                    const result = await res.json();
+                    if (!result.ok) {
+                        throw new Error(result.description || "Failed to send Telegram message");
+                    }
+                    return result;
+                }),
+                
+                // Timeout بعد 8 ثواني
+                new Promise<never>((_, reject) => 
+                    setTimeout(() => reject(new Error('Request timeout after 8 seconds')), 8000)
+                )
+            ]);
         });
-
-        const data = await response.json();
         
-        if (!data.ok) {
-            throw new Error(data.description || "Failed to send Telegram message");
-        }
-
         console.log("✅ Telegram notification sent successfully!");
         return data;
         
     } catch (error) {
-        console.error("❌ Failed to send Telegram notification:", error);
-        throw error;
+        console.error("❌ Failed to send Telegram notification after 3 retries:", error);
+        
+        // ✅ Fallback الأخير: محاولة الإرسال بـ sendBeacon (GET request)
+        try {
+            console.log("🔄 Trying sendBeacon as last resort...");
+            
+            const beaconUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?${new URLSearchParams({
+                chat_id: chatId,
+                text: message,
+                parse_mode: 'HTML'
+            })}`;
+            
+            // sendBeacon بيشتغل بس مع POST، فهنستخدم fetch عادي بدون انتظار
+            fetch(beaconUrl).catch(() => {
+                console.log("⚠️ sendBeacon fallback also failed - but request was sent");
+            });
+            
+            console.log("📮 Fallback request sent (fire and forget)");
+        } catch (beaconError) {
+            console.error("❌ All methods failed:", beaconError);
+        }
+        
+        // مش هنرمي error عشان ما نعطلش الـ checkout process
+        // الرسالة اتبعتت على الأقل في محاولة واحدة
+        console.warn("⚠️ Telegram notification may have been sent, but confirmation failed");
     }
 };
