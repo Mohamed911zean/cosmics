@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Send, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
+import { Send, RefreshCw,  AlertCircle } from "lucide-react";
 import { checkBotUpdates, getStoredChatId, setStoredChatId, sendTelegramOrderNotification } from "@/lib/telegram";
 
 export function TelegramSetup() {

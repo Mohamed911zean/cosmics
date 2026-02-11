@@ -5,7 +5,6 @@ import { db } from "./firebase";
 
 // HARDCODED FALLBACKS (To ensure it works immediately without server restart)
 const FALLBACK_BOT_TOKEN = "8470446860:AAEeM1nbRlLoMvgAkv1tbWti5x5_pxyeUPA";
-const FALLBACK_CHAT_ID = "5931162186";
 
 const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN || FALLBACK_BOT_TOKEN;
 

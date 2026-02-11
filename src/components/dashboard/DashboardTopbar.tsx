@@ -1,4 +1,4 @@
-import { Menu, Bell, X, Check, Trash2, ShoppingBag, Info, AlertTriangle } from "lucide-react"
+import { Menu, Bell,  Check, Trash2, ShoppingBag, Info, AlertTriangle } from "lucide-react"
 import { useAuthStore } from "@/stores/useAuthStore"
 import { useNotificationStore } from "@/stores/useNotificationStore"
 import { useState, useRef, useEffect } from "react"
