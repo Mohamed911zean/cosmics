@@ -222,7 +222,7 @@ export const useProductStore = create<ProductState>()(
             },
         }),
         {
-            name: 'lumiere-products',
+            name: 'majestics-products',
             partialize: (state) => ({
                 newProducts: state.newProducts,
             }),

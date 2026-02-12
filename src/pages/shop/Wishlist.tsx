@@ -54,7 +54,7 @@ export function Wishlist() {
                             <p className="text-foreground/40 font-light tracking-wide leading-relaxed">Save your favorite luxury items here for later.</p>
                         </div>
                         <Button asChild size="lg" className="rounded-none w-full bg-primary text-primary-foreground h-16 text-[10px] uppercase tracking-[0.3em] font-bold hover:shadow-lg hover:shadow-primary/20 transition-all duration-500">
-                            <Link to="/collections">Explore Collection</Link>
+                            <Link to="/shop">Explore Collection</Link>
                         </Button>
                     </motion.div>
                 </div>

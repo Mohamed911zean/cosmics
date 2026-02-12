@@ -88,7 +88,7 @@ export const useCartStore = create<CartState>()(
                 get().items.reduce((acc, item) => acc + item.quantity, 0),
         }),
         {
-            name: 'lumiere-cart',
+            name: 'majestics-cart',
         }
     )
 )

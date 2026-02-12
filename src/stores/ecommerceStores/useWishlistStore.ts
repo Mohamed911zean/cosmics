@@ -75,7 +75,7 @@ export const useWishlistStore = create<WishlistState>()(
             },
         }),
         {
-            name: 'lumiere-wishlist',
+            name: 'majestics-wishlist',
         }
     )
 )
