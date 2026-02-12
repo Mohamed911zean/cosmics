@@ -74,31 +74,31 @@ const sendToSingleChat = async (chatId: string, message: string): Promise<boolea
     try {
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         
-//     const data = await sendWithRetry(async () => {
-//        return await Promise.race([
-//                fetch(url, {
-//                    method: 'POST',
-//                    headers: {
-//                        'Content-Type': 'application/json'
-//                    },
-//                    body: JSON.stringify({
-//                        chat_id: chatId,
-//                        text: message,
-//                        parse_mode: 'HTML'
-//                    }),
-//                    keepalive: true
-//                }).then(async (res) => {
-//                    const result = await res.json();
-//                    if (!result.ok) {
-//                        throw new Error(result.description || "Failed to send Telegram message");
-//                   }
-//                    return result;
-//                }),
-//                new Promise<never>((_, reject) => 
-//                    setTimeout(() => reject(new Error('Request timeout after 8 seconds')), 8000)
-//                )
-//            ]);
-//        });
+     await sendWithRetry(async () => {
+        return await Promise.race([
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message,
+                        parse_mode: 'HTML'
+                    }),
+                    keepalive: true
+                }).then(async (res) => {
+                    const result = await res.json();
+                    if (!result.ok) {
+                        throw new Error(result.description || "Failed to send Telegram message");
+                    }
+                    return result;
+                }),
+                new Promise<never>((_, reject) => 
+                    setTimeout(() => reject(new Error('Request timeout after 8 seconds')), 8000)
+                )
+            ]);
+        });
         
         console.log(`✅ Telegram notification sent to ${chatId}`);
         return true;
