@@ -69,7 +69,7 @@ interface ProductState {
     isLoading: boolean
 
     setSelectedProduct: (product: Product | null) => void
-    addProduct: (product: Omit<Product, 'id' | 'sold'>) => void
+    addProduct: (product: Omit<Product, 'id' | 'sold'>) => Promise<void>
     updateProduct: (id: number, product: Partial<Product>) => void
     deleteProduct: (id: number) => void
     getProductById: (id: number) => Product | undefined
@@ -106,8 +106,20 @@ export const useProductStore = create<ProductState>()(
                     id: Date.now(),
                     sold: 0,
                 }
-                const { addProductToFirestore } = await import('@/lib/db')
-                await addProductToFirestore(newProduct)
+
+                // Update local state immediately so the UI reflects the new product
+                set((state) => ({
+                    newProducts: [...state.newProducts, newProduct],
+                }))
+
+                // Then persist to Firestore
+                try {
+                    const { addProductToFirestore } = await import('@/lib/db')
+                    await addProductToFirestore(newProduct)
+                } catch (error) {
+                    console.error('Failed to save product to Firestore:', error)
+                    // Product is still in local state via newProducts
+                }
             },
 
             updateProduct: (id, updates) => {
@@ -171,23 +183,42 @@ export const useProductStore = create<ProductState>()(
             setUser: async () => {
                 const { subscribeToProducts, getAllProductsFromFirestore, addProductToFirestore } = await import('@/lib/db')
                 set({ isLoading: true })
-                const unsubscribe = subscribeToProducts((items) => {
-                    const mapped = items.map((p: any) => ({
-                        ...p,
-                        id: typeof p.id === 'string' ? Number(p.id) : p.id,
-                    }))
-                    if (mapped.length > 0) {
-                        set({
-                            products: mapped as Product[],
-                            isLoading: false,
-                            newProducts: [],
-                        })
-                    } else {
-                        set({ isLoading: false })
-                    }
-                })
-                ;(window as any).__productsUnsub__ = unsubscribe
 
+                // Capture newProducts BEFORE subscribing, because the subscription
+                // callback will clear them when the first snapshot arrives
+                const pendingNewProducts = [...get().newProducts]
+
+                const unsubscribe = subscribeToProducts((items) => {
+                    const mapped = items.map((p: any) => {
+                        const numericId = typeof p.id === 'string' ? Number(p.id) : p.id
+                        return {
+                            ...p,
+                            id: isNaN(numericId) ? Date.now() + Math.random() : numericId,
+                        }
+                    })
+
+                    // Merge Firestore products with static data
+                    const mergedMap = new Map<number, Product>()
+                    // Add static products first
+                    for (const p of productsData) {
+                        mergedMap.set(p.id, p)
+                    }
+                    // Override/add with Firestore products
+                    for (const p of mapped) {
+                        mergedMap.set(p.id, p as Product)
+                    }
+
+                    const allProducts = Array.from(mergedMap.values())
+                    set({
+                        products: allProducts,
+                        featuredProducts: allProducts.slice(0, 4),
+                        isLoading: false,
+                        newProducts: [],
+                    })
+                })
+                    ; (window as any).__productsUnsub__ = unsubscribe
+
+                // Reconcile: push any locally-stored products that aren't yet in Firestore
                 try {
                     const existing = await getAllProductsFromFirestore()
                     const existingIds = new Set(
@@ -195,14 +226,12 @@ export const useProductStore = create<ProductState>()(
                             typeof p.id === 'string' ? Number(p.id) : p.id
                         )
                     )
-                    const localNew = get().newProducts
-                    for (const p of localNew) {
+                    for (const p of pendingNewProducts) {
                         const pid = typeof p.id === 'string' ? Number(p.id) : p.id
                         if (!existingIds.has(pid)) {
                             await addProductToFirestore(p)
                         }
                     }
-                    set({ newProducts: [] })
                 } catch {
                 }
             },
@@ -211,12 +240,27 @@ export const useProductStore = create<ProductState>()(
                 const { getAllProductsFromFirestore } = await import('@/lib/db')
                 set({ isLoading: true })
                 const items = await getAllProductsFromFirestore()
-                const mapped = items.map((p: any) => ({
-                    ...p,
-                    id: typeof p.id === 'string' ? Number(p.id) : p.id,
-                }))
+                const mapped = items.map((p: any) => {
+                    const numericId = typeof p.id === 'string' ? Number(p.id) : p.id
+                    return {
+                        ...p,
+                        id: isNaN(numericId) ? Date.now() + Math.random() : numericId,
+                    }
+                })
+
+                // Merge with static data
+                const mergedMap = new Map<number, Product>()
+                for (const p of productsData) {
+                    mergedMap.set(p.id, p)
+                }
+                for (const p of mapped) {
+                    mergedMap.set(p.id, p as Product)
+                }
+
+                const allProducts = Array.from(mergedMap.values())
                 set({
-                    products: mapped as Product[],
+                    products: allProducts,
+                    featuredProducts: allProducts.slice(0, 4),
                     isLoading: false,
                 })
             },

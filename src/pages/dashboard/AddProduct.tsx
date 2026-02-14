@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom"
 export default function AddProduct() {
   const { addProduct, categories } = useProductStore()
   const navigate = useNavigate()
-  
+
   const [formData, setFormData] = useState({
     brand: "",
     name: "",
@@ -16,7 +16,7 @@ export default function AddProduct() {
     category: "",
     description: "",
   })
-  
+
   const [mainImage, setMainImage] = useState<File | null>(null)
   const [mainImagePreview, setMainImagePreview] = useState<string>("")
   const [additionalImages, setAdditionalImages] = useState<File[]>([])
@@ -41,7 +41,7 @@ export default function AddProduct() {
       toast.error("Maximum 4 additional images allowed")
       return
     }
-    
+
     setAdditionalImages([...additionalImages, ...files])
     const newPreviews = files.map(file => URL.createObjectURL(file))
     setAdditionalPreviews([...additionalPreviews, ...newPreviews])
@@ -69,7 +69,7 @@ export default function AddProduct() {
     try {
       // Upload main image
       const mainImageUrl = await uploadToCloudinary(mainImage)
-      
+
       // Upload additional images
       let additionalUrls: string[] = []
       if (additionalImages.length > 0) {
@@ -77,8 +77,8 @@ export default function AddProduct() {
         additionalUrls = uploads.map(upload => upload.secure_url)
       }
 
-      // Add product to store
-      addProduct({
+      // Add product to store (await ensures Firestore write completes before navigating)
+      await addProduct({
         name: `${formData.brand} - ${formData.name}`,
         price: parseFloat(formData.price),
         category: formData.category,
