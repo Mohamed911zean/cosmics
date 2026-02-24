@@ -2,11 +2,14 @@
 import { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
+import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { login, googleLogin } = useAuthStore();
   const navigate = useNavigate();
@@ -16,11 +19,10 @@ export const Login = () => {
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const success = await login(email, password);
       if (success) {
-        toast.success('Logged in successfully!');
+        toast.success('Welcome back.');
         const { role } = useAuthStore.getState();
         if (role === 'admin' || role === 'superadmin') {
           navigate('/dashboard/dashHome', { replace: true });
@@ -39,11 +41,10 @@ export const Login = () => {
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
-
     try {
       const success = await googleLogin();
       if (success) {
-        toast.success('Logged in with Google!');
+        toast.success('Welcome back.');
         const { role } = useAuthStore.getState();
         if (role === 'admin' || role === 'superadmin') {
           navigate('/dashboard/dashHome', { replace: true });
@@ -61,86 +62,178 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-        </div>
+    <div className="min-h-screen bg-ivory flex">
 
-        <form className="mt-8 space-y-6" onSubmit={handleEmailLogin}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">Email address</label>
+      {/* ── Left Panel: Product Image ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2 }}
+        className="hidden lg:flex lg:w-1/2 relative overflow-hidden"
+      >
+        <img
+          src="https://e-majestic.com/cdn/shop/files/WhatsAppImage2025-09-01at15.31.20.jpg?v=1756738172&width=900"
+          alt="Majestics Skincare"
+          className="w-full h-full object-cover"
+        />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2D2422]/60 via-[#2D2422]/20 to-transparent" />
+
+        {/* Brand copy on image */}
+        <div className="absolute inset-0 flex flex-col justify-end p-14">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+          >
+            <Link to="/">
+              <h2 className="text-5xl font-serif text-white tracking-[0.2em] font-medium mb-4">
+                Majestics.
+              </h2>
+            </Link>
+            <p className="text-white/70 text-sm tracking-widest uppercase font-medium">
+              Egypt's Premier Beauty Marketplace
+            </p>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* ── Right Panel: Form ── */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center px-8 py-16 lg:px-16">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-md"
+        >
+
+          {/* Mobile logo */}
+          <Link to="/" className="lg:hidden block mb-12 text-center">
+            <h1 className="text-3xl font-serif tracking-[0.2em] text-foreground">Majestics.</h1>
+          </Link>
+
+          {/* Heading */}
+          <div className="mb-12">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-taupe font-bold mb-3">
+              Welcome Back
+            </p>
+            <h1 className="text-4xl md:text-5xl font-serif text-foreground leading-tight">
+              Sign in to your<br />
+              <span className="italic font-light text-taupe">account</span>
+            </h1>
+          </div>
+
+          {/* Google Button */}
+          <motion.button
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 h-14 border border-border bg-white hover:bg-secondary/30 transition-all duration-300 text-sm font-medium text-foreground/80 mb-8 disabled:opacity-50"
+          >
+            <img
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              alt="Google"
+              className="w-4 h-4"
+            />
+            Continue with Google
+          </motion.button>
+
+          {/* Divider */}
+          <div className="flex items-center gap-4 mb-8">
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-[10px] uppercase tracking-[0.2em] text-taupe/60 font-bold">or</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleEmailLogin} className="space-y-5">
+            {/* Email */}
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">
+                Email Address
+              </label>
               <input
-                id="email"
-                name="email"
                 type="email"
                 autoComplete="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                placeholder="jane@example.com"
+                className="w-full h-14 px-5 bg-secondary/30 border border-border/50 focus:border-accent outline-none transition-all duration-200 font-light text-sm placeholder:text-foreground/25"
               />
             </div>
 
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-              />
+            {/* Password */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">
+                  Password
+                </label>
+                <button
+                  type="button"
+                  className="text-[10px] text-accent hover:text-foreground transition-colors uppercase tracking-wider font-bold"
+                >
+                  Forgot password?
+                </button>
+              </div>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full h-14 px-5 pr-12 bg-secondary/30 border border-border/50 focus:border-accent outline-none transition-all duration-200 font-light text-sm placeholder:text-foreground/25"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-foreground/60 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div>
-            <button
+            {/* Submit */}
+            <motion.button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              whileTap={{ scale: 0.98 }}
+              className="w-full h-14 bg-foreground text-ivory text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-taupe transition-all duration-300 flex items-center justify-center gap-3 group disabled:opacity-60 disabled:cursor-not-allowed mt-2"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
-        </form>
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <motion.span
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                    className="w-4 h-4 border-2 border-ivory/30 border-t-ivory rounded-full inline-block"
+                  />
+                  Signing In...
+                </span>
+              ) : (
+                <>
+                  Sign In
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
+            </motion.button>
+          </form>
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-gray-50 text-gray-500">Or continue with</span>
-          </div>
-        </div>
+          {/* Footer */}
+          <p className="text-center text-sm text-foreground/40 mt-10 font-light">
+            New to Majestics?{' '}
+            <Link
+              to="/signup"
+              className="text-foreground font-medium hover:text-accent transition-colors underline underline-offset-4 decoration-border"
+            >
+              Create an account
+            </Link>
+          </p>
 
-        <button
-          onClick={handleGoogleSignIn}
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-3 py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <img
-            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-            alt="Google"
-            className="w-5 h-5"
-          />
-          Sign in with Google
-        </button>
-
-        <p className="text-center text-sm text-gray-600">
-          Don't have an account?{' '}
-          <Link to="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
-            Sign up
-          </Link>
-        </p>
+        </motion.div>
       </div>
     </div>
   );
