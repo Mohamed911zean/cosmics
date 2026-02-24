@@ -1,20 +1,18 @@
+import type { Order } from "@/stores/ecommerceStores/useOrderStore";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./firebase";
 
 // Telegram Notification Utility
 
-const FALLBACK_BOT_TOKEN = "8470446860:AAEeM1nbRlLoMvgAkv1tbWti5x5_pxyeUPA";
-const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN || FALLBACK_BOT_TOKEN;
+const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN || import.meta.env.VITE_FALLBACK_BOT_TOKEN;
 
-// ✅ Chat ID الأساسي (بتاعك) - هيبعتله دايماً
-const PRIMARY_CHAT_ID = "5931162186"; // ✅ حط Chat ID بتاعك هنا
-
-// ✅ جلب Chat ID الإضافي (بتاع صاحبك أو أي حد تاني)
-export const getSecondaryChatId = async () => {
-    // 1. Check Env
-    if (import.meta.env.VITE_TELEGRAM_SECONDARY_CHAT_ID) {
-        return import.meta.env.VITE_TELEGRAM_SECONDARY_CHAT_ID;
-    }
+/**
+ * Gets the secondary chat ID from environment variables, Firestore, or LocalStorage.
+ */
+export const getSecondaryChatId = async (): Promise<string> => {
+    // 1. Check Environment Variable
+    const envId = import.meta.env.VITE_TELEGRAM_SECONDARY_CHAT_ID;
+    if (envId && envId !== "YOUR_SECONDARY_CHAT_ID") return envId;
 
     // 2. Check Firestore
     try {
@@ -24,127 +22,155 @@ export const getSecondaryChatId = async () => {
             return docSnap.data().secondaryChatId;
         }
     } catch (e) {
-        console.log("Error fetching secondary chat ID from Firestore", e);
+        console.warn("⚠️ Could not fetch secondary chat ID from Firestore", e);
     }
 
-    // 3. Check LocalStorage
+    // 3. Check LocalStorage (Fallback)
     return localStorage.getItem('telegram_secondary_chat_id') || "";
 };
 
-export const setSecondaryChatId = async (id: string) => {
+/**
+ * Saves the secondary chat ID to LocalStorage and Firestore.
+ */
+export const setSecondaryChatId = async (id: string): Promise<void> => {
     localStorage.setItem('telegram_secondary_chat_id', id);
     try {
         await setDoc(doc(db, "settings", "telegram"), { secondaryChatId: id }, { merge: true });
     } catch (e) {
-        console.error("Failed to save secondary Chat ID to Firestore", e);
+        console.error("❌ Failed to save secondary Chat ID to Firestore", e);
     }
 };
 
 export const checkBotUpdates = async () => {
-    if (!TELEGRAM_BOT_TOKEN) throw new Error("Bot Token is missing");
+    if (!TELEGRAM_BOT_TOKEN) throw new Error("Telegram Bot Token is missing in environment variables.");
     
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates`;
-    const response = await fetch(url);
-    const data = await response.json();
-    
-    if (!data.ok) {
-        throw new Error(data.description || "Failed to fetch updates");
+    try {
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (!data.ok) {
+            throw new Error(data.description || "Failed to fetch updates from Telegram API");
+        }
+        
+        return data.result;
+    } catch (error) {
+        console.error("❌ Error checking bot updates:", error);
+        throw error;
     }
-    
-    return data.result;
 };
 
-// ✅ دالة للإعادة 3 مرات لو فشل الإرسال
-const sendWithRetry = async (fn: () => Promise<any>, retries = 3): Promise<any> => {
+const sendWithRetry = async <T>(fn: () => Promise<T>, retries = 3): Promise<T> => {
     for (let i = 0; i < retries; i++) {
         try {
             return await fn();
         } catch (error) {
             if (i === retries - 1) throw error;
-            console.log(`🔄 Retry ${i + 1}/${retries} for Telegram notification...`);
-            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+            const delay = 1000 * (i + 1);
+            console.warn(`🔄 Retry ${i + 1}/${retries} for Telegram notification (waiting ${delay}ms)...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
         }
     }
+    throw new Error("Retry logic failed");
 };
 
-// ✅ دالة لإرسال رسالة لـ Chat ID واحد
-const sendToSingleChat = async (chatId: string, message: string): Promise<boolean> => {
-    if (!chatId) return false;
+const sendToSingleChat = async (chatId: string, message: string, recipientName: string): Promise<boolean> => {
+    if (!chatId) {
+        console.warn(`⚠️ Skipping ${recipientName} - Chat ID not configured`);
+        return false;
+    }
     
     try {
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         
-     await sendWithRetry(async () => {
-        return await Promise.race([
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        text: message,
-                        parse_mode: 'HTML'
-                    }),
-                    keepalive: true
-                }).then(async (res) => {
-                    const result = await res.json();
-                    if (!result.ok) {
-                        throw new Error(result.description || "Failed to send Telegram message");
-                    }
-                    return result;
+        await sendWithRetry(async () => {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'HTML'
                 }),
-                new Promise<never>((_, reject) => 
-                    setTimeout(() => reject(new Error('Request timeout after 8 seconds')), 8000)
-                )
-            ]);
+                signal: controller.signal,
+                keepalive: true
+            });
+
+            clearTimeout(timeoutId);
+            const result = await response.json();
+            
+            if (!result.ok) {
+                throw new Error(result.description || "Telegram API error");
+            }
+            return result;
         });
         
-        console.log(`✅ Telegram notification sent to ${chatId}`);
+        console.log(`✅ Telegram notification sent to ${recipientName} (${chatId})`);
         return true;
         
     } catch (error) {
-        console.error(`❌ Failed to send to ${chatId}:`, error);
+        console.error(`❌ Failed to send to ${recipientName} (${chatId}):`, error);
         
-        // Fallback
         try {
-            const beaconUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?${new URLSearchParams({
+            const params = new URLSearchParams({
                 chat_id: chatId,
                 text: message,
                 parse_mode: 'HTML'
-            })}`;
-            
-            fetch(beaconUrl).catch(() => {});
-            console.log(`📮 Fallback sent to ${chatId}`);
-        } catch (beaconError) {
-            console.error(`❌ All methods failed for ${chatId}`);
+            });
+            const fallbackUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?${params.toString()}`;
+            fetch(fallbackUrl).catch(() => {});
+            console.log(`📮 Fallback GET request sent to ${recipientName}`);
+        } catch (fallbackError) {
+            // Silently fail fallback
         }
         
         return false;
     }
 };
 
-// ✅ دالة الإرسال الرئيسية - بتبعت لكل الـ Chat IDs
-export const sendTelegramOrderNotification = async (order: any) => {
+export const sendTelegramOrderNotification = async (order: Order | any) => {
     if (!TELEGRAM_BOT_TOKEN) {
-        console.warn("Telegram Bot Token not found. Skipping notification.");
+        console.error("❌ Telegram Bot Token not found. Notifications disabled.");
         return;
     }
 
     const { shippingDetails, items, total, id } = order;
-
-    console.log("📤 Sending Telegram notifications for order:", id);
     
-    // Calculate subtotal
+    // 1. Primary Chat (from Env)
+    const primaryChatId = import.meta.env.VITE_TELEGRAM_PRIMARY_CHAT_ID;
+    
+    // 2. Secondary Chat (Dynamic)
+    const secondaryChatId = await getSecondaryChatId();
+
+    const recipients = [
+        { name: "Primary Admin", chatId: primaryChatId },
+        { name: "Secondary Admin", chatId: secondaryChatId }
+    ].filter((r, index, self) => 
+        r.chatId && 
+        r.chatId !== "YOUR_PRIMARY_CHAT_ID" && 
+        r.chatId !== "YOUR_SECONDARY_CHAT_ID" &&
+        self.findIndex(t => t.chatId === r.chatId) === index // Avoid duplicates
+    );
+
+    if (recipients.length === 0) {
+        console.warn("⚠️ No valid recipients configured for Telegram notifications.");
+        return;
+    }
+
     const subtotal = items.reduce((acc: number, item: any) => acc + (item.price * (item.quantity || 1)), 0);
     const tax = total - subtotal;
 
-    // Format Items List
     const itemsList = items.map((item: any, index: number) => {
-        return `${index + 1}. <b>${item.name}</b>\n   الكمية: ${item.quantity || 1} x ${item.price.toFixed(2)} ج.م`;
+        const price = typeof item.price === 'number' ? item.price : 0;
+        const qty = item.quantity || 1;
+        return `${index + 1}. <b>${item.name}</b>\n   الكمية: ${qty} x ${price.toFixed(2)} ج.م`;
     }).join('\n');
 
-    // Construct Message
     const message = `
 🛒 <b>طلب جديد!</b>
 
@@ -171,39 +197,14 @@ ${itemsList}
 <i>افتح الداشبورد لمزيد من التفاصيل</i>
     `.trim();
 
-    // ✅ جمع كل الـ Chat IDs
-    const chatIds: string[] = [];
-    
-    // 1. Primary Chat ID (بتاعك - دايماً)
-    if (PRIMARY_CHAT_ID) {
-        chatIds.push(PRIMARY_CHAT_ID);
-        console.log(`📋 Primary recipient: ${PRIMARY_CHAT_ID}`);
-    }
-    
-    // 2. Secondary Chat ID (بتاع صاحبك - اختياري)
-    const secondaryChatId = await getSecondaryChatId();
-    if (secondaryChatId && secondaryChatId !== PRIMARY_CHAT_ID) {
-        chatIds.push(secondaryChatId);
-        console.log(`📋 Secondary recipient: ${secondaryChatId}`);
-    }
+    console.log(`📤 Sending Telegram notifications to ${recipients.length} recipients...`);
 
-    if (chatIds.length === 0) {
-        console.warn("⚠️ No Chat IDs configured. Skipping notification.");
-        return;
-    }
-
-    // ✅ إرسال للجميع بالتوازي
     const results = await Promise.allSettled(
-        chatIds.map(chatId => sendToSingleChat(chatId, message))
+        recipients.map(recipient => 
+            sendToSingleChat(recipient.chatId, message, recipient.name)
+        )
     );
 
-    // ✅ تقرير النتائج
     const successful = results.filter(r => r.status === 'fulfilled' && r.value === true).length;
-    const failed = results.length - successful;
-
-    console.log(`📊 Notification sent to ${successful}/${chatIds.length} recipients (${failed} failed)`);
-    
-    if (successful === 0) {
-        console.warn("⚠️ All notifications failed, but order was saved");
-    }
+    console.log(`📊 Notification summary: ${successful}/${recipients.length} successful`);
 };
