@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom"
 import { Toaster } from "sonner"
 
 import { StoreSynchronizer } from "@/components/shop/StoreSynchronizer"
+import ScrollToTop from "@/components/ScrollToTop"
 
 // Layouts
 import { EcommerceLayout } from "@/layouts/EcommerceLayout"
@@ -57,6 +58,7 @@ export default function App() {
 
   return (
     <>
+      <ScrollToTop />
       <StoreSynchronizer />
       <Toaster position="top-center" expand={false} richColors />
 
