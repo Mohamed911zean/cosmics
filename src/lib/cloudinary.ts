@@ -1,7 +1,7 @@
 // lib/cloudinary.ts
 
-const CLOUDINARY_CLOUD_NAME = 'daq2sc6tl'
-const CLOUDINARY_UPLOAD_PRESET = 'products_preset'
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
 
 export interface CloudinaryUploadResponse {
   secure_url: string
