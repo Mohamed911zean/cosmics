@@ -13,6 +13,7 @@ import { toast } from "sonner"
 
 
 
+
 const iconMap: Record<string, React.ReactNode> = {
   Sparkles: <Sparkles className="w-8 h-8" />,
   ShieldCheck: <ShieldCheck className="w-8 h-8" />,
@@ -65,223 +66,428 @@ export default function Home() {
 
       {/* HERO SECTION */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden pt-20">
-        <div className="absolute inset-0 z-0 opacity-70">
-          <img
-            src="https://e-majestic.com/cdn/shop/files/WhatsAppImage2025-09-01at15.31.20.jpg?v=1756738172&width=900"
-            alt="Hero Background"
-            className="w-full h-full object-cover scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-ivory via-ivory/80 to-transparent" />
-        </div>
+  {/* Background */}
+  <div className="absolute inset-0 z-0">
+    <img
+      src="https://e-majestic.com/cdn/shop/files/WhatsAppImage2025-09-01at15.31.20.jpg?v=1756738172&width=900"
+      alt="Hero Background"
+      className="w-full h-full object-cover scale-105 transition-transform duration-[12000ms] hover:scale-110"
+    />
 
-        <div className="container mx-auto px-6 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="max-w-2xl"
-          >
-            <span className="inline-block text-taupe tracking-widest uppercase text-xs mb-4 font-semibold">
-              {brand.tagline}
+    {/* Overlay */}
+    <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/20 lg:to-transparent" />
+  </div>
+
+  {/* Content */}
+  <div className="container mx-auto px-6 lg:px-12 relative z-10">
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, ease: "easeOut" }}
+      className="max-w-3xl mx-auto text-center lg:mx-0 lg:text-left"
+    >
+      <h1 className="font-serif font-bold leading-[1.05] text-5xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-foreground mb-6">
+        Authentic Beauty
+        <br />
+        <span className="text-primary">Across Egypt</span>
+      </h1>
+
+      <p className="text-foreground/80 font-semibold text-base sm:text-lg md:text-xl leading-8 max-w-xl mx-auto lg:mx-0 mb-10">
+        Discover premium skincare and beauty essentials designed to enhance
+        your natural glow with trusted products and luxurious care.
+      </p>
+
+      <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5">
+        <Link to="/shop">
+          <button className="group flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-primary text-white font-medium shadow-lg shadow-primary/20 hover:bg-foreground hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto">
+            Shop All Products
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </button>
+        </Link>
+
+        <Link to="/about">
+          <button className="group flex items-center gap-3 font-medium text-foreground transition-colors duration-300">
+            <span className="w-12 h-12 rounded-full border border-border bg-white/70 backdrop-blur flex items-center justify-center transition-all duration-300 group-hover:bg-secondary group-hover:border-secondary group-hover:scale-110">
+              <Play className="w-4 h-4 fill-current ml-0.5" />
             </span>
-            <h1 className="text-6xl md:text-8xl font-serif text-foreground leading-[1.1] mb-8">
-              Authentic Beauty <br />
-              <span className="italic text-taupe font-light">Across</span> Egypt
-            </h1>
-            <p className="text-xl text-taupe max-w-lg mb-10 leading-relaxed">
-              Majestics is your trusted Egyptian marketplace for 100% original skincare and beauty essentials, delivering premium world-class brands to every corner of Egypt.
-            </p>
-            <div className="flex flex-wrap gap-6 items-center">
-              <Link to="/shop">
-                <button className="px-10 py-4 bg-foreground text-ivory rounded-full hover:bg-taupe transition-colors duration-300 flex items-center gap-2 group shadow-lg shadow-foreground/5">
-                  Shop All Creams
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </Link>
-              <Link to="/about">
-                <button className="flex items-center gap-3 text-foreground font-medium group">
-                  <span className="w-12 h-12 rounded-full border border-border flex items-center justify-center group-hover:bg-accent group-hover:border-accent transition-all">
-                    <Play className="w-4 h-4 fill-current ml-0.5" />
-                  </span>
-                  Our Philosophy
-                </button>
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+
+            <span>Our Philosophy</span>
+          </button>
+        </Link>
+      </div>
+    </motion.div>
+  </div>
+</section>
+
 
       {/* SERVICES CAROUSEL */}
-      <section className="py-24 bg-white overflow-hidden">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div className="max-w-xl">
-              <span className="text-taupe tracking-widest uppercase text-xs mb-3 block font-semibold">Our Expertise</span>
-              <h2 className="text-4xl md:text-5xl font-serif mb-4">Dedicated Care</h2>
-              <p className="text-taupe">Experience wellness beyond products. Discover our range of personalized skincare services designed for your skin's health.</p>
-            </div>
-            <div className="hidden md:flex gap-4">
-              {/* Controls will be tied to carousel if we add more UI, for now standard arrows are inside container */}
-            </div>
-          </div>
+<section className="relative py-24 bg-surface overflow-hidden">
 
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full relative"
+  {/* Background Glow */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(211,197,246,0.08),transparent_70%)]" />
+
+  {/* Left Blob */}
+  <div className="absolute -left-24 top-20 w-56 h-56 md:w-80 md:h-80 rounded-full bg-secondary/30 blur-3xl" />
+
+  <div
+    className="
+    absolute left-0 top-1/2 -translate-y-1/2
+    w-32 h-56 md:w-44 md:h-72
+    bg-primary/10
+    blur-sm
+    rounded-[55%_45%_70%_30%/30%_60%_40%_70%]
+    rotate-12
+    "
+  />
+
+  {/* Right Blob */}
+  <div className="absolute -right-24 bottom-20 w-56 h-56 md:w-80 md:h-80 rounded-full bg-secondary/30 blur-3xl" />
+
+  <div
+    className="
+    absolute right-0 top-1/2 -translate-y-1/2
+    w-32 h-56 md:w-44 md:h-72
+    bg-primary/10
+    blur-sm
+    rounded-[45%_55%_35%_65%/40%_30%_70%_60%]
+    -rotate-12
+    "
+  />
+
+  {/* Decorative Dots */}
+  <div className="absolute top-24 left-[15%] w-3 h-3 rounded-full bg-primary/20" />
+  <div className="absolute top-44 right-[20%] w-2 h-2 rounded-full bg-secondary" />
+  <div className="absolute bottom-24 left-[12%] w-4 h-4 rounded-full bg-primary/15" />
+  <div className="absolute bottom-40 right-[15%] w-3 h-3 rounded-full bg-secondary/70" />
+
+  {/* Decorative Diamonds */}
+  <div className="absolute top-36 left-[28%] w-3 h-3 rotate-45 bg-primary/25 rounded-sm" />
+  <div className="absolute bottom-32 right-[30%] w-3 h-3 rotate-45 bg-primary/20 rounded-sm" />
+
+  <div className="container relative z-10 mx-auto px-6">
+
+    <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
+      <div className="max-w-xl">
+        <span className="text-muted-foreground tracking-[0.35em] uppercase text-xs font-semibold mb-3 block">
+          Our Expertise
+        </span>
+
+        <h2 className="text-4xl md:text-5xl font-serif text-foreground mb-4">
+          Dedicated Care
+        </h2>
+
+        <p className="text-muted-foreground leading-8">
+          Experience wellness beyond products. Discover our range of
+          personalized skincare services designed for your skin's health.
+        </p>
+      </div>
+
+      <div className="hidden md:flex gap-4">
+        {/* Controls */}
+      </div>
+    </div>
+
+    <Carousel
+      opts={{
+        align: "start",
+        loop: true,
+      }}
+      className="w-full relative"
+    >
+      <CarouselContent className="-ml-4 md:-ml-8">
+        {services.map((service) => (
+          <CarouselItem
+            key={service.id}
+            className="pl-4 md:pl-8 md:basis-1/2 lg:basis-1/3"
           >
-            <CarouselContent className="-ml-4 md:-ml-8">
-              {services.map((service) => (
-                <CarouselItem key={service.id} className="pl-4 md:pl-8 md:basis-1/2 lg:basis-1/3">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="group cursor-pointer h-full"
-                  >
-                    <div className="relative aspect-[16/10] overflow-hidden rounded-[2.5rem] bg-muted mb-8 shadow-sm group-hover:shadow-xl transition-all duration-700">
-                      <img
-                        src={service.image}
-                        alt={service.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
-                      />
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-                      <div className="absolute top-6 left-6 w-14 h-14 rounded-2xl bg-white/90 backdrop-blur-md flex items-center justify-center text-foreground shadow-sm">
-                        {iconMap[service.icon]}
-                      </div>
-                    </div>
-                    <div className="px-4">
-                      <h3 className="text-2xl font-serif mb-3 flex items-center gap-3">
-                        {service.title}
-                      </h3>
-                      <p className="text-taupe text-sm mb-6 leading-relaxed">
-                        {service.description}
-                      </p>
-                      <button className="text-xs font-bold uppercase tracking-widest text-foreground flex items-center gap-2 group-hover:text-accent transition-colors">
-                        Learn More <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </button>
-                    </div>
-                  </motion.div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="flex justify-end gap-4 mt-12 pr-6">
-              <CarouselPrevious className="static translate-y-0" />
-              <CarouselNext className="static translate-y-0" />
-            </div>
-          </Carousel>
-        </div>
-      </section>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="group h-full cursor-pointer"
+            >
+              <div className="relative overflow-hidden rounded-[2.5rem] aspect-[16/10] bg-muted mb-8 shadow-sm transition-all duration-700 group-hover:-translate-y-2 group-hover:shadow-2xl">
+
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+
+                <div className="absolute top-6 left-6 w-14 h-14 rounded-2xl bg-white/80 backdrop-blur-md flex items-center justify-center text-primary shadow-lg">
+                  {iconMap[service.icon]}
+                </div>
+              </div>
+
+              <div className="px-4">
+                <h3 className="text-2xl font-serif text-foreground mb-3">
+                  {service.title}
+                </h3>
+
+                <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+                  {service.description}
+                </p>
+
+                <button className="group/button text-xs font-bold uppercase tracking-[0.25em] text-primary flex items-center gap-2 transition-colors">
+                  Learn More
+
+                  <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover/button:translate-x-1" />
+                </button>
+              </div>
+            </motion.div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+
+      <div className="flex justify-end gap-4 mt-12 pr-6">
+        <CarouselPrevious className="static translate-y-0 border-border bg-white/80 backdrop-blur hover:bg-primary hover:text-white" />
+
+        <CarouselNext className="static translate-y-0 border-border bg-white/80 backdrop-blur hover:bg-primary hover:text-white" />
+      </div>
+    </Carousel>
+  </div>
+</section>
 
       {/* BEST SELLERS */}
-      <section className="py-24 bg-ivory overflow-hidden">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-taupe tracking-widest uppercase text-xs mb-3 block font-semibold">Favorites</span>
-            <h2 className="text-4xl md:text-5xl font-serif mb-4">The Best Sellers</h2>
-            <p className="text-taupe">Loved by our community for their exceptional results from world-class brands.</p>
-          </div>
+<section className="relative py-24 bg-surface overflow-hidden">
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product: any, idx: number) => {
-              const inWishlist = isInWishlist(product.id)
-              return (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  className="group relative"
-                >
-                  <Link to={`/product/${product.id}`}>
-                    <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-white mb-6 border border-border/50 group-hover:shadow-2xl group-hover:shadow-taupe/10 transition-all duration-500">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                      <button
-                        onClick={(e) => handleAddToCart(e, product)}
-                        className="absolute bottom-4 left-4 right-4 py-3 bg-white/95 backdrop-blur-sm text-foreground rounded-xl opacity-100 translate-y-0 lg:opacity-0 lg:translate-y-2 lg:group-hover:opacity-100 lg:group-hover:translate-y-0 transition-all duration-300 font-medium flex items-center justify-center gap-2 z-10"
-                      >
-                        <ShoppingBag className="w-4 h-4" />
-                        Add to Cart
-                      </button>
-                      <button
-                        onClick={(e) => handleToggleWishlist(e, product)}
-                        className={`absolute top-4 right-4 w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all z-10 ${inWishlist ? "bg-accent/20 text-accent" : "bg-white/80 text-foreground/40 hover:text-accent"
-                          } opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity`}
-                      >
-                        <Heart className={`w-4 h-4 ${inWishlist ? "fill-current" : ""}`} />
-                      </button>
-                    </div>
-                  </Link>
-                  <div className="px-2">
-                    <span className="text-xs uppercase tracking-wider text-taupe font-medium">{product.category}</span>
-                    <Link to={`/product/${product.id}`}>
-                      <h3 className="text-lg font-serif mt-1 mb-2 hover:text-accent transition-colors">{product.name}</h3>
-                    </Link>
-                    <p className="text-xl font-medium text-foreground">${product.price.toFixed(2)}</p>
-                  </div>
-                </motion.div>
-              )
-            })}
-          </div>
+  {/* Center Glow */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(211,197,246,0.12),transparent_70%)]" />
+
+  {/* Grid Pattern */}
+  <div
+    className="absolute inset-0 opacity-[0.04]"
+    style={{
+      backgroundImage: `
+      linear-gradient(to right, #3b2a60 1px, transparent 1px),
+      linear-gradient(to bottom, #3b2a60 1px, transparent 1px)
+      `,
+      backgroundSize: "70px 70px",
+    }}
+  />
+
+  {/* Top Left Decoration */}
+  <div className="absolute left-0 top-0 w-72 h-72 pointer-events-none">
+
+    <div className="absolute left-8 top-8 w-44 h-44 rounded-full border border-primary/15" />
+
+    <div className="absolute left-16 top-16 w-28 h-28 rounded-full border border-primary/10" />
+
+    <svg
+      viewBox="0 0 250 250"
+      className="absolute left-0 top-0 w-full h-full"
+      fill="none"
+    >
+      <path
+        d="M10 170
+        C60 60 170 40 240 110"
+        stroke="currentColor"
+        className="text-primary/20"
+        strokeWidth="1.4"
+      />
+    </svg>
+
+  </div>
+
+  {/* Bottom Right Decoration */}
+
+  <div className="absolute right-0 bottom-0 w-72 h-72 rotate-180 pointer-events-none">
+
+    <div className="absolute left-8 top-8 w-44 h-44 rounded-full border border-primary/15" />
+
+    <div className="absolute left-16 top-16 w-28 h-28 rounded-full border border-primary/10" />
+
+    <svg
+      viewBox="0 0 250 250"
+      className="absolute left-0 top-0 w-full h-full"
+      fill="none"
+    >
+      <path
+        d="M10 170
+        C60 60 170 40 240 110"
+        stroke="currentColor"
+        className="text-primary/20"
+        strokeWidth="1.4"
+      />
+    </svg>
+
+  </div>
+
+  {/* Floating Diamonds */}
+
+  <div className="absolute left-[18%] top-20 w-3 h-3 rotate-45 rounded-sm bg-primary/25" />
+  <div className="absolute right-[22%] top-36 w-2 h-2 rotate-45 rounded-sm bg-secondary" />
+  <div className="absolute left-[25%] bottom-24 w-2.5 h-2.5 rotate-45 rounded-sm bg-primary/20" />
+  <div className="absolute right-[16%] bottom-20 w-3 h-3 rotate-45 rounded-sm bg-secondary/70" />
+
+  {/* Main Content */}
+
+  <div className="container relative z-10 mx-auto px-6">
+
+    <div className="relative overflow-hidden rounded-[3rem] border border-border/70 bg-white/70 backdrop-blur-xl px-8 py-12 md:px-14 md:py-16 shadow-[0_30px_80px_rgba(59,42,96,0.06)]">
+
+      <div className="flex flex-col lg:flex-row justify-between items-end gap-8">
+
+        <div className="max-w-2xl">
+
+          <span className="text-muted-foreground tracking-[0.35em] uppercase text-xs font-semibold mb-4 block">
+            Editor's Choice
+          </span>
+
+          <h2 className="text-4xl md:text-5xl font-serif text-foreground mb-6">
+            Why Everyone Loves
+            <span className="block text-primary italic font-light">
+              These Products
+            </span>
+          </h2>
+
+          <p className="text-muted-foreground text-lg leading-8 max-w-xl">
+            Carefully selected skincare essentials loved by thousands for their
+            proven results, premium ingredients, and luxurious experience.
+          </p>
+
         </div>
-      </section>
 
+        <Link to="/shop">
+
+          <button className="group rounded-full bg-primary px-8 py-4 text-white transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/20">
+
+            <span className="flex items-center gap-2">
+              Explore Collection
+
+              <ChevronRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
+
+          </button>
+
+        </Link>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
       {/* FEATURED PRODUCT HIGHLIGHT */}
-      <section className="py-32 bg-white relative overflow-hidden">
-        <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1 }}
-              className="relative"
-            >
-              <div className="absolute -inset-10 bg-accent/20 rounded-full blur-[100px] z-0" />
-              <img
-                src="https://e-majestic.com/cdn/shop/files/retinol_pirlome.png?v=1764809595&width=900"
-                alt="Featured Product"
-                className="relative z-10 w-full rounded-[3rem] shadow-2xl"
-              />
-            </motion.div>
+     <section className="relative overflow-hidden py-32 bg-surface">
 
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1 }}
-            >
-              <span className="text-taupe tracking-widest uppercase text-xs mb-4 block font-semibold">Curated Collections</span>
-              <h2 className="text-5xl md:text-7xl font-serif mb-8 leading-tight">Global Beauty & <br /> <span className="italic font-light">Wellness Rituals</span></h2>
-              <p className="text-lg text-taupe mb-10 leading-relaxed max-w-lg">
-                We bridge the gap between world-class brands and the Egyptian market. Explore 100% original formulations, from high-performance retinol treatments to essential beauty supplements.
-              </p>
+  {/* Background Glow */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(211,197,246,0.12),transparent_70%)]" />
 
-              <ul className="space-y-4 mb-10">
-                {["Authenticity Verified", "Top International Brands", "Fast Delivery Across Egypt"].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-foreground font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Link to="/collections">
-                <button className="px-12 py-5 bg-foreground text-ivory rounded-full hover:bg-taupe transition-colors duration-300 flex items-center gap-2 group shadow-xl">
-                  Explore The Marketplace
-                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+  {/* Left Blob */}
+  <div className="absolute -left-20 sm:-left-24 lg:-left-32 top-24 w-56 h-56 sm:w-72 sm:h-72 lg:w-[420px] lg:h-[420px] rounded-full bg-secondary/30 blur-3xl" />
+
+  {/* Left Organic Shape */}
+  <div
+    className="absolute left-0 top-1/2 -translate-y-1/2
+    w-36 h-64
+    sm:w-44 sm:h-72
+    lg:w-60 lg:h-[420px]
+    bg-primary/10
+    blur-sm
+    rounded-[55%_45%_70%_30%/30%_60%_40%_70%]
+    rotate-12"
+  />
+
+  {/* Right Blob */}
+  <div className="absolute -right-20 sm:-right-24 lg:-right-32 bottom-20 w-56 h-56 sm:w-72 sm:h-72 lg:w-[420px] lg:h-[420px] rounded-full bg-secondary/30 blur-3xl" />
+
+  {/* Right Organic Shape */}
+  <div
+    className="absolute right-0 top-1/2 -translate-y-1/2
+    w-36 h-64
+    sm:w-44 sm:h-72
+    lg:w-60 lg:h-[420px]
+    bg-primary/10
+    blur-sm
+    rounded-[45%_55%_35%_65%/40%_30%_70%_60%]
+    -rotate-12"
+  />
+
+  {/* Decorative Circles */}
+  <div className="absolute top-20 left-[18%] w-3 h-3 rounded-full bg-primary/20" />
+  <div className="absolute top-40 right-[18%] w-2 h-2 rounded-full bg-secondary" />
+  <div className="absolute bottom-20 left-[12%] w-4 h-4 rounded-full bg-primary/15" />
+  <div className="absolute bottom-36 right-[12%] w-3 h-3 rounded-full bg-secondary/70" />
+
+  {/* Decorative Diamonds */}
+  <div className="absolute top-44 left-[28%] w-3 h-3 rotate-45 bg-primary/30 rounded-sm" />
+  <div className="absolute bottom-32 right-[30%] w-3 h-3 rotate-45 bg-primary/20 rounded-sm" />
+
+  <div className="container relative z-10 mx-auto px-6">
+    <div className="grid lg:grid-cols-2 gap-16 items-center">
+
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1 }}
+        className="relative"
+      >
+        <div className="absolute -inset-10 bg-primary/10 rounded-full blur-[120px]" />
+
+        <img
+          src="https://e-majestic.com/cdn/shop/files/retinol_pirlome.png?v=1764809595&width=900"
+          alt="Featured Product"
+          className="relative z-10 w-full rounded-[3rem] shadow-2xl"
+        />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, x: 50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1 }}
+      >
+        <span className="text-muted-foreground tracking-[0.35em] uppercase text-xs font-semibold mb-4 block">
+          Curated Collections
+        </span>
+
+        <h2 className="text-4xl md:text-6xl xl:text-7xl font-serif text-foreground leading-tight mb-8">
+          Global Beauty &
+          <br />
+          <span className="italic font-light text-primary">
+            Wellness Rituals
+          </span>
+        </h2>
+
+        <p className="text-muted-foreground text-lg leading-8 max-w-xl mb-10">
+          We bridge the gap between world-class brands and the Egyptian market.
+          Explore authentic skincare, premium treatments, and beauty essentials
+          trusted worldwide.
+        </p>
+
+        <ul className="space-y-5 mb-10">
+          {[
+            "100% Authentic Products",
+            "Premium International Brands",
+            "Fast Delivery Across Egypt",
+          ].map((item) => (
+            <li
+              key={item}
+              className="flex items-center gap-4 text-foreground font-medium"
+            >
+              <span className="w-2 h-2 rounded-full bg-primary" />
+              {item}
+            </li>
+          ))}
+        </ul>
+
+        <Link to="/collections">
+          <button className="group flex items-center gap-2 rounded-full bg-primary px-10 py-5 text-white shadow-xl shadow-primary/20 transition-all duration-300 hover:scale-105 hover:bg-foreground">
+            Explore The Marketplace
+
+            <ChevronRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+          </button>
+        </Link>
+      </motion.div>
+
+    </div>
+  </div>
+</section>
 
       {/* BRAND VALUES / STATEMENT */}
       <section className="py-32 bg-ivory">
@@ -297,7 +503,7 @@ export default function Home() {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 pt-12 border-t border-border/50">
               {[
-                { label: "Founded", value: "2024" },
+                { label: "Founded", value: "2026" },
                 { label: "Community", value: "120k+" },
                 { label: "Products", value: "Original" },
                 { label: "Sourcing", value: "Verified" }

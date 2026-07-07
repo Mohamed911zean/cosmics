@@ -111,7 +111,7 @@ export function Cart() {
                                     <p className="text-2xl font-light tracking-tight">${(item.price * item.quantity).toFixed(2)}</p>
                                     <button
                                         onClick={() => handleRemoveItem(item.id, item.name)}
-                                        className="text-foreground/20 hover:text-red-500 transition-all duration-300 p-3 hover:bg-red-500/10 rounded-sm group/delete"
+                                        className="text-foreground/20 hover:text-destructive transition-all duration-300 p-3 hover:bg-destructive/10 rounded-sm group/delete"
                                     >
                                         <Trash2 className="w-5 h-5 transition-transform group-hover/delete:scale-110" />
                                     </button>

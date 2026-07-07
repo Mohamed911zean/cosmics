@@ -113,7 +113,7 @@ export function Wishlist() {
                                     <Button
                                         variant="outline"
                                         onClick={() => handleRemoveItem(item.id, item.name)}
-                                        className="rounded-none border-border/40 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30 transition-colors w-full sm:w-auto"
+                                        className="rounded-none border-border/40 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors w-full sm:w-auto"
                                     >
                                         <Trash2 className="h-4 w-4 mr-2" />
                                         Remove

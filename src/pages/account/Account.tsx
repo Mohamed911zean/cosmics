@@ -58,7 +58,7 @@ export function Account() {
                         <Button
                             variant="outline"
                             onClick={handleLogout}
-                            className="w-full md:w-auto border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                            className="w-full md:w-auto border-primary text-primary hover:bg-primary hover:text-primary"
                         >
                             <LogOut className="w-4 h-4 mr-2" />
                             Sign Out
@@ -107,7 +107,7 @@ export function Account() {
                         </div>
 
                         {/* Content */}
-                        <div className="flex-1 bg-white/50 backdrop-blur-sm border border-border/30 rounded-2xl p-6 md:p-10 min-h-[500px]">
+                        <div className="flex-1 bg-surface/50 backdrop-blur-sm border border-border/30 rounded-2xl p-6 md:p-10 min-h-[500px]">
                             {/* Profile Tab */}
                             {activeTab === "profile" && (
                                 <motion.div
@@ -134,7 +134,7 @@ export function Account() {
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40 float-left w-full">Account Status</label>
                                             <div className="flex items-center gap-4 p-4 bg-secondary/20 rounded-lg border border-border/30">
-                                                <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-600">
+                                                <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center text-success">
                                                     <User className="w-5 h-5" />
                                                 </div>
                                                 <div>

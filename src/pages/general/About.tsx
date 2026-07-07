@@ -43,7 +43,7 @@ export default function About() {
             </section>
 
             {/* OUR PHILOSOPHY */}
-            <section className="py-24 bg-white">
+            <section className="py-24 bg-surface">
                 <div className="container mx-auto px-6">
                     <div className="grid lg:grid-cols-2 gap-20 items-center">
                         <motion.div
@@ -109,7 +109,7 @@ export default function About() {
                                 transition={{ delay: idx * 0.1 }}
                                 className="text-center group"
                             >
-                                <div className="w-16 h-16 rounded-full bg-white mb-6 mx-auto flex items-center justify-center text-accent shadow-sm group-hover:scale-110 transition-transform duration-500">
+                                <div className="w-16 h-16 rounded-full bg-surface mb-6 mx-auto flex items-center justify-center text-accent shadow-sm group-hover:scale-110 transition-transform duration-500">
                                     <value.icon className="w-8 h-8" />
                                 </div>
                                 <h3 className="text-xl font-serif mb-3">{value.title}</h3>
@@ -121,7 +121,7 @@ export default function About() {
             </section>
 
             {/* COMMITMENT SECTION */}
-            <section className="py-32 bg-white overflow-hidden">
+            <section className="py-32 bg-surface overflow-hidden">
                 <div className="container mx-auto px-6">
                     <div className="max-w-4xl mx-auto text-center">
                         <motion.div
@@ -131,7 +131,7 @@ export default function About() {
                             className="relative p-12 md:p-20"
                         >
                             <div className="absolute inset-0 border border-border/50 rounded-[3rem]" />
-                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white px-6">
+                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-surface px-6">
                                 <Sparkles className="w-8 h-8 text-accent" />
                             </div>
 
@@ -152,7 +152,7 @@ export default function About() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h2 className="text-4xl md:text-6xl font-serif mb-8 text-white">Start Your Own <br /> <span className="italic font-light">Skin Ritual</span></h2>
+                        <h2 className="text-4xl md:text-6xl font-serif mb-8 text-primary-foreground">Start Your Own <br /> <span className="italic font-light">Skin Ritual</span></h2>
                         <p className="text-ivory/70 max-w-lg mx-auto mb-10 text-lg">
                             Experience the harmony of nature and science. Discover the collection that’s designed for you.
                         </p>

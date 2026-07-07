@@ -43,8 +43,8 @@ export function FAQ() {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
-                    <p className="text-gray-600 font-medium">
+                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-foreground mb-4">Frequently Asked Questions</h1>
+                    <p className="text-muted-foreground font-medium">
                         Have questions about your {brandName} ritual? We're here to help.
                     </p>
                 </motion.div>
@@ -53,19 +53,19 @@ export function FAQ() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-border space-y-4"
+                    className="bg-surface rounded-3xl p-6 sm:p-10 shadow-sm border border-border space-y-4"
                 >
                     {faqData.map((item, index) => (
-                        <div key={index} className="border-b border-rose-50 last:border-0 pb-4 last:pb-0">
+                        <div key={index} className="border-b border-primary last:border-0 pb-4 last:pb-0">
                             <button
                                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                                 className="flex items-center justify-between w-full text-left py-4 focus:outline-none group"
                             >
-                                <span className="text-lg font-serif font-medium text-gray-900 group-hover:text-accent transition-colors">
+                                <span className="text-lg font-serif font-medium text-foreground group-hover:text-accent transition-colors">
                                     {item.question}
                                 </span>
                                 <ChevronDown
-                                    className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${openIndex === index ? "rotate-180" : "group-hover:text-accent"}`}
+                                    className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${openIndex === index ? "rotate-180" : "group-hover:text-accent"}`}
                                 />
                             </button>
                             <AnimatePresence>
@@ -77,7 +77,7 @@ export function FAQ() {
                                         transition={{ duration: 0.3 }}
                                         className="overflow-hidden"
                                     >
-                                        <p className="text-gray-600 pb-4 leading-relaxed font-sans">
+                                        <p className="text-muted-foreground pb-4 leading-relaxed font-sans">
                                             {item.answer}
                                         </p>
                                     </motion.div>

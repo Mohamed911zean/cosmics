@@ -58,7 +58,7 @@ export function Orders() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                            className="bg-white/50 backdrop-blur-sm border border-border/30 overflow-hidden group hover:shadow-lg transition-all duration-500"
+                            className="bg-surface/50 backdrop-blur-sm border border-border/30 overflow-hidden group hover:shadow-lg transition-all duration-500"
                         >
                             <div className="p-6 sm:p-8 border-b border-border/30 bg-secondary/10 flex flex-wrap items-center justify-between gap-6">
                                 <div className="space-y-1">
@@ -77,9 +77,9 @@ export function Orders() {
                                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Status</p>
                                     <div className="flex items-center gap-2">
                                         {order.status === 'Delivered' ? (
-                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                            <CheckCircle2 className="w-4 h-4 text-success" />
                                         ) : (
-                                            <Clock className="w-4 h-4 text-orange-500" />
+                                            <Clock className="w-4 h-4 text-accent" />
                                         )}
                                         <span className="text-sm font-medium">{order.status}</span>
                                     </div>

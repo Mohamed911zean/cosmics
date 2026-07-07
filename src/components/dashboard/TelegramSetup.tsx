@@ -74,64 +74,64 @@ export function TelegramSetup() {
     };
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-6">
-            <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
-                <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center">
-                    <Send className="w-5 h-5 text-sky-600" />
+        <div className="bg-surface p-6 rounded-xl shadow-sm border border-border space-y-6">
+            <div className="flex items-center gap-3 border-b border-border pb-4">
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                    <Send className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                    <h2 className="text-lg font-bold text-gray-900">Telegram Notifications</h2>
-                    <p className="text-sm text-gray-500">Manage order alert recipients</p>
+                    <h2 className="text-lg font-bold text-foreground">Telegram Notifications</h2>
+                    <p className="text-sm text-muted-foreground">Manage order alert recipients</p>
                 </div>
             </div>
 
             <div className="space-y-4">
                 {/* Primary Recipient (انت) */}
-                <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-lg">
+                <div className="bg-success border border-success p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                            <CheckCircle2 className="w-5 h-5 text-success" />
                             <div>
-                                <p className="text-sm font-semibold text-emerald-900">Primary Recipient (You)</p>
-                                <p className="text-xs text-emerald-700">Chat ID: 5931162186</p>
+                                <p className="text-sm font-semibold text-success">Primary Recipient (You)</p>
+                                <p className="text-xs text-success">Chat ID: 5931162186</p>
                             </div>
                         </div>
-                        <span className="px-3 py-1 bg-emerald-600 text-white text-xs font-bold rounded-full">ACTIVE</span>
+                        <span className="px-3 py-1 bg-success text-primary-foreground text-xs font-bold rounded-full">ACTIVE</span>
                     </div>
-                    <p className="text-xs text-emerald-600 mt-2">✓ All orders will be sent to this account automatically</p>
+                    <p className="text-xs text-success mt-2">✓ All orders will be sent to this account automatically</p>
                 </div>
 
                 {/* Secondary Recipient (صاحبك) */}
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <div className="bg-surface-soft p-4 rounded-lg border border-border">
                     <div className="flex items-center gap-3 mb-3">
-                        <UserPlus className="w-5 h-5 text-gray-600" />
+                        <UserPlus className="w-5 h-5 text-muted-foreground" />
                         <div>
-                            <p className="text-sm font-semibold text-gray-900">Secondary Recipient (Optional)</p>
-                            <p className="text-xs text-gray-600">Add another person to receive notifications</p>
+                            <p className="text-sm font-semibold text-foreground">Secondary Recipient (Optional)</p>
+                            <p className="text-xs text-muted-foreground">Add another person to receive notifications</p>
                         </div>
                     </div>
 
                     {secondaryChatId ? (
-                        <div className="flex items-center justify-between bg-white p-3 rounded border border-gray-200">
+                        <div className="flex items-center justify-between bg-surface p-3 rounded border border-border">
                             <div>
-                                <p className="text-xs text-gray-500">Chat ID:</p>
-                                <p className="text-sm font-semibold text-gray-900">{secondaryChatId}</p>
+                                <p className="text-xs text-muted-foreground">Chat ID:</p>
+                                <p className="text-sm font-semibold text-foreground">{secondaryChatId}</p>
                             </div>
                             <Button size="sm" variant="destructive" onClick={handleRemoveSecondary}>
                                 Remove
                             </Button>
                         </div>
                     ) : (
-                        <p className="text-xs text-gray-500 italic">No secondary recipient added</p>
+                        <p className="text-xs text-muted-foreground italic">No secondary recipient added</p>
                     )}
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg text-sm space-y-2">
+                <div className="bg-surface-soft p-4 rounded-lg text-sm space-y-2">
                     <h3 className="font-semibold flex items-center gap-2">
                         <AlertCircle className="w-4 h-4" />
                         How to add a secondary recipient:
                     </h3>
-                    <ol className="list-decimal list-inside space-y-1 text-gray-600">
+                    <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
                         <li>Ask them to open your bot in Telegram</li>
                         <li>They send <code>/start</code> to the bot</li>
                         <li>Click "Find Recent Chats" below</li>
@@ -151,7 +151,7 @@ export function TelegramSetup() {
 
                 {updates.length > 0 && (
                     <div className="border rounded-lg overflow-hidden">
-                        <div className="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 uppercase">Recent Messages</div>
+                        <div className="bg-surface-soft px-4 py-2 text-xs font-semibold text-muted-foreground uppercase">Recent Messages</div>
                         <div className="divide-y">
                             {updates.map((update: any) => {
                                 const chatId = String(update.message?.chat?.id);
@@ -159,15 +159,15 @@ export function TelegramSetup() {
                                 const isPrimary = chatId === "5931162186";
                                 
                                 return (
-                                    <div key={update.update_id} className="p-3 flex items-center justify-between hover:bg-gray-50">
+                                    <div key={update.update_id} className="p-3 flex items-center justify-between hover:bg-surface-soft">
                                         <div>
                                             <div className="font-medium flex items-center gap-2">
                                                 {update.message?.from?.first_name} {update.message?.from?.last_name}
-                                                {isPrimary && <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">YOU</span>}
-                                                {isSelected && <span className="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded">SELECTED</span>}
-                                                <span className="text-gray-400 text-xs">@{update.message?.from?.username}</span>
+                                                {isPrimary && <span className="text-xs bg-success text-success px-2 py-0.5 rounded">YOU</span>}
+                                                {isSelected && <span className="text-xs bg-primary text-primary px-2 py-0.5 rounded">SELECTED</span>}
+                                                <span className="text-muted-foreground text-xs">@{update.message?.from?.username}</span>
                                             </div>
-                                            <div className="text-xs text-gray-500">ID: {chatId} • "{update.message?.text}"</div>
+                                            <div className="text-xs text-muted-foreground">ID: {chatId} • "{update.message?.text}"</div>
                                         </div>
                                         {!isPrimary && (
                                             <Button 

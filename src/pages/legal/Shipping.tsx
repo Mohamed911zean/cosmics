@@ -11,11 +11,11 @@ export function Shipping() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-border"
+                    className="bg-surface rounded-3xl p-8 sm:p-12 shadow-sm border border-border"
                 >
-                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gray-900 mb-8">Shipping Policy</h1>
+                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-foreground mb-8">Shipping Policy</h1>
 
-                    <div className="prose prose-rose max-w-none text-gray-600">
+                    <div className="prose prose-rose max-w-none text-muted-foreground">
                         <h3 className="text-foreground font-serif">Nationwide Delivery</h3>
                         <p>
                             We are proud to offer nationwide delivery to every governorate in Egypt. From the heart of Cairo to the furthest corners of Upper Egypt, we ensure your beauty essentials reach you safely. Facilitating the delivery of top skincare brands across Egypt is our mission.

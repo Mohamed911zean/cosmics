@@ -5,9 +5,9 @@ import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 
 const statusStyles: Record<string, { bg: string; text: string; dot: string }> = {
-  Delivered: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
-  Shipped: { bg: "bg-sky-50", text: "text-sky-700", dot: "bg-sky-500" },
-  Processing: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-500" },
+  Delivered: { bg: "bg-success", text: "text-success", dot: "bg-success" },
+  Shipped: { bg: "bg-primary", text: "text-primary", dot: "bg-primary" },
+  Processing: { bg: "bg-accent", text: "text-accent", dot: "bg-accent" },
 }
 
 export default function Orders() {
@@ -40,8 +40,8 @@ export default function Orders() {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
-          <p className="text-gray-500 font-medium">Loading orders from all customers...</p>
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          <p className="text-muted-foreground font-medium">Loading orders from all customers...</p>
         </div>
       </div>
     )
@@ -51,26 +51,26 @@ export default function Orders() {
     <div className="space-y-8">
       <DashboardKpiCards items={kpis} />
 
-      <section className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
-        <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50/80 to-white">
+      <section className="bg-surface rounded-2xl shadow-sm border border-border/80 overflow-hidden">
+        <div className="px-6 py-5 border-b border-border bg-gradient-to-r from-surface-soft to-white">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-200">
-              <Package className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary flex items-center justify-center shadow-lg shadow-purple-200">
+              <Package className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">Orders</h2>
-              <p className="text-xs text-gray-500">Latest transactions and payment status</p>
+              <h2 className="text-lg font-bold text-foreground">Orders</h2>
+              <p className="text-xs text-muted-foreground">Latest transactions and payment status</p>
             </div>
           </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50/50">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Order</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+              <tr className="bg-surface-soft/50">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Order</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Customer</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -84,15 +84,15 @@ export default function Orders() {
                   <tr 
                     key={order.id} 
                     onClick={() => navigate(`/dashboard/orders/${order.id}`)}
-                    className="hover:bg-violet-50/30 transition-colors duration-200 cursor-pointer"
+                    className="hover:bg-primary/30 transition-colors duration-200 cursor-pointer"
                   >
                     <td className="px-6 py-4">
-                      <span className="font-semibold text-gray-900">
+                      <span className="font-semibold text-foreground">
                         {orderName}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-gray-900">{customer}</td>
-                    <td className="px-6 py-4 font-bold text-gray-900">${order.total.toFixed(2)}</td>
+                    <td className="px-6 py-4 font-semibold text-foreground">{customer}</td>
+                    <td className="px-6 py-4 font-bold text-foreground">${order.total.toFixed(2)}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${status.bg} ${status.text}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />

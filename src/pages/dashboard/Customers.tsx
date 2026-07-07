@@ -4,10 +4,10 @@ import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 
 const avatarGradients = [
-  "from-violet-500 to-purple-600",
-  "from-emerald-500 to-teal-600",
-  "from-amber-500 to-orange-600",
-  "from-rose-500 to-pink-600",
+  "from-primary to-primary",
+  "from-success to-success",
+  "from-accent to-accent",
+  "from-primary to-primary",
 ]
 
 export default function Customers() {
@@ -80,8 +80,8 @@ export default function Customers() {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
-          <p className="text-gray-500 font-medium">Loading customers from orders...</p>
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          <p className="text-muted-foreground font-medium">Loading customers from orders...</p>
         </div>
       </div>
     )
@@ -91,77 +91,77 @@ export default function Customers() {
     <div className="space-y-8">
       <DashboardKpiCards items={kpis} />
 
-      <section className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
-        <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50/80 to-white">
+      <section className="bg-surface rounded-2xl shadow-sm border border-border/80 overflow-hidden">
+        <div className="px-6 py-5 border-b border-border bg-gradient-to-r from-surface-soft to-white">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-200">
-              <Users className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary flex items-center justify-center shadow-lg shadow-purple-200">
+              <Users className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">Customers</h2>
-              <p className="text-xs text-gray-500">Details from checkout</p>
+              <h2 className="text-lg font-bold text-foreground">Customers</h2>
+              <p className="text-xs text-muted-foreground">Details from checkout</p>
             </div>
           </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50/50">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Address</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">City</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Postal Code</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Orders</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Spent</th>
+              <tr className="bg-surface-soft/50">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Name</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Phone</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Address</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">City</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Postal Code</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Orders</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Spent</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {customers.map((customer, index) => (
-                <tr key={customer.email} className="hover:bg-violet-50/30 transition-colors duration-200">
+                <tr key={customer.email} className="hover:bg-primary/30 transition-colors duration-200">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarGradients[index % avatarGradients.length]} flex items-center justify-center text-white font-bold text-sm shadow-md`}>
+                      <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarGradients[index % avatarGradients.length]} flex items-center justify-center text-primary-foreground font-bold text-sm shadow-md`}>
                         {customer.name[0]}
                       </div>
                       <div>
-                        <div className="font-semibold text-gray-900">{customer.name}</div>
-                        <div className="text-xs text-gray-500">Customer</div>
+                        <div className="font-semibold text-foreground">{customer.name}</div>
+                        <div className="text-xs text-muted-foreground">Customer</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-1.5 text-gray-600">
-                      <Mail className="w-3.5 h-3.5 text-gray-400" />
+                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                      <Mail className="w-3.5 h-3.5 text-muted-foreground" />
                       {customer.email}
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-1.5 text-gray-600">
-                      <Phone className="w-3.5 h-3.5 text-gray-400" />
+                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                      <Phone className="w-3.5 h-3.5 text-muted-foreground" />
                       {customer.phone || "-"}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-700">{customer.address || "-"}</span>
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-foreground">{customer.address || "-"}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-gray-700">{customer.city || "-"}</span>
+                    <span className="text-foreground">{customer.city || "-"}</span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-gray-700">{customer.postalCode || "-"}</span>
+                    <span className="text-foreground">{customer.postalCode || "-"}</span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-violet-100 text-violet-700">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-primary text-primary">
                       {customer.orders} orders
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="font-bold text-gray-900">${customer.total.toFixed(2)}</span>
+                    <span className="font-bold text-foreground">${customer.total.toFixed(2)}</span>
                   </td>
                 </tr>
               ))}

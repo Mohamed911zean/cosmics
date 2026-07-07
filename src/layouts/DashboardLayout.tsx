@@ -21,7 +21,7 @@ export function DashboardLayout() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-violet-50/30 text-[#1f1f1f]">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/30 text-foreground">
       <AdminOrderAlert />
       <DashboardSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <DashboardTopbar isSidebarOpen={isSidebarOpen} onMenuClick={() => setIsSidebarOpen((prev) => !prev)} />

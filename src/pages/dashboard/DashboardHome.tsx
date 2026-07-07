@@ -73,8 +73,8 @@ export default function DashboardHome() {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
-          <p className="text-gray-500 font-medium">Loading dashboard data...</p>
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          <p className="text-muted-foreground font-medium">Loading dashboard data...</p>
         </div>
       </div>
     )

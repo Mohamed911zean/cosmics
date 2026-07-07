@@ -69,15 +69,15 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
       {isOpen && (
         <div className="fixed inset-0 bg-black/40 z-20 lg:hidden" onClick={onClose} />
       )}
-      <aside className={`fixed inset-y-0 left-0 w-64 xl:w-72 bg-[#4B0082] text-white flex flex-col transition-transform duration-300 z-30 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed inset-y-0 left-0 w-64 xl:w-72 bg-primary text-primary-foreground flex flex-col transition-transform duration-300 z-30 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="h-16 px-6 flex items-center justify-between border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center">
-              <UserStar className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 rounded-full bg-surface/15 flex items-center justify-center">
+              <UserStar className="w-5 h-5 text-primary-foreground" />
             </div>
             <span className="text-lg font-semibold tracking-wide">Admin Page</span>
           </div>
-          <button type="button" onClick={onClose} className="lg:hidden w-9 h-9 rounded-full bg-white/10 flex items-center justify-center">
+          <button type="button" onClick={onClose} className="lg:hidden w-9 h-9 rounded-full bg-surface/10 flex items-center justify-center">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -91,8 +91,8 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
             const isSubmenuOpen = openSubmenu === item.label
 
             const baseClasses = "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors"
-            const activeClasses = "bg-white/15 text-white"
-            const inactiveClasses = "text-white/80 hover:bg-white/10"
+            const activeClasses = "bg-surface/15 text-primary-foreground"
+            const inactiveClasses = "text-primary-foreground/80 hover:bg-surface/10"
 
             if (hasSubmenu) {
               return (
@@ -117,7 +117,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
                           <Link
                             key={subItem.label}
                             to={subItem.to}
-                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${isSubActive ? "bg-white/20 text-white" : "text-white/70 hover:bg-white/10"
+                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${isSubActive ? "bg-surface/20 text-primary-foreground" : "text-primary-foreground/70 hover:bg-surface/10"
                               }`}
                             onClick={handleNavClick}
                           >
@@ -149,7 +149,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
         </div>
 
         <div className="px-4 pb-6">
-          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-white/90 hover:bg-white/10 transition-colors">
+          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-primary-foreground/90 hover:bg-surface/10 transition-colors">
             <LogOut className="w-5 h-5" />
             Sign Out
           </button>

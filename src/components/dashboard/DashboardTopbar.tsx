@@ -32,18 +32,18 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
   }
 
   return (
-    <header className={`fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-50 transition-all duration-300 ${isSidebarOpen ? "lg:left-64 xl:left-72 " : "lg:left-0 z-10"}`}>
+    <header className={`fixed top-0 left-0 right-0 h-16 bg-surface/80 backdrop-blur-md border-b border-border flex items-center justify-between px-4 sm:px-6 lg:px-8 z-50 transition-all duration-300 ${isSidebarOpen ? "lg:left-64 xl:left-72 " : "lg:left-0 z-10"}`}>
       <div className="flex items-center gap-4 ">
         <button
           type="button"
           onClick={onMenuClick}
-          className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-violet-100 flex items-center justify-center text-gray-600 hover:text-violet-700 transition-all duration-200"
+          className="w-10 h-10 rounded-xl bg-muted hover:bg-primary flex items-center justify-center text-muted-foreground hover:text-primary transition-all duration-200"
         >
           <Menu className="w-5 h-5" />
         </button>
         <div className="hidden sm:block">
-          <h1 className="text-lg font-bold text-gray-900">Dashboard</h1>
-          <p className="text-xs text-gray-500">Welcome back, {user?.displayName?.split(" ")[0] || "Admin"}</p>
+          <h1 className="text-lg font-bold text-foreground">Dashboard</h1>
+          <p className="text-xs text-muted-foreground">Welcome back, {user?.displayName?.split(" ")[0] || "Admin"}</p>
         </div>
       </div>
       <div className="flex items-center gap-3">
@@ -53,11 +53,11 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
             <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${isOpen ? 'bg-violet-100 text-violet-700' : 'bg-gray-100 text-gray-600 hover:bg-violet-100 hover:text-violet-700'}`}
+            className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${isOpen ? 'bg-primary text-primary' : 'bg-muted text-muted-foreground hover:bg-primary hover:text-primary'}`}
             >
             <Bell className="w-5 h-5" />
             {unreadCount > 0 && (
-                <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white animate-pulse" />
+                <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full ring-2 ring-white animate-pulse" />
             )}
             </button>
 
@@ -70,12 +70,12 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
                     />
                     
                     {/* Dropdown */}
-                    <div className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-20 sm:top-auto sm:mt-3 w-auto sm:w-96 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200 max-w-md sm:max-w-none mx-auto sm:mx-0">
-                        <div className="p-3 sm:p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                    <div className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-20 sm:top-auto sm:mt-3 w-auto sm:w-96 bg-surface rounded-2xl shadow-xl border border-border overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200 max-w-md sm:max-w-none mx-auto sm:mx-0">
+                        <div className="p-3 sm:p-4 border-b border-border flex items-center justify-between bg-surface-soft/50">
                             <div className="flex items-center gap-2">
-                                <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Notifications</h3>
+                                <h3 className="font-semibold text-foreground text-sm sm:text-base">Notifications</h3>
                                 {unreadCount > 0 && (
-                                    <span className="bg-violet-100 text-violet-700 text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full">
+                                    <span className="bg-primary text-primary text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full">
                                         {unreadCount} New
                                     </span>
                                 )}
@@ -84,7 +84,7 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
                                 {unreadCount > 0 && (
                                     <button 
                                         onClick={() => markAllAsRead()}
-                                        className="p-1.5 hover:bg-white rounded-lg text-gray-500 hover:text-violet-600 transition-colors"
+                                        className="p-1.5 hover:bg-surface rounded-lg text-muted-foreground hover:text-primary transition-colors"
                                         title="Mark all as read"
                                     >
                                         <Check className="w-4 h-4" />
@@ -93,7 +93,7 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
                                 {notifications.length > 0 && (
                                     <button 
                                         onClick={() => clearNotifications()}
-                                        className="p-1.5 hover:bg-white rounded-lg text-gray-500 hover:text-rose-600 transition-colors"
+                                        className="p-1.5 hover:bg-surface rounded-lg text-muted-foreground hover:text-primary transition-colors"
                                         title="Clear all"
                                     >
                                         <Trash2 className="w-4 h-4" />
@@ -104,8 +104,8 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
 
                         <div className="max-h-[calc(100vh-12rem)] sm:max-h-[400px] overflow-y-auto">
                             {notifications.length === 0 ? (
-                                <div className="p-6 sm:p-8 text-center text-gray-500">
-                                    <Bell className="w-8 h-8 mx-auto mb-3 text-gray-300" />
+                                <div className="p-6 sm:p-8 text-center text-muted-foreground">
+                                    <Bell className="w-8 h-8 mx-auto mb-3 text-border" />
                                     <p className="text-sm sm:text-base">No notifications yet</p>
                                 </div>
                             ) : (
@@ -113,14 +113,14 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
                                     {notifications.map((notification) => (
                                         <div 
                                             key={notification.id} 
-                                            className={`p-3 sm:p-4 hover:bg-gray-50 transition-colors relative group ${!notification.read ? 'bg-violet-50/30' : ''}`}
+                                            className={`p-3 sm:p-4 hover:bg-surface-soft transition-colors relative group ${!notification.read ? 'bg-primary/30' : ''}`}
                                             onClick={() => markAsRead(notification.id)}
                                         >
                                             <div className="flex gap-2 sm:gap-3">
                                                 <div className={`mt-0.5 sm:mt-1 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 ${
-                                                    notification.type === 'order' ? 'bg-green-100 text-green-600' :
-                                                    notification.type === 'warning' ? 'bg-amber-100 text-amber-600' :
-                                                    'bg-blue-100 text-blue-600'
+                                                    notification.type === 'order' ? 'bg-success/20 text-success' :
+                                                    notification.type === 'warning' ? 'bg-accent text-accent' :
+                                                    'bg-primary text-primary'
                                                 }`}>
                                                     {notification.type === 'order' ? <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> :
                                                      notification.type === 'warning' ? <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> :
@@ -128,20 +128,20 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-start justify-between gap-2">
-                                                        <p className={`text-xs sm:text-sm font-medium ${!notification.read ? 'text-gray-900' : 'text-gray-600'}`}>
+                                                        <p className={`text-xs sm:text-sm font-medium ${!notification.read ? 'text-foreground' : 'text-muted-foreground'}`}>
                                                             {notification.title}
                                                         </p>
-                                                        <span className="text-[9px] sm:text-[10px] text-gray-400 whitespace-nowrap">
+                                                        <span className="text-[9px] sm:text-[10px] text-muted-foreground whitespace-nowrap">
                                                             {formatDate(notification.date)}
                                                         </span>
                                                     </div>
-                                                    <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 line-clamp-2">
+                                                    <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 line-clamp-2">
                                                         {notification.message}
                                                     </p>
                                                     {notification.link && (
                                                         <Link 
                                                             to={notification.link}
-                                                            className="inline-flex items-center text-[11px] sm:text-xs font-medium text-violet-600 hover:text-violet-700 mt-1.5 sm:mt-2"
+                                                            className="inline-flex items-center text-[11px] sm:text-xs font-medium text-primary hover:text-primary mt-1.5 sm:mt-2"
                                                             onClick={() => setIsOpen(false)}
                                                         >
                                                             View Details →
@@ -149,7 +149,7 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
                                                     )}
                                                 </div>
                                                 {!notification.read && (
-                                                    <div className="absolute top-3 sm:top-4 right-3 sm:right-4 w-2 h-2 bg-violet-500 rounded-full" />
+                                                    <div className="absolute top-3 sm:top-4 right-3 sm:right-4 w-2 h-2 bg-primary rounded-full" />
                                                 )}
                                             </div>
                                         </div>
@@ -162,13 +162,13 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
             )}
         </div>
 
-        <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-violet-200">
+        <div className="flex items-center gap-3 pl-3 border-l border-border">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-violet-200">
             <span className="text-sm font-bold">{user?.displayName?.[0] || "A"}</span>
           </div>
           <div className="hidden sm:block">
-            <div className="text-sm font-semibold text-gray-900">{user?.displayName || "Admin"}</div>
-            <div className="text-xs text-gray-500">Administrator</div>
+            <div className="text-sm font-semibold text-foreground">{user?.displayName || "Admin"}</div>
+            <div className="text-xs text-muted-foreground">Administrator</div>
           </div>
         </div>
       </div>

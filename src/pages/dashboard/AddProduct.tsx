@@ -102,43 +102,43 @@ export default function AddProduct() {
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-200">
-          <Package className="w-5 h-5 text-white" />
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-success to-success flex items-center justify-center shadow-lg shadow-emerald-200">
+          <Package className="w-5 h-5 text-primary-foreground" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Add New Product</h1>
-          <p className="text-sm text-gray-500">Fill in the details below</p>
+          <h1 className="text-2xl font-bold text-foreground">Add New Product</h1>
+          <p className="text-sm text-muted-foreground">Fill in the details below</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden">
+      <form onSubmit={handleSubmit} className="bg-surface rounded-2xl shadow-sm border border-border/80 overflow-hidden">
         <div className="p-6 space-y-6">
           {/* Brand & Product Name */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Brand Name <span className="text-rose-500">*</span>
+              <label className="block text-sm font-semibold text-foreground mb-2">
+                Brand Name <span className="text-primary">*</span>
               </label>
               <input
                 type="text"
                 name="brand"
                 value={formData.brand}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                className="w-full px-4 py-2.5 rounded-lg border border-border focus:border-success focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
                 placeholder="e.g. Luminous"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Product Name <span className="text-rose-500">*</span>
+              <label className="block text-sm font-semibold text-foreground mb-2">
+                Product Name <span className="text-primary">*</span>
               </label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                className="w-full px-4 py-2.5 rounded-lg border border-border focus:border-success focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
                 placeholder="e.g. Glow Serum"
                 required
               />
@@ -148,8 +148,8 @@ export default function AddProduct() {
           {/* Price & Category */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Price ($) <span className="text-rose-500">*</span>
+              <label className="block text-sm font-semibold text-foreground mb-2">
+                Price ($) <span className="text-primary">*</span>
               </label>
               <input
                 type="number"
@@ -158,20 +158,20 @@ export default function AddProduct() {
                 onChange={handleInputChange}
                 step="0.01"
                 min="0"
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                className="w-full px-4 py-2.5 rounded-lg border border-border focus:border-success focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
                 placeholder="0.00"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Category <span className="text-rose-500">*</span>
+              <label className="block text-sm font-semibold text-foreground mb-2">
+                Category <span className="text-primary">*</span>
               </label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                className="w-full px-4 py-2.5 rounded-lg border border-border focus:border-success focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
                 required
               >
                 <option value="">Select Category</option>
@@ -186,7 +186,7 @@ export default function AddProduct() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-foreground mb-2">
               Description
             </label>
             <textarea
@@ -194,17 +194,17 @@ export default function AddProduct() {
               value={formData.description}
               onChange={handleInputChange}
               rows={4}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all resize-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-border focus:border-success focus:ring-2 focus:ring-emerald-200 outline-none transition-all resize-none"
               placeholder="Product description..."
             />
           </div>
 
           {/* Main Image */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Main Product Image <span className="text-rose-500">*</span>
+            <label className="block text-sm font-semibold text-foreground mb-2">
+              Main Product Image <span className="text-primary">*</span>
             </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-emerald-500 transition-colors">
+            <div className="border-2 border-dashed border-border rounded-lg p-6 hover:border-success transition-colors">
               {mainImagePreview ? (
                 <div className="flex items-center gap-4">
                   <img src={mainImagePreview} alt="Preview" className="w-32 h-32 object-cover rounded-lg" />
@@ -214,15 +214,15 @@ export default function AddProduct() {
                       setMainImage(null)
                       setMainImagePreview("")
                     }}
-                    className="text-rose-600 hover:text-rose-700"
+                    className="text-primary hover:text-primary"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
               ) : (
                 <label className="flex flex-col items-center cursor-pointer">
-                  <Upload className="w-12 h-12 text-gray-400 mb-2" />
-                  <span className="text-sm text-gray-600">Click to upload main image</span>
+                  <Upload className="w-12 h-12 text-muted-foreground mb-2" />
+                  <span className="text-sm text-muted-foreground">Click to upload main image</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -236,7 +236,7 @@ export default function AddProduct() {
 
           {/* Additional Images */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-foreground mb-2">
               Additional Images (Optional, max 4)
             </label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -246,17 +246,17 @@ export default function AddProduct() {
                   <button
                     type="button"
                     onClick={() => removeAdditionalImage(index)}
-                    className="absolute top-2 right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600"
+                    className="absolute top-2 right-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center hover:bg-primary"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
               ))}
               {additionalImages.length < 4 && (
-                <label className="border-2 border-dashed border-gray-300 rounded-lg h-32 flex items-center justify-center cursor-pointer hover:border-emerald-500 transition-colors">
+                <label className="border-2 border-dashed border-border rounded-lg h-32 flex items-center justify-center cursor-pointer hover:border-success transition-colors">
                   <div className="text-center">
-                    <Upload className="w-8 h-8 text-gray-400 mx-auto mb-1" />
-                    <span className="text-xs text-gray-600">Upload</span>
+                    <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-1" />
+                    <span className="text-xs text-muted-foreground">Upload</span>
                   </div>
                   <input
                     type="file"
@@ -272,11 +272,11 @@ export default function AddProduct() {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+        <div className="px-6 py-4 bg-surface-soft border-t border-border flex justify-end gap-3">
           <button
             type="button"
             onClick={() => navigate("/dashboard/products")}
-            className="px-6 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition-colors"
+            className="px-6 py-2.5 rounded-lg border border-border text-foreground font-semibold hover:bg-muted transition-colors"
             disabled={isUploading}
           >
             Cancel
@@ -284,7 +284,7 @@ export default function AddProduct() {
           <button
             type="submit"
             disabled={isUploading}
-            className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-success to-success text-primary-foreground font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isUploading ? (
               <>

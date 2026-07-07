@@ -81,15 +81,15 @@ export function Shop() {
     }
 
     return (
-        <div className="pt-24 min-h-screen bg-gradient-to-b from-rose-50/50 to-orange-50/50">
+        <div className="pt-24 min-h-screen bg-ivory from-primary/50 to-accent/50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
                 {/* Header */}
                 <div className="text-center mb-12">
-                    <h1 className="text-4xl sm:text-5xl font-serif font-bold text-gray-900 mb-4">
+                    <h1 className="text-4xl sm:text-5xl font-serif font-bold text-foreground mb-4">
                         Shop All
                     </h1>
-                    <p className="text-gray-600 max-w-2xl mx-auto">
+                    <p className="text-muted-foreground max-w-2xl mx-auto">
                         Explore our complete collection of premium skincare and body care essentials
                     </p>
                 </div>
@@ -100,23 +100,23 @@ export function Shop() {
                     <aside className="lg:w-64 space-y-8 flex-shrink-0">
                         {/* Search */}
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <input
                                 type="text"
                                 placeholder="Search products..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-full focus:outline-none focus:border-rose-500 transition-colors"
+                                className="w-full pl-10 pr-4 py-2 bg-surface border border-border rounded-full focus:outline-none focus:border-primary transition-colors"
                             />
                         </div>
 
                         {/* Categories */}
                         <div>
-                            <h3 className="font-semibold text-gray-900 mb-4">Categories</h3>
-                            <div className="space-y-2">
+                            <h3 className="font-semibold text-foreground mb-4">Categories</h3>
+                           <div className="flex overflow-x-auto gap-2 pb-4 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
                                 <button
                                     onClick={() => handleCategoryChange("All")}
-                                    className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${selectedCategory === "All" ? "bg-white shadow-sm text-rose-500 font-medium" : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+                                    className={`w-full  px-3 py-2 rounded-lg transition-colors ${selectedCategory === "All" ? "bg-surface shadow-sm text-primary font-medium" : "text-muted-foreground hover:text-foreground hover:bg-surface/50"
                                         }`}
                                 >
                                     All Products
@@ -125,7 +125,7 @@ export function Shop() {
                                     <button
                                         key={category.id}
                                         onClick={() => handleCategoryChange(category.name)}
-                                        className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${selectedCategory === category.name ? "bg-white shadow-sm text-rose-500 font-medium" : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+                                        className={` w-full  px-3 py-2 rounded-lg transition-colors ${selectedCategory === category.name ? "bg-surface shadow-sm text-primary font-medium" : "text-muted-foreground hover:text-foreground hover:bg-surface/50"
                                             }`}
                                     >
                                         {category.name}
@@ -136,17 +136,17 @@ export function Shop() {
 
                         {/* Price Range - Simple Implementation */}
                         <div>
-                            <h3 className="font-semibold text-gray-900 mb-4">Price Range</h3>
+                            <h3 className="font-semibold text-foreground mb-4">Price Range</h3>
                             <div className="px-2">
                                 <input
                                     type="range"
                                     min="0"
-                                    max="200"
+                                    max="2000"
                                     value={priceRange[1]}
                                     onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
-                                    className="w-full accent-rose-500 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                    className="w-full accent-rose-500 h-2 bg-muted rounded-lg appearance-none cursor-pointer"
                                 />
-                                <div className="flex justify-between text-sm text-gray-600 mt-2">
+                                <div className="flex justify-between text-sm text-muted-foreground mt-2">
                                     <span>$0</span>
                                     <span>${priceRange[1]}</span>
                                 </div>
@@ -157,14 +157,14 @@ export function Shop() {
                     {/* Product Grid */}
                     <div className="flex-1">
                         {/* Sort Bar */}
-                        <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
-                            <p className="text-sm text-gray-500">
+                        <div className="flex justify-between items-center mb-6 pb-4 border-b border-border">
+                            <p className="text-sm text-muted-foreground">
                                 Showing {filteredProducts.length} results
                             </p>
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
-                                className="bg-transparent border-none text-sm font-medium text-gray-700 focus:ring-0 cursor-pointer"
+                                className="bg-transparent border-none text-sm font-medium text-foreground focus:ring-0 cursor-pointer"
                             >
                                 <option value="featured">Featured</option>
                                 <option value="price-low">Price: Low to High</option>
@@ -182,7 +182,7 @@ export function Shop() {
                                         transition={{ delay: index * 0.05 }}
                                         className="group"
                                     >
-                                        <div className="relative aspect-square rounded-2xl overflow-hidden bg-white mb-4 shadow-sm border border-gray-100">
+                                        <div className="relative aspect-square rounded-2xl overflow-hidden bg-surface mb-4 shadow-sm border border-border">
                                             <Link to={`/product/${product.id}`}>
                                                 <img
                                                     src={product.image}
@@ -192,16 +192,16 @@ export function Shop() {
                                             </Link>
 
                                             {/* Quick Actions - Visible on mobile, hover on desktop */}
-                                            <div className="absolute inset-x-0 bottom-4 flex items-center justify-center gap-3 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 translate-y-0 lg:translate-y-4 lg:group-hover:translate-y-0 text-white">
+                                            <div className="absolute inset-x-0 bottom-4 flex items-center justify-center gap-3 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 translate-y-0 lg:translate-y-4 lg:group-hover:translate-y-0 text-primary-foreground">
                                                 <button
                                                     onClick={(e) => handleAddToCart(e, product)}
-                                                    className="w-10 h-10 rounded-full bg-white text-gray-900 flex items-center justify-center hover:bg-rose-500 hover:text-white shadow-lg transition-colors"
+                                                    className="w-10 h-10 rounded-full bg-surface text-foreground flex items-center justify-center hover:bg-primary hover:text-primary-foreground shadow-lg transition-colors"
                                                 >
                                                     <ShoppingCart className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={(e) => handleToggleWishlist(e, product)}
-                                                    className={`w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-rose-500 hover:text-white shadow-lg transition-colors ${isInWishlist(product.id) ? "text-rose-500" : "text-gray-900"
+                                                    className={`w-10 h-10 rounded-full bg-surface flex items-center justify-center hover:bg-primary hover:text-primary-foreground shadow-lg transition-colors ${isInWishlist(product.id) ? "text-primary" : "text-foreground"
                                                         }`}
                                                 >
                                                     <Heart className="w-4 h-4" />
@@ -210,14 +210,14 @@ export function Shop() {
                                         </div>
 
                                         <div>
-                                            <p className="text-xs text-rose-500 uppercase tracking-widest mb-1">{product.category}</p>
+                                            <p className="text-xs text-primary uppercase tracking-widest mb-1">{product.category}</p>
                                             <Link to={`/product/${product.id}`}>
-                                                <h3 className="font-medium text-gray-900 mb-1 hover:text-rose-500 transition-colors truncate">
+                                                <h3 className="font-medium text-foreground mb-1 hover:text-primary transition-colors truncate">
                                                     {product.name}
                                                 </h3>
                                             </Link>
                                             <div className="flex items-center justify-between">
-                                                <p className="text-lg font-semibold text-gray-900">
+                                                <p className="text-lg font-semibold text-foreground">
                                                     ${product.price.toFixed(2)}
                                                 </p>
                                             </div>
@@ -226,8 +226,8 @@ export function Shop() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-20 bg-white/50 rounded-2xl border border-dashed border-gray-300">
-                                <p className="text-gray-500 text-lg mb-4">No products found</p>
+                            <div className="text-center py-20 bg-surface/50 rounded-2xl border border-dashed border-border">
+                                <p className="text-muted-foreground text-lg mb-4">No products found</p>
                                 <Button
                                     onClick={() => {
                                         setSearchQuery("")

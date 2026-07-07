@@ -88,7 +88,7 @@ export function Contact() {
 
                             <div className="grid gap-8">
                                 <div className="flex gap-4 group">
-                                    <div className="w-12 h-12 bg-white flex items-center justify-center text-accent shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-border">
+                                    <div className="w-12 h-12 bg-surface flex items-center justify-center text-accent shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-border">
                                         <MapPin className="w-5 h-5" />
                                     </div>
                                     <div>
@@ -98,7 +98,7 @@ export function Contact() {
                                 </div>
 
                                 <div className="flex gap-4 group">
-                                    <div className="w-12 h-12 bg-white flex items-center justify-center text-accent shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-border">
+                                    <div className="w-12 h-12 bg-surface flex items-center justify-center text-accent shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-border">
                                         <Phone className="w-5 h-5" />
                                     </div>
                                     <div>
@@ -109,7 +109,7 @@ export function Contact() {
                                 </div>
 
                                 <div className="flex gap-4 group">
-                                    <div className="w-12 h-12 bg-white flex items-center justify-center text-accent shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-border">
+                                    <div className="w-12 h-12 bg-surface flex items-center justify-center text-accent shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-border">
                                         <Mail className="w-5 h-5" />
                                     </div>
                                     <div>
@@ -119,7 +119,7 @@ export function Contact() {
                                 </div>
 
                                 <div className="flex gap-4 group">
-                                    <div className="w-12 h-12 bg-white flex items-center justify-center text-accent shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-border">
+                                    <div className="w-12 h-12 bg-surface flex items-center justify-center text-accent shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-border">
                                         <Clock className="w-5 h-5" />
                                     </div>
                                     <div>
@@ -136,7 +136,7 @@ export function Contact() {
                         initial={{ opacity: 0, x: 30 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="bg-white p-8 sm:p-10 border border-border/30 shadow-lg shadow-secondary/20"
+                        className="bg-surface p-8 sm:p-10 border border-border/30 shadow-lg shadow-secondary/20"
                     >
                         <h2 className="text-2xl font-serif mb-8">Send us a message</h2>
                         <form onSubmit={handleSubmit} className="space-y-6">

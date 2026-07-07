@@ -216,7 +216,7 @@ export function Navbar() {
                     setIsSearchOpen(false)
                     setSearchQuery("")
                   }}
-                  className="p-3 border border-border rounded-full hover:bg-white transition-colors"
+                  className="p-3 border border-border rounded-full hover:bg-surface transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -241,9 +241,9 @@ export function Navbar() {
                       key={product.id}
                       to={`/product/${product.id}`}
                       onClick={() => setIsSearchOpen(false)}
-                      className="flex items-center gap-6 p-4 rounded-3xl hover:bg-white transition-all group"
+                      className="flex items-center gap-6 p-4 rounded-3xl hover:bg-surface transition-all group"
                     >
-                      <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white border border-border/50">
+                      <div className="w-20 h-20 rounded-2xl overflow-hidden bg-surface border border-border/50">
                         <img
                           src={product.image}
                           alt={product.name}

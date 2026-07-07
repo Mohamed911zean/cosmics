@@ -110,7 +110,7 @@ export function ProductPage() {
                                 variant="ghost"
                                 className={`absolute top-6 right-6 backdrop-blur-md border transition-all duration-300 rounded-none ${inWishlist
                                     ? "bg-accent/20 border-accent/50 text-accent"
-                                    : "bg-white/20 border-white/30 hover:bg-white/40 text-white"
+                                    : "bg-surface/20 border-white/30 hover:bg-surface/40 text-primary-foreground"
                                     }`}
                                 onClick={handleToggleWishlist}
                             >

@@ -77,7 +77,7 @@ export const Login = () => {
           className="w-full h-full object-cover"
         />
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#2D2422]/60 via-[#2D2422]/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-deep-purple/60 via-deep-purple/20 to-transparent" />
 
         {/* Brand copy on image */}
         <div className="absolute inset-0 flex flex-col justify-end p-14">
@@ -87,11 +87,11 @@ export const Login = () => {
             transition={{ delay: 0.6, duration: 0.8 }}
           >
             <Link to="/">
-              <h2 className="text-5xl font-serif text-white tracking-[0.2em] font-medium mb-4">
+              <h2 className="text-5xl font-serif text-primary-foreground tracking-[0.2em] font-medium mb-4">
                 Majestics.
               </h2>
             </Link>
-            <p className="text-white/70 text-sm tracking-widest uppercase font-medium">
+            <p className="text-primary-foreground/70 text-sm tracking-widest uppercase font-medium">
               Egypt's Premier Beauty Marketplace
             </p>
           </motion.div>
@@ -129,7 +129,7 @@ export const Login = () => {
             whileTap={{ scale: 0.98 }}
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 h-14 border border-border bg-white hover:bg-secondary/30 transition-all duration-300 text-sm font-medium text-foreground/80 mb-8 disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 h-14 border border-border bg-surface hover:bg-secondary/30 transition-all duration-300 text-sm font-medium text-foreground/80 mb-8 disabled:opacity-50"
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"

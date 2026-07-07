@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom"
 import { useProductStore } from "@/stores"
+import {ArrowUpRight} from "lucide-react"
 
 export function Footer() {
   const { brand } = useProductStore()
   if (!brand) return null
 
   return (
-    <footer className="bg-white pt-24 pb-12 border-t border-border">
+    <footer className="bg-surface mb-10 mx-4 pt-24 pb-12 border-t border-border rounded-4xl">
       <div className="container mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-12 mb-20">
 
@@ -74,6 +75,20 @@ export function Footer() {
             <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
           </div>
+         <a
+  href="https://www.facebook.com/profile.php?id=61581516043531"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="group flex items-center gap-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-muted-foreground hover:text-primary transition-all duration-300"
+>
+  <span>Designed by</span>
+
+  <span className="font-bold text-primary group-hover:tracking-[0.3em] transition-all duration-300">
+    REACTECH
+  </span>
+
+  <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -translate-x-1 transition-all duration-300" />
+</a>
         </div>
       </div>
     </footer>

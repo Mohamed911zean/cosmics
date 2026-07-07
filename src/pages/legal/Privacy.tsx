@@ -11,11 +11,11 @@ export function Privacy() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-border"
+                    className="bg-surface rounded-3xl p-8 sm:p-12 shadow-sm border border-border"
                 >
-                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gray-900 mb-8">Privacy Policy</h1>
+                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-foreground mb-8">Privacy Policy</h1>
 
-                    <div className="prose prose-rose max-w-none text-gray-600">
+                    <div className="prose prose-rose max-w-none text-muted-foreground">
                         <p className="lead">
                             At {brandName}, we take your privacy seriously. This Privacy Policy describes how your personal information is collected, used, and shared when you visit or make a purchase from our store.
                         </p>
@@ -45,8 +45,8 @@ export function Privacy() {
                             We may update this privacy policy from time to time in order to reflect, for example, changes to our practices or for other operational, legal or regulatory reasons.
                         </p>
 
-                        <div className="mt-8 pt-8 border-t border-gray-100">
-                            <p className="text-sm text-gray-400">Last updated: January 2026</p>
+                        <div className="mt-8 pt-8 border-t border-border">
+                            <p className="text-sm text-muted-foreground">Last updated: January 2026</p>
                         </div>
                     </div>
                 </motion.div>

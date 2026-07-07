@@ -68,8 +68,8 @@ export function ProductCard({ id, name, price, image, category }: ProductCardPro
                 size="icon"
                 variant="ghost"
                 className={`absolute top-4 right-4 backdrop-blur-md border transition-all z-10 rounded-none ${inWishlist
-                  ? "bg-accent/30 border-accent/50 text-white"
-                  : "bg-white/10 border-white/20 hover:bg-white/30 text-white"
+                  ? "bg-accent/30 border-accent/50 text-primary-foreground"
+                  : "bg-surface/10 border-white/20 hover:bg-surface/30 text-primary-foreground"
                   }`}
                 onClick={handleToggleWishlist}
               >

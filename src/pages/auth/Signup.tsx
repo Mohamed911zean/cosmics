@@ -79,7 +79,7 @@ export const Signup = () => {
           alt="Majestics Beauty"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#2D2422]/50 via-[#2D2422]/15 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-deep-purple/50 via-deep-purple/15 to-transparent" />
 
         {/* Floating trust badges */}
         <div className="absolute inset-0 flex flex-col justify-between p-14">
@@ -101,10 +101,10 @@ export const Signup = () => {
                 transition={{ delay: 0.9 + i * 0.1, duration: 0.5 }}
                 className="flex items-center gap-3"
               >
-                <div className="w-5 h-5 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
-                  <Check className="w-3 h-3 text-white" />
+                <div className="w-5 h-5 rounded-full bg-surface/20 backdrop-blur-sm flex items-center justify-center shrink-0">
+                  <Check className="w-3 h-3 text-primary-foreground" />
                 </div>
-                <span className="text-white/80 text-xs tracking-wider font-medium">{benefit}</span>
+                <span className="text-primary-foreground/80 text-xs tracking-wider font-medium">{benefit}</span>
               </motion.div>
             ))}
           </motion.div>
@@ -115,11 +115,11 @@ export const Signup = () => {
             transition={{ delay: 0.6, duration: 0.8 }}
           >
             <Link to="/">
-              <h2 className="text-5xl font-serif text-white tracking-[0.2em] font-medium mb-4">
+              <h2 className="text-5xl font-serif text-primary-foreground tracking-[0.2em] font-medium mb-4">
                 Majestics.
               </h2>
             </Link>
-            <p className="text-white/70 text-sm tracking-widest uppercase font-medium">
+            <p className="text-primary-foreground/70 text-sm tracking-widest uppercase font-medium">
               Egypt's Premier Beauty Marketplace
             </p>
           </motion.div>
@@ -157,7 +157,7 @@ export const Signup = () => {
             whileTap={{ scale: 0.98 }}
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 h-14 border border-border bg-white hover:bg-secondary/30 transition-all duration-300 text-sm font-medium text-foreground/80 mb-8 disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 h-14 border border-border bg-surface hover:bg-secondary/30 transition-all duration-300 text-sm font-medium text-foreground/80 mb-8 disabled:opacity-50"
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -210,7 +210,7 @@ export const Signup = () => {
                     password.length > 0
                       ? passwordLongEnough
                         ? 'border-accent/60'
-                        : 'border-rose-300'
+                        : 'border-primary'
                       : 'border-border/50 focus:border-accent'
                   }`}
                 />
@@ -224,7 +224,7 @@ export const Signup = () => {
               </div>
               {/* Password strength hint */}
               {password.length > 0 && !passwordLongEnough && (
-                <p className="text-[10px] text-rose-400 font-medium tracking-wide">
+                <p className="text-[10px] text-primary font-medium tracking-wide">
                   Password must be at least 6 characters
                 </p>
               )}
@@ -247,7 +247,7 @@ export const Signup = () => {
                     confirmPassword.length > 0
                       ? passwordsMatch
                         ? 'border-accent/60'
-                        : 'border-rose-300'
+                        : 'border-primary'
                       : 'border-border/50 focus:border-accent'
                   }`}
                 />
@@ -271,7 +271,7 @@ export const Signup = () => {
                 </div>
               </div>
               {confirmPassword.length > 0 && !passwordsMatch && (
-                <p className="text-[10px] text-rose-400 font-medium tracking-wide">
+                <p className="text-[10px] text-primary font-medium tracking-wide">
                   Passwords do not match
                 </p>
               )}
