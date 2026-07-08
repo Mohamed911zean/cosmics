@@ -279,9 +279,9 @@ export function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-ivory"
+            className="fixed inset-0 z-[100] bg-white "
           >
-            <div className="container mx-auto px-8 py-8 h-full flex flex-col">
+            <div className="container mx-auto px-8 py-8 h-full flex flex-col z-[999]">
               <div className="flex justify-between items-center mb-20">
                 <h2 className="text-xl font-serif tracking-widest uppercase">Menu</h2>
                 <button onClick={() => setMenuOpen(false)} className="p-2 border border-border rounded-full hover:bg-muted transition-colors">

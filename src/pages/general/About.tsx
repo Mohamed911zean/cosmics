@@ -153,11 +153,11 @@ export default function About() {
                         viewport={{ once: true }}
                     >
                         <h2 className="text-4xl md:text-6xl font-serif mb-8 text-primary-foreground">Start Your Own <br /> <span className="italic font-light">Skin Ritual</span></h2>
-                        <p className="text-ivory/70 max-w-lg mx-auto mb-10 text-lg">
+                        <p className="text-white-creamy max-w-lg mx-auto mb-10 text-lg">
                             Experience the harmony of nature and science. Discover the collection that’s designed for you.
                         </p>
                         <Link to="/shop">
-                            <button className="px-12 py-5 bg-ivory text-foreground rounded-full hover:bg-accent transition-colors duration-300 flex items-center gap-2 group mx-auto font-bold shadow-xl">
+                            <button className="px-12 py-5 bg-ivory text-white-soft rounded-full hover:bg-accent transition-colors duration-300 flex items-center gap-2 group mx-auto font-bold shadow-xl">
                                 Shop The Collection
                                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                             </button>

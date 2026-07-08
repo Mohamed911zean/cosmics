@@ -490,7 +490,137 @@ export default function Home() {
 </section>
 
       {/* BRAND VALUES / STATEMENT */}
-      <section className="py-32 bg-ivory">
+<section className="relative py-32 bg-ivory overflow-hidden">        {/* ================= Decorations ================= */}
+
+<div className="absolute left-[14%] top-20 text-primary/25 text-xl">✦</div>
+
+<div className="absolute right-[18%] top-32 text-secondary text-lg">✦</div>
+
+<div className="absolute left-[20%] bottom-24 text-primary/20">✦</div>
+
+<div className="absolute right-[14%] bottom-28 text-secondary/70">✦</div>
+
+{/* Center Glow */}
+<div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(211,197,246,0.12),transparent_70%)] pointer-events-none" />
+
+{/* Left Luxury SVG */}
+<div className="absolute -left-10 md:left-0 top-1/2 -translate-y-1/2 opacity-70 pointer-events-none">
+
+<svg
+width="220"
+height="560"
+viewBox="0 0 220 560"
+fill="none"
+xmlns="http://www.w3.org/2000/svg"
+>
+
+<path
+d="M30 0
+C170 120
+30 240
+170 360
+40 470
+170 560"
+stroke="currentColor"
+className="text-primary/20"
+strokeWidth="1.2"
+/>
+
+<circle
+cx="82"
+cy="145"
+r="55"
+stroke="currentColor"
+className="text-primary/15"
+/>
+
+<circle
+cx="130"
+cy="420"
+r="70"
+stroke="currentColor"
+className="text-secondary"
+/>
+
+<path
+d="M90 110
+C105 92 115 78 122 58
+C108 74 94 89 78 103Z"
+fill="currentColor"
+className="text-secondary"
+/>
+
+<path
+d="M126 410
+C145 388 156 362 166 338
+C150 360 136 382 118 396Z"
+fill="currentColor"
+className="text-secondary"
+/>
+
+</svg>
+
+</div>
+
+{/* Right Luxury SVG */}
+
+<div className="absolute -right-10 md:right-0 top-1/2 -translate-y-1/2 scale-x-[-1] opacity-70 pointer-events-none">
+
+<svg
+width="220"
+height="560"
+viewBox="0 0 220 560"
+fill="none"
+xmlns="http://www.w3.org/2000/svg"
+>
+
+<path
+d="M30 0
+C170 120
+30 240
+170 360
+40 470
+170 560"
+stroke="currentColor"
+className="text-primary/20"
+strokeWidth="1.2"
+/>
+
+<circle
+cx="82"
+cy="145"
+r="55"
+stroke="currentColor"
+className="text-primary/15"
+/>
+
+<circle
+cx="130"
+cy="420"
+r="70"
+stroke="currentColor"
+className="text-secondary"
+/>
+
+<path
+d="M90 110
+C105 92 115 78 122 58
+C108 74 94 89 78 103Z"
+fill="currentColor"
+className="text-secondary"
+/>
+
+<path
+d="M126 410
+C145 388 156 362 166 338
+C150 360 136 382 118 396Z"
+fill="currentColor"
+className="text-secondary"
+/>
+
+</svg>
+
+</div>
         <div className="container mx-auto px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -498,9 +628,36 @@ export default function Home() {
             viewport={{ once: true }}
             className="max-w-4xl mx-auto"
           >
+
+            <div className="flex justify-center mb-10">
+
+<div className="relative">
+
+<div className="w-32 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent"/>
+
+<div className="absolute left-1/2 -translate-x-1/2 -top-2">
+
+<div className="w-4 h-4 rotate-45 rounded-sm bg-primary/30"/>
+
+</div>
+
+</div>
+
+</div>
+            
             <h2 className="text-4xl md:text-6xl font-serif mb-12 leading-relaxed">
               "We believe that authenticity is the core of true <span className="italic text-taupe font-light">beauty</span> and <span className="text-accent underline decoration-1 underline-offset-[12px]">care</span>."
             </h2>
+
+            <div className="flex justify-center my-12 gap-3">
+
+<div className="w-2 h-2 rotate-45 bg-primary/30 rounded-sm"/>
+
+<div className="w-2 h-2 rotate-45 bg-secondary rounded-sm"/>
+
+<div className="w-2 h-2 rotate-45 bg-primary/30 rounded-sm"/>
+
+</div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 pt-12 border-t border-border/50">
               {[
                 { label: "Founded", value: "2026" },
