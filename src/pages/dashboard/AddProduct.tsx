@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { Package, Upload, X, Loader2 } from "lucide-react"
 import { useProductStore } from "@/stores/ecommerceStores/useProductStore"
@@ -8,7 +7,7 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 import { createProduct, updateProduct, fetchProductById, type UpsertProductInput, type ProductStatus } from "@/lib/products"
 
 export default function AddProduct() {
-  const { categories } = useProductStore()
+  const { categories, fetchCategories } = useProductStore()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const productId = searchParams.get("id")
@@ -18,7 +17,7 @@ export default function AddProduct() {
     brand: "",
     name: "",
     price: "",
-    category: "",
+    categoryId: "",
     description: "",
     stockQuantity: "10",
     lowStockThreshold: "5",
@@ -32,6 +31,20 @@ export default function AddProduct() {
   const [existingAdditionalImageUrls, setExistingAdditionalImageUrls] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [isLoadingProduct, setIsLoadingProduct] = useState(false)
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true)
+
+  // Load categories from Supabase on mount. Without this, the dropdown
+  // below is permanently empty because the store starts with categories: []
+  // and nothing else on this page ever populates it.
+  useEffect(() => {
+    setIsLoadingCategories(true)
+    fetchCategories()
+      .catch((error) => {
+        console.error("Failed to load categories:", error)
+        toast.error("Failed to load categories")
+      })
+      .finally(() => setIsLoadingCategories(false))
+  }, [fetchCategories])
 
   // Load product data if in edit mode
   useEffect(() => {
@@ -50,7 +63,7 @@ export default function AddProduct() {
               brand: brand,
               name: productName,
               price: product.price.toString(),
-              category: product.category,
+              categoryId: product.categoryId || "",
               description: product.description || "",
               stockQuantity: product.stock_quantity.toString(),
               lowStockThreshold: product.low_stock_threshold.toString(),
@@ -112,7 +125,7 @@ export default function AddProduct() {
       return
     }
 
-    if (!formData.brand || !formData.name || !formData.price || !formData.category) {
+    if (!formData.brand || !formData.name || !formData.price || !formData.categoryId) {
       toast.error("Please fill all required fields")
       return
     }
@@ -138,7 +151,7 @@ export default function AddProduct() {
         name: `${formData.brand} - ${formData.name}`,
         brandName: formData.brand,
         price: parseFloat(formData.price),
-        categoryId: formData.category, // Note: This might need to be adjusted based on your categories setup
+        categoryId: formData.categoryId,
         description: formData.description,
         imageUrls: [mainImageUrl, ...additionalUrls],
         stockQuantity: parseInt(formData.stockQuantity),
@@ -245,19 +258,27 @@ export default function AddProduct() {
                 Category <span className="text-primary">*</span>
               </label>
               <select
-                name="category"
-                value={formData.category}
+                name="categoryId"
+                value={formData.categoryId}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2.5 rounded-lg border border-border focus:border-success focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                className="w-full px-4 py-2.5 rounded-lg border border-border focus:border-success focus:ring-2 focus:ring-emerald-200 outline-none transition-all disabled:opacity-50"
+                disabled={isLoadingCategories}
                 required
               >
-                <option value="">Select Category</option>
+                <option value="">
+                  {isLoadingCategories ? "Loading categories..." : "Select Category"}
+                </option>
                 {categories.map((cat) => (
-                  <option key={cat.id} value={cat.name}>
+                  <option key={cat.id} value={cat.id}>
                     {cat.name}
                   </option>
                 ))}
               </select>
+              {!isLoadingCategories && categories.length === 0 && (
+                <p className="text-xs text-destructive mt-1.5">
+                  No categories found. Add one from Dashboard → Categories first.
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">

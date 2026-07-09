@@ -42,6 +42,7 @@ import OrderDetails from "@/pages/dashboard/OrderDetails"
 import DashboardCustomers from "@/pages/dashboard/Customers"
 import AllProducts from "@/pages/dashboard/Products"
 import DashboardAccount from "@/pages/dashboard/Account"
+import Categories from "@/pages/dashboard/Categories"
 
 // Utils
 import { useAuthStore } from "@/stores/useAuthStore"
@@ -99,6 +100,7 @@ export default function App() {
               <Route path="orders" element={<DashboardOrders />} />
               <Route path="orders/:id" element={<OrderDetails />} />
               <Route path="customers" element={<DashboardCustomers />} />
+              <Route path="categories" element={<Categories />} />
               <Route path="products" element={<AllProducts />} />
               <Route path="products/add" element={<AddProduct />} />
               <Route path="products/best-sellers" element={<BestSellers />} />

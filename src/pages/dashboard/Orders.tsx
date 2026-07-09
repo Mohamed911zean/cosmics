@@ -6,9 +6,9 @@ import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 
 const statusStyles: Record<string, { bg: string; text: string; dot: string }> = {
-  delivered: { bg: "bg-success", text: "text-success", dot: "bg-success" },
-  shipped: { bg: "bg-primary", text: "text-primary", dot: "bg-primary" },
-  processing: { bg: "bg-accent", text: "text-accent", dot: "bg-accent" },
+  delivered: { bg: "bg-success", text: "text-white", dot: "bg-green-500" },
+  shipped: { bg: "bg-primary", text: "text-white", dot: "bg-blue-500" },
+  processing: { bg: "bg-accent", text: "text-white", dot: "bg-yellow-500" },
 }
 
 export default function Orders() {
@@ -93,7 +93,7 @@ export default function Orders() {
                     <td className="px-6 py-4 font-bold text-foreground">${order.total.toFixed(2)}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${status.bg} ${status.text}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+                        <span className={`w-1.5 h-1.5 rounded-full  ${status.dot}`} />
                         {order.status}
                       </span>
                     </td>

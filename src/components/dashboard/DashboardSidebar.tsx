@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { UserStar, LayoutDashboard, Users, Package, ShoppingBag, User, LogOut, X, ChevronDown, PackagePlus, TrendingUp, List, type LucideIcon } from "lucide-react"
+import { UserStar, LayoutDashboard, Users, Package, ShoppingBag, User, LogOut, X, ChevronDown, PackagePlus, TrendingUp, List, type LucideIcon , Layers } from "lucide-react"
 import { useAuthStore } from "@/stores/useAuthStore"
 import { toast } from "sonner"
 import { useState } from "react"
@@ -26,6 +26,7 @@ const menuItems: MenuItem[] = [
   { label: "Dashboard", icon: LayoutDashboard, to: "/dashboard/dashHome" },
   { label: "Orders", icon: ShoppingBag, to: "/dashboard/orders" },
   { label: "Customers", icon: Users, to: "/dashboard/customers" },
+  { label: "Categories", icon: Layers, to: "/dashboard/categories" },
   {
     label: "Products",
     icon: Package,

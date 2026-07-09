@@ -416,3 +416,123 @@ export async function updateProductStock(id: string, stockQuantity: number) {
 
   if (error) throw error
 }
+
+
+
+
+// CATEGROIES SECTION
+
+// ============================================================
+// ADD-ON for src/lib/products.ts
+// Paste these functions into the existing src/lib/products.ts
+// (it already has fetchCategories — these add create/update/delete
+// and a product-count-per-category helper on top of it).
+// ============================================================
+
+export interface CategoryRow {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  image_url: string | null
+  display_order: number
+  is_active: boolean
+}
+
+export interface UpsertCategoryInput {
+  name: string
+  description?: string
+  imageUrl?: string
+  displayOrder?: number
+  isActive?: boolean
+}
+
+// Enhanced version of fetchCategories that also returns product counts,
+// description, image, active state — needed for the dashboard management UI.
+// (The existing fetchCategories() used by the Shop page can stay as-is;
+// this is a separate function for the dashboard.)
+export async function fetchCategoriesForDashboard(): Promise<
+  (CategoryRow & { productCount: number })[]
+> {
+  const { data: categoriesData, error: catError } = await supabase
+    .from('categories')
+    .select('id,name,slug,description,image_url,display_order,is_active')
+    .order('display_order', { ascending: true })
+    .order('name', { ascending: true })
+
+  if (catError) throw catError
+
+  // Get product counts per category in one query
+  const { data: countData, error: countError } = await supabase
+    .from('products')
+    .select('category_id')
+    .not('category_id', 'is', null)
+
+  if (countError) throw countError
+
+  const counts = new Map<string, number>()
+  for (const row of countData || []) {
+    const key = row.category_id as string
+    counts.set(key, (counts.get(key) || 0) + 1)
+  }
+
+  return (categoriesData || []).map((c) => ({
+    ...c,
+    productCount: counts.get(c.id) || 0,
+  }))
+}
+
+export async function createCategory(input: UpsertCategoryInput): Promise<CategoryRow> {
+  const slug = `${slugify(input.name)}`
+
+  const { data, error } = await supabase
+    .from('categories')
+    .insert({
+      name: input.name,
+      slug,
+      description: input.description || null,
+      image_url: input.imageUrl || null,
+      display_order: input.displayOrder ?? 0,
+      is_active: input.isActive ?? true,
+    })
+    .select('id,name,slug,description,image_url,display_order,is_active')
+    .single()
+
+  if (error) throw error
+  return data as CategoryRow
+}
+
+export async function updateCategory(
+  id: string,
+  input: Partial<UpsertCategoryInput>
+): Promise<CategoryRow> {
+  const updates: Record<string, unknown> = {}
+
+  if (input.name !== undefined) {
+    updates.name = input.name
+    updates.slug = slugify(input.name)
+  }
+  if (input.description !== undefined) updates.description = input.description || null
+  if (input.imageUrl !== undefined) updates.image_url = input.imageUrl || null
+  if (input.displayOrder !== undefined) updates.display_order = input.displayOrder
+  if (input.isActive !== undefined) updates.is_active = input.isActive
+
+  const { data, error } = await supabase
+    .from('categories')
+    .update(updates)
+    .eq('id', id)
+    .select('id,name,slug,description,image_url,display_order,is_active')
+    .single()
+
+  if (error) throw error
+  return data as CategoryRow
+}
+
+export async function deleteCategory(id: string) {
+  // Products referencing this category have category_id set to NULL
+  // automatically (the FK is "on delete set null" in the schema), so
+  // deleting a category never deletes or breaks its products — they
+  // just become "Uncategorized" until reassigned.
+  const { error } = await supabase.from('categories').delete().eq('id', id)
+  if (error) throw error
+}
