@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { ArrowRight, ChevronRight, Play, Sparkles, Heart, ShieldCheck, Leaf } from "lucide-react"
 import {
   Carousel,
@@ -8,8 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { useCartStore, useWishlistStore, useProductStore } from "@/stores"
-import { toast } from "sonner"
+import { useProductStore } from "@/stores"
 
 
 

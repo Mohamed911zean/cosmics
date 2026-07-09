@@ -1,13 +1,18 @@
-import { useState } from "react"
+
+import { useState, useEffect } from "react"
 import { Package, Upload, X, Loader2 } from "lucide-react"
 import { useProductStore } from "@/stores/ecommerceStores/useProductStore"
 import { uploadToCloudinary, uploadMultipleToCloudinary } from "@/lib/cloudinary"
 import { toast } from "sonner"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
+import { createProduct, updateProduct, fetchProductById, type UpsertProductInput, type ProductStatus } from "@/lib/products"
 
 export default function AddProduct() {
-  const { addProduct, categories } = useProductStore()
+  const { categories } = useProductStore()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const productId = searchParams.get("id")
+  const isEditMode = !!productId
 
   const [formData, setFormData] = useState({
     brand: "",
@@ -15,13 +20,54 @@ export default function AddProduct() {
     price: "",
     category: "",
     description: "",
+    stockQuantity: "10",
+    lowStockThreshold: "5",
   })
 
   const [mainImage, setMainImage] = useState<File | null>(null)
   const [mainImagePreview, setMainImagePreview] = useState<string>("")
+  const [existingMainImageUrl, setExistingMainImageUrl] = useState<string>("")
   const [additionalImages, setAdditionalImages] = useState<File[]>([])
   const [additionalPreviews, setAdditionalPreviews] = useState<string[]>([])
+  const [existingAdditionalImageUrls, setExistingAdditionalImageUrls] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
+  const [isLoadingProduct, setIsLoadingProduct] = useState(false)
+
+  // Load product data if in edit mode
+  useEffect(() => {
+    if (isEditMode && productId) {
+      setIsLoadingProduct(true)
+      const loadProduct = async () => {
+        try {
+          const product = await fetchProductById(productId)
+          if (product) {
+            // Split name into brand and product name (assuming "Brand - Product" format)
+            const nameParts = product.name.split(" - ")
+            const brand = nameParts.length > 1 ? nameParts[0] : ""
+            const productName = nameParts.length > 1 ? nameParts.slice(1).join(" - ") : product.name
+
+            setFormData({
+              brand: brand,
+              name: productName,
+              price: product.price.toString(),
+              category: product.category,
+              description: product.description || "",
+              stockQuantity: product.stock_quantity.toString(),
+              lowStockThreshold: product.low_stock_threshold.toString(),
+            })
+            setExistingMainImageUrl(product.image)
+            setExistingAdditionalImageUrls(product.images || [])
+          }
+        } catch (error) {
+          console.error("Failed to load product:", error)
+          toast.error("Failed to load product data")
+        } finally {
+          setIsLoadingProduct(false)
+        }
+      }
+      loadProduct()
+    }
+  }, [isEditMode, productId])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -32,12 +78,13 @@ export default function AddProduct() {
     if (file) {
       setMainImage(file)
       setMainImagePreview(URL.createObjectURL(file))
+      setExistingMainImageUrl("") // Clear existing if user selects a new one
     }
   }
 
   const handleAdditionalImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
-    if (files.length + additionalImages.length > 4) {
+    if (files.length + additionalImages.length + existingAdditionalImageUrls.length > 4) {
       toast.error("Maximum 4 additional images allowed")
       return
     }
@@ -47,15 +94,20 @@ export default function AddProduct() {
     setAdditionalPreviews([...additionalPreviews, ...newPreviews])
   }
 
-  const removeAdditionalImage = (index: number) => {
-    setAdditionalImages(additionalImages.filter((_, i) => i !== index))
-    setAdditionalPreviews(additionalPreviews.filter((_, i) => i !== index))
+  const removeAdditionalImage = (index: number, isExisting: boolean = false) => {
+    if (isExisting) {
+      setExistingAdditionalImageUrls(existingAdditionalImageUrls.filter((_, i) => i !== index))
+    } else {
+      setAdditionalImages(additionalImages.filter((_, i) => i !== index))
+      setAdditionalPreviews(additionalPreviews.filter((_, i) => i !== index))
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!mainImage) {
+    // If no new main image selected and no existing one, show error
+    if (!mainImage && !existingMainImageUrl) {
       toast.error("Please upload a main product image")
       return
     }
@@ -67,36 +119,61 @@ export default function AddProduct() {
 
     setIsUploading(true)
     try {
-      // Upload main image
-      const mainImageUrl = await uploadToCloudinary(mainImage)
+      let mainImageUrl = existingMainImageUrl
+      let additionalUrls = [...existingAdditionalImageUrls]
 
-      // Upload additional images
-      let additionalUrls: string[] = []
-      if (additionalImages.length > 0) {
-        const uploads = await uploadMultipleToCloudinary(additionalImages)
-        additionalUrls = uploads.map(upload => upload.secure_url)
+      // Upload main image if a new one was selected
+      if (mainImage) {
+        const uploaded = await uploadToCloudinary(mainImage)
+        mainImageUrl = uploaded.secure_url
       }
 
-      // Add product to store (await ensures Firestore write completes before navigating)
-      await addProduct({
-        name: `${formData.brand} - ${formData.name}`,
-        price: parseFloat(formData.price),
-        category: formData.category,
-        image: mainImageUrl.secure_url,
-        description: formData.description,
-        images: additionalUrls.length > 0 ? additionalUrls : undefined,
-        rating: 0,
-        reviews: 0,
-      })
+      // Upload additional images if any were selected
+      if (additionalImages.length > 0) {
+        const uploads = await uploadMultipleToCloudinary(additionalImages)
+        additionalUrls = [...additionalUrls, ...uploads.map(upload => upload.secure_url)]
+      }
 
-      toast.success("Product added successfully!")
+      const productData: UpsertProductInput = {
+        name: `${formData.brand} - ${formData.name}`,
+        brandName: formData.brand,
+        price: parseFloat(formData.price),
+        categoryId: formData.category, // Note: This might need to be adjusted based on your categories setup
+        description: formData.description,
+        imageUrls: [mainImageUrl, ...additionalUrls],
+        stockQuantity: parseInt(formData.stockQuantity),
+        lowStockThreshold: parseInt(formData.lowStockThreshold),
+        status: "active" as ProductStatus,
+        isFeatured: false,
+        isNew: true,
+      }
+
+      if (isEditMode && productId) {
+        await updateProduct(productId, productData)
+        toast.success("Product updated successfully!")
+      } else {
+        await createProduct(productData)
+        toast.success("Product added successfully!")
+      }
+
       navigate("/dashboard/products")
     } catch (error) {
       console.error(error)
-      toast.error("Failed to add product. Please try again.")
+      toast.error(`Failed to ${isEditMode ? "update" : "add"} product. Please try again.`)
     } finally {
       setIsUploading(false)
     }
+  }
+
+  if (isLoadingProduct) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          <p className="text-muted-foreground font-medium">Loading product data...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -106,7 +183,7 @@ export default function AddProduct() {
           <Package className="w-5 h-5 text-primary-foreground" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Add New Product</h1>
+          <h1 className="text-2xl font-bold text-foreground">{isEditMode ? "Edit Product" : "Add New Product"}</h1>
           <p className="text-sm text-muted-foreground">Fill in the details below</p>
         </div>
       </div>
@@ -145,8 +222,8 @@ export default function AddProduct() {
             </div>
           </div>
 
-          {/* Price & Category */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Price, Category, Stock, Low Stock Threshold */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">
                 Price ($) <span className="text-primary">*</span>
@@ -182,6 +259,35 @@ export default function AddProduct() {
                 ))}
               </select>
             </div>
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-2">
+                Stock Quantity <span className="text-primary">*</span>
+              </label>
+              <input
+                type="number"
+                name="stockQuantity"
+                value={formData.stockQuantity}
+                onChange={handleInputChange}
+                min="0"
+                className="w-full px-4 py-2.5 rounded-lg border border-border focus:border-success focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                placeholder="0"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-2">
+                Low Stock Threshold
+              </label>
+              <input
+                type="number"
+                name="lowStockThreshold"
+                value={formData.lowStockThreshold}
+                onChange={handleInputChange}
+                min="0"
+                className="w-full px-4 py-2.5 rounded-lg border border-border focus:border-success focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                placeholder="5"
+              />
+            </div>
           </div>
 
           {/* Description */}
@@ -205,14 +311,15 @@ export default function AddProduct() {
               Main Product Image <span className="text-primary">*</span>
             </label>
             <div className="border-2 border-dashed border-border rounded-lg p-6 hover:border-success transition-colors">
-              {mainImagePreview ? (
+              {mainImagePreview || existingMainImageUrl ? (
                 <div className="flex items-center gap-4">
-                  <img src={mainImagePreview} alt="Preview" className="w-32 h-32 object-cover rounded-lg" />
+                  <img src={mainImagePreview || existingMainImageUrl} alt="Preview" className="w-32 h-32 object-cover rounded-lg" />
                   <button
                     type="button"
                     onClick={() => {
                       setMainImage(null)
                       setMainImagePreview("")
+                      setExistingMainImageUrl("")
                     }}
                     className="text-primary hover:text-primary"
                   >
@@ -240,8 +347,20 @@ export default function AddProduct() {
               Additional Images (Optional, max 4)
             </label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {existingAdditionalImageUrls.map((url, index) => (
+                <div key={`existing-${index}`} className="relative">
+                  <img src={url} alt={`Additional ${index + 1}`} className="w-full h-32 object-cover rounded-lg" />
+                  <button
+                    type="button"
+                    onClick={() => removeAdditionalImage(index, true)}
+                    className="absolute top-2 right-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center hover:bg-primary"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
               {additionalPreviews.map((preview, index) => (
-                <div key={index} className="relative">
+                <div key={`new-${index}`} className="relative">
                   <img src={preview} alt={`Additional ${index + 1}`} className="w-full h-32 object-cover rounded-lg" />
                   <button
                     type="button"
@@ -252,7 +371,7 @@ export default function AddProduct() {
                   </button>
                 </div>
               ))}
-              {additionalImages.length < 4 && (
+              {existingAdditionalImageUrls.length + additionalImages.length < 4 && (
                 <label className="border-2 border-dashed border-border rounded-lg h-32 flex items-center justify-center cursor-pointer hover:border-success transition-colors">
                   <div className="text-center">
                     <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-1" />
@@ -289,10 +408,10 @@ export default function AddProduct() {
             {isUploading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Uploading...
+                {isEditMode ? "Updating..." : "Uploading..."}
               </>
             ) : (
-              "Add Product"
+              isEditMode ? "Update Product" : "Add Product"
             )}
           </button>
         </div>

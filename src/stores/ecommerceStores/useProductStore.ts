@@ -1,275 +1,188 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 import siteData from '@/data/data.json'
+import {
+  createProduct,
+  deleteProduct as deleteProductRow,
+  fetchCategories as fetchCatalogCategories,
+  fetchProductById as fetchCatalogProductById,
+  fetchProducts as fetchCatalogProducts,
+  updateProduct as updateProductRow,
+  updateProductStock,
+  type CatalogProduct,
+  type Category,
+  type FetchProductsFilters,
+  type UpsertProductInput,
+} from '@/lib/products'
 
-/* =======================
-   Types
-======================= */
-
-export interface Product {
-    id: number
-    name: string
-    price: number
-    category: string
-    image: string
-    description?: string
-    rating?: number
-    reviews?: number
-    images?: string[]
-    sold?: number
-}
-
-export interface Category {
-    id: number
-    name: string
-    productCount: number
-    image: string
-}
+export type Product = CatalogProduct
+export type { Category }
 
 export interface BrandLinks {
-    email: string
-    support: string
-    address: string
+  email: string
+  support: string
+  address: string
 }
 
 export interface Brand {
-    name: string
-    tagline: string
-    description: string
-    links: BrandLinks
+  name: string
+  tagline: string
+  description: string
+  links: BrandLinks
 }
 
 export interface Service {
-    id: number
-    title: string
-    description: string
-    icon: string
-    image: string
+  id: number
+  title: string
+  description: string
+  icon: string
+  image: string
 }
-
-/* =======================
-   Data
-======================= */
-
-const productsData: Product[] = siteData.products
-const categoriesData: Category[] = siteData.categories
-
-/* =======================
-   Store Interface
-======================= */
 
 interface ProductState {
-    products: Product[]
-    newProducts: Product[]
-    featuredProducts: Product[]
-    categories: Category[]
-    services: Service[]
-    brand: Brand
-    selectedProduct: Product | null
-    isLoading: boolean
+  products: Product[]
+  featuredProducts: Product[]
+  categories: Category[]
+  services: Service[]
+  brand: Brand
+  selectedProduct: Product | null
+  isLoading: boolean
+  error: string | null
+  totalCount: number
+  lastFilters: FetchProductsFilters
 
-    setSelectedProduct: (product: Product | null) => void
-    addProduct: (product: Omit<Product, 'id' | 'sold'>) => Promise<void>
-    updateProduct: (id: number, product: Partial<Product>) => void
-    deleteProduct: (id: number) => void
-    getProductById: (id: number) => Product | undefined
-    getProductsByCategory: (category: string) => Product[]
-    getAllProducts: () => Product[]
-    setUser: (user: unknown) => void
-    fetchFromFirestore: () => Promise<void>
+  setSelectedProduct: (product: Product | null) => void
+  fetchProducts: (filters?: FetchProductsFilters) => Promise<void>
+  refreshProducts: () => Promise<void>
+  fetchCategories: () => Promise<void>
+  fetchProductById: (id: string) => Promise<Product | null>
+  addProduct: (product: UpsertProductInput) => Promise<Product>
+  updateProduct: (id: string, product: Partial<UpsertProductInput>) => Promise<Product>
+  updateStock: (id: string, stockQuantity: number) => Promise<void>
+  deleteProduct: (id: string) => Promise<void>
+  getProductById: (id: string) => Product | undefined
+  getProductsByCategory: (category: string) => Product[]
+  getAllProducts: () => Product[]
+  setUser: (user: unknown) => void
 }
 
-/* =======================
-   Store
-======================= */
+function selectFeatured(products: Product[]) {
+  const featured = products.filter((product) => product.isFeatured)
+  return (featured.length ? featured : products).slice(0, 4)
+}
 
-export const useProductStore = create<ProductState>()(
-    persist(
-        (set, get) => ({
-            products: productsData,
-            newProducts: [],
-            featuredProducts: productsData.slice(0, 4),
-            categories: categoriesData,
-            services: siteData.services as Service[],
-            brand: siteData.brand as Brand,
-            selectedProduct: null,
-            isLoading: false,
+export const useProductStore = create<ProductState>()((set, get) => ({
+  products: [],
+  featuredProducts: [],
+  categories: [],
+  services: siteData.services as Service[],
+  brand: siteData.brand as Brand,
+  selectedProduct: null,
+  isLoading: false,
+  error: null,
+  totalCount: 0,
+  lastFilters: { page: 1, pageSize: 24 },
 
-            /* -------- Actions -------- */
+  setSelectedProduct: (product) => set({ selectedProduct: product }),
 
-            setSelectedProduct: (product) =>
-                set({ selectedProduct: product }),
+  fetchProducts: async (filters = {}) => {
+    const mergedFilters = { page: 1, pageSize: 24, ...filters }
+    set({ isLoading: true, error: null, lastFilters: mergedFilters })
+    try {
+      const { products, total } = await fetchCatalogProducts(mergedFilters)
+      set({
+        products,
+        featuredProducts: selectFeatured(products),
+        totalCount: total,
+        isLoading: false,
+      })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to load products'
+      set({ error: message, isLoading: false })
+      throw error
+    }
+  },
 
-            addProduct: async (product) => {
-                const newProduct: Product = {
-                    ...product,
-                    id: Date.now(),
-                    sold: 0,
-                }
+  refreshProducts: async () => {
+    await get().fetchProducts(get().lastFilters)
+  },
 
-                // Update local state immediately so the UI reflects the new product
-                set((state) => ({
-                    newProducts: [...state.newProducts, newProduct],
-                }))
+  fetchCategories: async () => {
+    const categories = await fetchCatalogCategories()
+    set({ categories })
+  },
 
-                // Then persist to Firestore
-                try {
-                    const { addProductToFirestore } = await import('@/lib/db')
-                    await addProductToFirestore(newProduct)
-                } catch (error) {
-                    console.error('Failed to save product to Firestore:', error)
-                    // Product is still in local state via newProducts
-                }
-            },
+  fetchProductById: async (id) => {
+    const existing = get().getProductById(id)
+    if (existing) return existing
 
-            updateProduct: (id, updates) => {
-                const { products } = get()
-
-                if (products.some((p) => p.id === id)) {
-                    set((state) => ({
-                        products: state.products.map((p) =>
-                            p.id === id ? { ...p, ...updates } : p
-                        ),
-                    }))
-                } else {
-                    set((state) => ({
-                        newProducts: state.newProducts.map((p) =>
-                            p.id === id ? { ...p, ...updates } : p
-                        ),
-                    }))
-                }
-            },
-
-            deleteProduct: (id) => {
-                const { products } = get()
-
-                if (products.some((p) => p.id === id)) {
-                    set((state) => ({
-                        products: state.products.filter((p) => p.id !== id),
-                    }))
-                } else {
-                    set((state) => ({
-                        newProducts: state.newProducts.filter((p) => p.id !== id),
-                    }))
-                }
-            },
-
-            getProductById: (id) => {
-                return get().getAllProducts().find((p) => p.id === id)
-            },
-
-            getProductsByCategory: (category) => {
-                return get()
-                    .getAllProducts()
-                    .filter(
-                        (p) => p.category.toLowerCase() === category.toLowerCase()
-                    )
-            },
-
-            getAllProducts: () => {
-                const { products, newProducts } = get()
-                const map = new Map<number, Product>()
-                for (const p of products) {
-                    map.set(p.id, p)
-                }
-                for (const p of newProducts) {
-                    if (!map.has(p.id)) {
-                        map.set(p.id, p)
-                    }
-                }
-                return Array.from(map.values())
-            },
-
-            setUser: async () => {
-                const { subscribeToProducts, getAllProductsFromFirestore, addProductToFirestore } = await import('@/lib/db')
-                set({ isLoading: true })
-
-                // Capture newProducts BEFORE subscribing, because the subscription
-                // callback will clear them when the first snapshot arrives
-                const pendingNewProducts = [...get().newProducts]
-
-                const unsubscribe = subscribeToProducts((items) => {
-                    const mapped = items.map((p: any) => {
-                        const numericId = typeof p.id === 'string' ? Number(p.id) : p.id
-                        return {
-                            ...p,
-                            id: isNaN(numericId) ? Date.now() + Math.random() : numericId,
-                        }
-                    })
-
-                    // Merge Firestore products with static data
-                    const mergedMap = new Map<number, Product>()
-                    // Add static products first
-                    for (const p of productsData) {
-                        mergedMap.set(p.id, p)
-                    }
-                    // Override/add with Firestore products
-                    for (const p of mapped) {
-                        mergedMap.set(p.id, p as Product)
-                    }
-
-                    const allProducts = Array.from(mergedMap.values())
-                    set({
-                        products: allProducts,
-                        featuredProducts: allProducts.slice(0, 4),
-                        isLoading: false,
-                        newProducts: [],
-                    })
-                })
-                    ; (window as any).__productsUnsub__ = unsubscribe
-
-                // Reconcile: push any locally-stored products that aren't yet in Firestore
-                try {
-                    const existing = await getAllProductsFromFirestore()
-                    const existingIds = new Set(
-                        existing.map((p: any) =>
-                            typeof p.id === 'string' ? Number(p.id) : p.id
-                        )
-                    )
-                    for (const p of pendingNewProducts) {
-                        const pid = typeof p.id === 'string' ? Number(p.id) : p.id
-                        if (!existingIds.has(pid)) {
-                            await addProductToFirestore(p)
-                        }
-                    }
-                } catch {
-                }
-            },
-
-            fetchFromFirestore: async () => {
-                const { getAllProductsFromFirestore } = await import('@/lib/db')
-                set({ isLoading: true })
-                const items = await getAllProductsFromFirestore()
-                const mapped = items.map((p: any) => {
-                    const numericId = typeof p.id === 'string' ? Number(p.id) : p.id
-                    return {
-                        ...p,
-                        id: isNaN(numericId) ? Date.now() + Math.random() : numericId,
-                    }
-                })
-
-                // Merge with static data
-                const mergedMap = new Map<number, Product>()
-                for (const p of productsData) {
-                    mergedMap.set(p.id, p)
-                }
-                for (const p of mapped) {
-                    mergedMap.set(p.id, p as Product)
-                }
-
-                const allProducts = Array.from(mergedMap.values())
-                set({
-                    products: allProducts,
-                    featuredProducts: allProducts.slice(0, 4),
-                    isLoading: false,
-                })
-            },
-        }),
-        {
-            name: 'majestics-products',
-            partialize: (state) => ({
-                newProducts: state.newProducts,
-            }),
+    const product = await fetchCatalogProductById(id)
+    if (product) {
+      set((state) => {
+        const products = state.products.some((item) => item.id === product.id)
+          ? state.products.map((item) => (item.id === product.id ? product : item))
+          : [product, ...state.products]
+        return {
+          products,
+          featuredProducts: selectFeatured(products),
+          selectedProduct: product,
         }
-    )
-)
+      })
+    }
+    return product
+  },
+
+  addProduct: async (product) => {
+    const created = await createProduct(product)
+    await get().refreshProducts()
+    return created
+  },
+
+  updateProduct: async (id, product) => {
+    const updated = await updateProductRow(id, product)
+    set((state) => {
+      const products = state.products.map((item) => (item.id === id ? updated : item))
+      return {
+        products,
+        featuredProducts: selectFeatured(products),
+        selectedProduct: state.selectedProduct?.id === id ? updated : state.selectedProduct,
+      }
+    })
+    return updated
+  },
+
+  updateStock: async (id, stockQuantity) => {
+    await updateProductStock(id, stockQuantity)
+    set((state) => {
+      const products = state.products.map((item) =>
+        item.id === id
+          ? { ...item, stock_quantity: stockQuantity, stock: stockQuantity }
+          : item,
+      )
+      return {
+        products,
+        featuredProducts: selectFeatured(products),
+      }
+    })
+  },
+
+  deleteProduct: async (id) => {
+    await deleteProductRow(id)
+    set((state) => {
+      const products = state.products.filter((item) => item.id !== id)
+      return {
+        products,
+        featuredProducts: selectFeatured(products),
+        selectedProduct: state.selectedProduct?.id === id ? null : state.selectedProduct,
+      }
+    })
+  },
+
+  getProductById: (id) => get().products.find((product) => product.id === id),
+
+  getProductsByCategory: (category) =>
+    get().products.filter((product) => product.category.toLowerCase() === category.toLowerCase()),
+
+  getAllProducts: () => get().products,
+
+  setUser: () => {},
+}))

@@ -15,10 +15,10 @@ export default function Account() {
         <div className="px-6 pb-6">
           <div className="flex flex-col md:flex-row md:items-end gap-4 -mt-12 relative z-10">
             <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary to-primary flex items-center justify-center text-primary-foreground text-3xl font-bold shadow-xl ring-4 ring-white">
-              {user?.displayName?.[0] || "A"}
+              {user?.email?.[0]?.toUpperCase() || "A"}
             </div>
             <div className="flex-1 pt-2 md:pt-0 md:pb-2">
-              <h2 className="text-2xl font-bold text-foreground">{user?.displayName || "Admin User"}</h2>
+              <h2 className="text-2xl font-bold text-foreground">{user?.email?.split('@')[0] || "Admin User"}</h2>
               <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
                 <Briefcase className="w-4 h-4" />
                 Administrator

@@ -53,7 +53,7 @@ export function Account() {
                             <h1 className="text-4xl md:text-5xl font-serif mb-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                                 My Account
                             </h1>
-                            <p className="text-foreground/60">Welcome back, {user.displayName || user.email?.split('@')[0]}</p>
+                            <p className="text-foreground/60">Welcome back, {user.email?.split('@')[0]}</p>
                         </div>
                         <Button
                             variant="outline"

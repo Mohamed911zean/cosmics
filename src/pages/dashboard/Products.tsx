@@ -1,9 +1,13 @@
-import { useEffect } from "react"
-import { Package, Layers, TrendingUp, ShoppingBag, Tag, Edit, Trash2, Loader2 } from "lucide-react"
+
+import { useEffect, useState } from "react"
+import { Package, Layers, TrendingUp, ShoppingBag, Tag, Edit, Trash2, Loader2, Plus, Minus } from "lucide-react"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { useProductStore } from "@/stores/ecommerceStores/useProductStore"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 
 const categoryColors: Record<string, string> = {
   Skincare: "bg-primary text-primary",
@@ -16,19 +20,54 @@ const categoryColors: Record<string, string> = {
 }
 
 export default function Products() {
-  const { getAllProducts, categories } = useProductStore()
+  const { getAllProducts, categories, fetchProducts, deleteProduct, updateStock } = useProductStore()
   const { getGlobalBestSellers, fetchAllOrdersForAdmin, isLoadingAllOrders } = useOrderStore()
   const navigate = useNavigate()
+  const [editingStockId, setEditingStockId] = useState<string | null>(null)
+  const [stockValue, setStockValue] = useState<number>(0)
 
-  // Fetch all orders from all users when component mounts
+  // Fetch products and orders when component mounts
   useEffect(() => {
+    fetchProducts()
     fetchAllOrdersForAdmin()
-  }, [fetchAllOrdersForAdmin])
+  }, [fetchProducts, fetchAllOrdersForAdmin])
 
   const allProducts = getAllProducts()
   const bestSellers = getGlobalBestSellers()
   const topSeller = bestSellers[0]
   const totalUnitsSold = bestSellers.reduce((sum, p) => sum + p.totalSold, 0)
+
+  const handleDelete = async (productId: string, productName: string) => {
+    if (window.confirm(`Are you sure you want to delete "${productName}"?`)) {
+      try {
+        await deleteProduct(productId)
+        toast.success("Product deleted successfully!")
+      } catch (error) {
+        console.error("Error deleting product:", error)
+        toast.error("Failed to delete product")
+      }
+    }
+  }
+
+  const handleStockEditStart = (product: any) => {
+    setEditingStockId(product.id)
+    setStockValue(product.stock_quantity)
+  }
+
+  const handleStockSave = async (productId: string) => {
+    try {
+      await updateStock(productId, stockValue)
+      toast.success("Stock updated!")
+      setEditingStockId(null)
+    } catch (error) {
+      console.error("Error updating stock:", error)
+      toast.error("Failed to update stock")
+    }
+  }
+
+  const handleStockCancel = () => {
+    setEditingStockId(null)
+  }
 
   const kpis = [
     { label: "Total Products", value: allProducts.length.toString(), icon: Package },
@@ -55,12 +94,13 @@ export default function Products() {
                 </p>
               </div>
             </div>
-            <button
+            <Button
               onClick={() => navigate("/dashboard/products/add")}
               className="px-4 py-2 bg-gradient-to-r from-success to-success text-primary-foreground rounded-lg font-semibold text-sm hover:shadow-lg transition-all"
             >
-              + Add Product
-            </button>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Product
+            </Button>
           </div>
         </div>
 
@@ -71,6 +111,7 @@ export default function Products() {
                 <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Product</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Category</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Price</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Stock</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sold</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Revenue</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
@@ -102,6 +143,64 @@ export default function Products() {
                     </td>
                     <td className="px-6 py-4 font-bold text-foreground">${product.price}</td>
                     <td className="px-6 py-4">
+                      {editingStockId === product.id ? (
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={() => setStockValue(Math.max(0, stockValue - 1))}
+                          >
+                            <Minus className="w-3 h-3" />
+                          </Button>
+                          <Input
+                            type="number"
+                            min="0"
+                            value={stockValue}
+                            onChange={(e) => setStockValue(parseInt(e.target.value) || 0)}
+                            className="w-20 h-8 text-center"
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={() => setStockValue(stockValue + 1)}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="h-8"
+                            onClick={() => handleStockSave(product.id)}
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8"
+                            onClick={handleStockCancel}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span className={`font-semibold ${product.stock_quantity <= 5 ? "text-destructive" : "text-foreground"}`}>
+                            {product.stock_quantity}
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                            onClick={() => handleStockEditStart(product)}
+                          >
+                            Edit
+                          </Button>
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
                       {isLoadingAllOrders ? (
                         <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                       ) : (
@@ -121,12 +220,22 @@ export default function Products() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-primary rounded-lg transition-colors">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          onClick={() => navigate(`/dashboard/products/add?id=${product.id}`)}
+                        >
                           <Edit className="w-4 h-4 text-primary" />
-                        </button>
-                        <button className="p-2 hover:bg-primary rounded-lg transition-colors">
-                          <Trash2 className="w-4 h-4 text-primary" />
-                        </button>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          onClick={() => handleDelete(product.id, product.name)}
+                        >
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
                       </div>
                     </td>
                   </tr>

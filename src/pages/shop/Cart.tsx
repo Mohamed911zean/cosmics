@@ -12,14 +12,14 @@ export function Cart() {
     const tax = getTax()
     const total = getTotal()
 
-    const handleRemoveItem = (id: number, name: string) => {
-        removeItem(id)
-        toast.error(`${name} removed from bag`)
-    }
+    const handleRemoveItem = (id: string, name: string) => {
+    removeItem(id)
+    toast.error(`${name} removed from bag`)
+  }
 
-    const handleUpdateQuantity = (id: number, newQuantity: number) => {
-        updateQuantity(id, newQuantity)
-    }
+  const handleUpdateQuantity = (id: string, newQuantity: number) => {
+    updateQuantity(id, newQuantity)
+  }
 
     if (items.length === 0) {
         return (

@@ -1,29 +1,29 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { User } from 'firebase/auth';
-import { observeAuthState, logoutUser } from '@/lib/authService';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import type { User } from '@supabase/supabase-js'
+import { observeAuthState, logoutUser } from '@/lib/authService'
 
 interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  logout: () => Promise<void>;
+  user: User | null
+  loading: boolean
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   logout: async () => {},
-});
+})
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
+  const context = useContext(AuthContext)
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error('useAuth must be used within AuthProvider')
   }
-  return context;
-};
+  return context
+}
 
 interface AuthProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
@@ -31,8 +31,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = observeAuthState((user) => {
-      setUser(user)
+    const unsubscribe = observeAuthState((nextUser) => {
+      setUser(nextUser)
       setLoading(false)
     })
     return unsubscribe

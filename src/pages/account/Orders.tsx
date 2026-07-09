@@ -1,12 +1,33 @@
 
+import { useEffect } from "react"
 import { motion } from "framer-motion"
-import { Package, Clock, CheckCircle2 } from "lucide-react"
+import { Package, Clock, CheckCircle2, Link as LinkIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Link } from "react-router-dom"
-import { useOrderStore } from "@/stores"
+import { Link, useNavigate } from "react-router-dom"
+import { useOrderStore, useAuthStore } from "@/stores"
+import { subscribeToUserOrders } from "@/lib/orders"
 
 export function Orders() {
-    const { orders } = useOrderStore()
+    const navigate = useNavigate()
+    const { orders, fetchOrdersForCurrentUser, setOrders } = useOrderStore()
+    const { user } = useAuthStore()
+
+    useEffect(() => {
+        if (user) {
+            fetchOrdersForCurrentUser()
+            
+            // Subscribe to realtime updates
+            const channel = subscribeToUserOrders(user.id, async () => {
+                await fetchOrdersForCurrentUser()
+            })
+            
+            return () => {
+                channel.unsubscribe()
+            }
+        } else {
+            setOrders([])
+        }
+    }, [user, fetchOrdersForCurrentUser, setOrders])
 
     if (orders.length === 0) {
         return (
@@ -63,11 +84,11 @@ export function Orders() {
                             <div className="p-6 sm:p-8 border-b border-border/30 bg-secondary/10 flex flex-wrap items-center justify-between gap-6">
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Order ID</p>
-                                    <p className="font-mono text-sm">#{order.id}</p>
+                                    <p className="font-mono text-sm">#{order.orderNumber}</p>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Date Placed</p>
-                                    <p className="text-sm font-medium">{new Date(order.date).toLocaleDateString()}</p>
+                                    <p className="text-sm font-medium">{new Date(order.createdAt).toLocaleDateString()}</p>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Total Amount</p>
@@ -76,14 +97,22 @@ export function Orders() {
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Status</p>
                                     <div className="flex items-center gap-2">
-                                        {order.status === 'Delivered' ? (
+                                        {order.status === 'delivered' ? (
                                             <CheckCircle2 className="w-4 h-4 text-success" />
                                         ) : (
                                             <Clock className="w-4 h-4 text-accent" />
                                         )}
-                                        <span className="text-sm font-medium">{order.status}</span>
+                                        <span className="text-sm font-medium capitalize">{order.status}</span>
                                     </div>
                                 </div>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => navigate(`/orders/${order.id}`)}
+                                    className="rounded-none"
+                                >
+                                    View Details
+                                    <LinkIcon className="w-4 h-4 ml-2" />
+                                </Button>
                             </div>
 
                             <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">

@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuthStore, useCartStore, useOrderStore } from "@/stores"
-import { addDoc, collection } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { placeOrder as placeOrderSupabase, type PlaceOrderInput } from "@/lib/orders"
 import { sendTelegramOrderNotification } from "@/lib/telegram"
 
 export function Checkout() {
@@ -52,16 +51,13 @@ export function Checkout() {
     setIsProcessing(true)
 
     try {
-        // Simulate processing
-        await new Promise(resolve => setTimeout(resolve, 2000))
-
-        const newOrder: any = {
-            id: Math.random().toString(36).substr(2, 9).toUpperCase(),
-            date: Date.now(),
-            items: [...items],
-            total: total,
-            status: 'Processing',
-            shippingDetails: {
+        const input: PlaceOrderInput = {
+            userId: user?.id || null,
+            customerName: `${firstName} ${lastName}`,
+            customerPhone: phone,
+            customerEmail: email,
+            shippingAddressId: null,
+            shippingAddressSnapshot: {
                 firstName,
                 lastName,
                 email,
@@ -69,52 +65,57 @@ export function Checkout() {
                 address,
                 city,
                 postalCode
-            }
+            },
+            paymentMethod: paymentMethod,
+            shippingFee: 0,
+            discountTotal: tax,
+            couponCode: null,
+            notes: null,
+            items: items.map(item => ({
+                product_id: item.productId || item.id,
+                variant_id: null,
+                quantity: item.quantity
+            }))
         }
 
-        // ✅ الخطوة 1: حفظ في Firestore
-        await addDoc(collection(db, "orders"), newOrder)
+        const newOrder = await placeOrderSupabase(input)
         
-        // ✅ الخطوة 2: إرسال إشعار Telegram (ننتظر حتى ينجح أو يفشل)
+        // Send Telegram notification
         try {
             console.log("📤 Sending Telegram notification...");
             await sendTelegramOrderNotification(newOrder);
             console.log("✅ Telegram notification sent successfully!");
         } catch (telegramError) {
-            // لو فشل الـ Telegram، نسجل الخطأ بس ما نوقفش العملية
             console.error("⚠️ Telegram notification failed, but order was saved:", telegramError);
-            // نعرض تنبيه بسيط للمستخدم (اختياري)
             toast.warning("Order placed, but notification may be delayed", {
                 description: "Your order was saved successfully.",
                 duration: 3000,
             });
         }
 
-        // ✅ الخطوة 3: تحديث الـ local state
+        // Update local state
         addOrder(newOrder)
         clearCart()
 
-        // ✅ الخطوة 4: عرض رسالة النجاح
         toast.success("Order Placed Successfully!", {
             description: "Thank you for your purchase. You can view your order in orders history.",
             duration: 5000,
         })
 
-        // ✅ الخطوة 5: الانتقال للصفحة التالية (بعد ما كل حاجة خلصت)
-        // ننتظر 500ms إضافية للتأكد من أن كل الـ async operations خلصت
         await new Promise(resolve => setTimeout(resolve, 500))
-        
         navigate("/order-success")
 
     } catch (error) {
         console.error("❌ Error placing order:", error)
+        const errorMessage = error instanceof Error ? error.message : "Please try again or contact support."
         toast.error("Failed to place order", {
-            description: "Please try again or contact support.",
+            description: errorMessage,
         })
     } finally {
         setIsProcessing(false)
     }
 }
+
     if (items.length === 0) {
         return (
             <div className="pt-48 pb-32 text-center min-h-screen bg-gradient-to-b from-background to-secondary/20">
@@ -344,7 +345,7 @@ export function Checkout() {
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1 ]}}
                             className="bg-gradient-to-br from-secondary/30 to-secondary/10 p-8 sm:p-10 rounded-none border border-border/30 sticky top-32 space-y-8 backdrop-blur-sm"
                         >
                             <h3 className="text-2xl font-serif">Order Summary</h3>
@@ -356,9 +357,9 @@ export function Checkout() {
                                             <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                         </div>
                                         <div className="flex-1 space-y-1">
-                                            <h4 className="font-medium text-[12px] sm:text-[13px] uppercase tracking-wider text-foreground/80 line-clamp-1">{item.name}</h4>
-                                            <p className="text-[10px] text-foreground/40 uppercase tracking-widest font-bold">Qty: {String(item.quantity).padStart(2, '0')}</p>
-                                            <p className="text-sm font-light mt-2">${(item.price * item.quantity).toFixed(2)}</p>
+                                            <h4 className="font-medium text-sm text-foreground/90">{item.name}</h4>
+                                            <p className="text-[10px] text-foreground/60 uppercase tracking-widest font-bold">Qty: {String(item.quantity).padStart(2, '0')}</p>
+                                            <p className="text-sm font-medium mt-2">${(item.price * item.quantity).toFixed(2)}</p>
                                         </div>
                                     </div>
                                 ))}

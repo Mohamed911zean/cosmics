@@ -41,7 +41,7 @@ export default function DashboardHome() {
         order.items.length === 1
           ? String(order.items[0].name).split(" - ")[0]
           : `${order.items.length} items`
-      const payment = order.status === "Processing" ? "Due" : "Paid"
+      const payment = order.status === "processing" ? "Due" : "Paid"
       return {
         id: order.id,
         name,

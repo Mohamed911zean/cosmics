@@ -10,19 +10,20 @@ export function Wishlist() {
     const { items, removeItem } = useWishlistStore()
     const addToCart = useCartStore((state) => state.addItem)
 
-    const handleRemoveItem = (id: number, name: string) => {
-        removeItem(id)
-        toast.error(`${name} removed from wishlist`)
-    }
+    const handleRemoveItem = (id: string, name: string) => {
+    removeItem(id)
+    toast.error(`${name} removed from wishlist`)
+  }
 
-    const handleAddToCart = (item: any) => {
-        addToCart({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            image: item.image,
-            category: item.category,
-        })
+  const handleAddToCart = (item: any) => {
+    addToCart({
+      id: item.id,
+      productId: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      category: item.category,
+    })
         toast.success(`${item.name} added to bag`, {
             action: {
                 label: "Checkout",

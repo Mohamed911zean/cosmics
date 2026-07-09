@@ -1,3 +1,4 @@
+
 import { useEffect } from "react"
 import { ShoppingBag, CheckCircle, Clock, Package, Loader2 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
@@ -5,9 +6,9 @@ import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 
 const statusStyles: Record<string, { bg: string; text: string; dot: string }> = {
-  Delivered: { bg: "bg-success", text: "text-success", dot: "bg-success" },
-  Shipped: { bg: "bg-primary", text: "text-primary", dot: "bg-primary" },
-  Processing: { bg: "bg-accent", text: "text-accent", dot: "bg-accent" },
+  delivered: { bg: "bg-success", text: "text-success", dot: "bg-success" },
+  shipped: { bg: "bg-primary", text: "text-primary", dot: "bg-primary" },
+  processing: { bg: "bg-accent", text: "text-accent", dot: "bg-accent" },
 }
 
 export default function Orders() {
@@ -23,11 +24,11 @@ export default function Orders() {
     fetchAllOrdersForAdmin()
   }, [fetchAllOrdersForAdmin])
 
-  const deliveredCount = getAllOrdersByStatus("Delivered").length
-  const shippedCount = getAllOrdersByStatus("Shipped").length
-  const processingCount = getAllOrdersByStatus("Processing").length
+  const deliveredCount = getAllOrdersByStatus("delivered").length
+  const shippedCount = getAllOrdersByStatus("shipped").length
+  const processingCount = getAllOrdersByStatus("processing").length
   const totalOrders = allOrders.length
-  const newestOrders = [...allOrders].sort((a, b) => b.date - a.date)
+  const newestOrders = [...allOrders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
   const kpis = [
     { label: "Total Orders", value: totalOrders.toString(), icon: ShoppingBag },
@@ -75,11 +76,8 @@ export default function Orders() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {newestOrders.map((order) => {
-                const status = statusStyles[order.status] || statusStyles.Processing
+                const status = statusStyles[order.status] || statusStyles.processing
                 const customer = `${order.shippingDetails.firstName} ${order.shippingDetails.lastName}`
-                const count = order.items?.length || 0
-                const firstName = count > 0 ? order.items[0].name : "Untitled Order"
-                const orderName = count > 1 ? `${firstName} + ${count - 1} more` : firstName
                 return (
                   <tr 
                     key={order.id} 
@@ -88,7 +86,7 @@ export default function Orders() {
                   >
                     <td className="px-6 py-4">
                       <span className="font-semibold text-foreground">
-                        {orderName}
+                        #{order.orderNumber || order.id.slice(0, 8).toUpperCase()}
                       </span>
                     </td>
                     <td className="px-6 py-4 font-semibold text-foreground">{customer}</td>

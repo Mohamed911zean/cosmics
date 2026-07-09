@@ -2,7 +2,6 @@ import { useEffect } from "react"
 import { Routes, Route, Navigate } from "react-router-dom"
 import { Toaster } from "sonner"
 
-import { StoreSynchronizer } from "@/components/shop/StoreSynchronizer"
 import ScrollToTop from "@/components/ScrollToTop"
 
 // Layouts
@@ -23,6 +22,7 @@ import { Cart } from "@/pages/shop/Cart"
 import { Checkout } from "@/pages/shop/Checkout"
 import { Wishlist } from "@/pages/shop/Wishlist"
 import { Orders } from "@/pages/account/Orders"
+import { OrderDetail } from "@/pages/account/OrderDetail"
 import { Account } from "@/pages/account/Account"
 import { ProductPage } from "@/pages/shop/ProductPage"
 import { OrderSuccess } from "@/pages/shop/OrderSuccess"
@@ -59,7 +59,6 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
-      <StoreSynchronizer />
       <Toaster position="top-center" expand={false} richColors />
 
       <Routes>
@@ -83,6 +82,7 @@ export default function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/orders/:id" element={<OrderDetail />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/account" element={<Account />} />
             <Route path="/product/:id" element={<ProductPage />} />

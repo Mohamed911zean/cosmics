@@ -1,60 +1,37 @@
-import {
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged,
-    type User,
-    GoogleAuthProvider,
-    signInWithPopup
-} from 'firebase/auth';
-import { auth } from './firebase';
+import type { User } from '@supabase/supabase-js'
+import { supabase } from '@/lib/supabase'
 
-// Initialize Google provider
-const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({
-    prompt: 'select_account'
-});
-
-// Email/Password Login
 export const loginUser = async (email: string, password: string): Promise<User> => {
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        return userCredential.user;
-    } catch (error: any) {
-        throw new Error(error.message || 'Login failed');
-    }
-};
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+  if (error || !data.user) throw new Error(error?.message || 'Login failed')
+  return data.user
+}
 
-// Email/Password Signup
 export const signupUser = async (email: string, password: string): Promise<User> => {
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        return userCredential.user;
-    } catch (error: any) {
-        throw new Error(error.message || 'Signup failed');
-    }
-};
+  const { data, error } = await supabase.auth.signUp({ email, password })
+  if (error || !data.user) throw new Error(error?.message || 'Signup failed')
+  return data.user
+}
 
-// Google Sign-In
-export const signInWithGoogle = async (): Promise<User> => {
-    try {
-        const result = await signInWithPopup(auth, googleProvider);
-        return result.user;
-    } catch (error: any) {
-        throw new Error(error.message || 'Google sign-in failed');
-    }
-};
+export const signInWithGoogle = async (): Promise<void> => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin },
+  })
+  if (error) throw new Error(error.message || 'Google sign-in failed')
+}
 
-// Logout
 export const logoutUser = async (): Promise<void> => {
-    try {
-        await signOut(auth);
-    } catch (error: any) {
-        throw new Error(error.message || 'Logout failed');
-    }
-};
+  const { error } = await supabase.auth.signOut()
+  if (error) throw new Error(error.message || 'Logout failed')
+}
 
-// Auth state observer
 export const observeAuthState = (callback: (user: User | null) => void) => {
-    return onAuthStateChanged(auth, callback);
-};
+  const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+    callback(session?.user || null)
+  })
+
+  supabase.auth.getUser().then(({ data: userData }) => callback(userData.user))
+
+  return () => data.subscription.unsubscribe()
+}

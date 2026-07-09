@@ -43,7 +43,7 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
         </button>
         <div className="hidden sm:block">
           <h1 className="text-lg font-bold text-foreground">Dashboard</h1>
-          <p className="text-xs text-muted-foreground">Welcome back, {user?.displayName?.split(" ")[0] || "Admin"}</p>
+          <p className="text-xs text-muted-foreground">Welcome back, {user?.email?.split("@")[0] || "Admin"}</p>
         </div>
       </div>
       <div className="flex items-center gap-3">
@@ -164,10 +164,10 @@ export function DashboardTopbar({ onMenuClick, isSidebarOpen }: DashboardTopbarP
 
         <div className="flex items-center gap-3 pl-3 border-l border-border">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-violet-200">
-            <span className="text-sm font-bold">{user?.displayName?.[0] || "A"}</span>
+            <span className="text-sm font-bold">{user?.email?.[0]?.toUpperCase() || "A"}</span>
           </div>
           <div className="hidden sm:block">
-            <div className="text-sm font-semibold text-foreground">{user?.displayName || "Admin"}</div>
+            <div className="text-sm font-semibold text-foreground">{user?.email?.split("@")[0] || "Admin"}</div>
             <div className="text-xs text-muted-foreground">Administrator</div>
           </div>
         </div>

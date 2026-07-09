@@ -1,55 +1,84 @@
+
 import { useEffect, useState } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { ArrowLeft, MapPin, Mail, Phone, Calendar, Package, Truck, CheckCircle, Clock } from "lucide-react"
-import { useOrderStore , type Order } from "@/stores/ecommerceStores/useOrderStore"
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "@/lib/firebase"
-import { format } from "date-fns"
+import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
+import { fetchOrderById, updateOrderStatus, subscribeToOrderUpdates, type OrderStatus } from "@/lib/orders"
+import { toast } from "sonner"
+
+const statusOptions: OrderStatus[] = ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled", "refunded"]
 
 export default function OrderDetails() {
-  
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { allOrders } = useOrderStore()
-  const [order, setOrder] = useState<Order | null>(null)
+  const [order, setOrder] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isUpdating, setIsUpdating] = useState(false)
 
   useEffect(() => {
-    const fetchOrder = async () => {
-      if (!id) return
+    if (!id) return
 
-      // 1. Try to find in global store first
-      const foundInStore = allOrders.find(o => o.id === id)
-      if (foundInStore) {
-        setOrder(foundInStore)
-        setIsLoading(false)
-        return
-      }
+    let active = true
 
-      // 2. If not in store (e.g. direct link refresh), fetch from Firestore
+    const loadOrder = async () => {
       try {
-        const docRef = doc(db, "orders", id)
-        const docSnap = await getDoc(docRef)
-        
-        if (docSnap.exists()) {
-          setOrder({ id: docSnap.id, ...docSnap.data() } as Order)
-        } else {
-          // Handle order not found
-          console.error("Order not found")
+        // First check if we have it in the store
+        const fromStore = allOrders.find(o => o.id === id)
+        if (fromStore) {
+          setOrder(fromStore)
+          setIsLoading(false)
+          return
+        }
+
+        // If not, fetch from Supabase
+        const data = await fetchOrderById(id)
+        if (active && data) {
+          setOrder(data)
         }
       } catch (error) {
         console.error("Error fetching order:", error)
       } finally {
-        setIsLoading(false)
+        if (active) {
+          setIsLoading(false)
+        }
       }
     }
 
-    fetchOrder()
+    loadOrder()
+
+    // Subscribe to real-time updates
+    const channel = subscribeToOrderUpdates(id, async () => {
+      const updated = await fetchOrderById(id)
+      if (updated) {
+        setOrder(updated)
+      }
+    })
+
+    return () => {
+      active = false
+      channel.unsubscribe()
+    }
   }, [id, allOrders])
+
+  const handleStatusChange = async (newStatus: OrderStatus) => {
+    if (!order) return
+    setIsUpdating(true)
+    try {
+      await updateOrderStatus(order.id, newStatus)
+      setOrder((prev: any) => ({ ...prev, status: newStatus }))
+      toast.success(`Order status updated to ${newStatus}`)
+    } catch (error) {
+      console.error("Failed to update order status:", error)
+      toast.error("Failed to update order status")
+    } finally {
+      setIsUpdating(false)
+    }
+  }
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[50vh]">
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
@@ -57,7 +86,7 @@ export default function OrderDetails() {
 
   if (!order) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
         <Package className="w-16 h-16 text-border mb-4" />
         <h2 className="text-2xl font-bold text-foreground">Order Not Found</h2>
         <p className="text-muted-foreground mb-6">The order you're looking for doesn't exist or has been removed.</p>
@@ -103,7 +132,7 @@ export default function OrderDetails() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground">
-                Order #{order.id.slice(0, 8).toUpperCase()}
+                Order #{order.orderNumber || order.id.slice(0, 8).toUpperCase()}
               </h1>
               <span className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 ${getStatusColor(order.status)}`}>
                 {getStatusIcon(order.status)}
@@ -112,14 +141,24 @@ export default function OrderDetails() {
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
               <Calendar className="w-4 h-4" />
-              {format(order.date, "PPP 'at' p")}
+              {new Date(order.createdAt).toLocaleString()}
             </div>
           </div>
         </div>
         
-        {/* Actions (Future: Print, Refund, etc.) */}
-        <div className="flex gap-3">
-            {/* Placeholder for future actions */}
+        {/* Status update dropdown */}
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-medium text-foreground">Update Status:</label>
+          <select
+            value={order.status}
+            onChange={(e) => handleStatusChange(e.target.value as OrderStatus)}
+            disabled={isUpdating}
+            className="px-3 py-2 rounded-lg border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all disabled:opacity-50"
+          >
+            {statusOptions.map(status => (
+              <option key={status} value={status}>{status}</option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -131,9 +170,9 @@ export default function OrderDetails() {
               <h3 className="font-semibold text-foreground">Order Items</h3>
             </div>
             <div className="divide-y divide-gray-100">
-              {order.items.map((item, index) => (
+              {order.items.map((item: any, index: number) => (
                 <div key={index} className="p-6 flex items-center gap-4">
-                  <div className="w-20 h-20 rounded-lg bg-muted overflow-hidden shrink-0 border border-border">
+                  <div className="w-20 h-24 rounded-lg bg-muted overflow-hidden shrink-0 border border-border">
                     <img 
                       src={item.image} 
                       alt={item.name} 
@@ -155,11 +194,15 @@ export default function OrderDetails() {
               <div className="flex flex-col gap-2 max-w-xs ml-auto">
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Subtotal</span>
-                  <span>${order.items.reduce((acc, item) => acc + (item.price * item.quantity), 0).toFixed(2)}</span>
+                  <span>${order.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Shipping</span>
-                  <span>اسأل احمد ابو ابراهيم </span>
+                  <span>${order.shippingFee.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Discount</span>
+                  <span>-${order.discountTotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-base font-bold text-foreground pt-2 border-t border-border">
                   <span>Total</span>
@@ -172,7 +215,6 @@ export default function OrderDetails() {
 
         {/* Sidebar - Customer & Shipping Info */}
         <div className="space-y-6">
-          {/* Customer Details */}
           <div className="bg-surface rounded-2xl shadow-sm border border-border overflow-hidden">
             <div className="px-6 py-4 border-b border-border bg-surface-soft/50">
               <h3 className="font-semibold text-foreground">Customer Details</h3>
@@ -209,7 +251,6 @@ export default function OrderDetails() {
             </div>
           </div>
 
-          {/* Shipping Address */}
           <div className="bg-surface rounded-2xl shadow-sm border border-border overflow-hidden">
             <div className="px-6 py-4 border-b border-border bg-surface-soft/50">
               <h3 className="font-semibold text-foreground">Shipping Address</h3>
@@ -222,6 +263,20 @@ export default function OrderDetails() {
                   <p>{order.shippingDetails.city}, {order.shippingDetails.postalCode}</p>
                 </address>
               </div>
+            </div>
+          </div>
+
+          <div className="bg-surface rounded-2xl shadow-sm border border-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-border bg-surface-soft/50">
+              <h3 className="font-semibold text-foreground">Payment</h3>
+            </div>
+            <div className="p-6 space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Method: <span className="capitalize">{order.paymentMethod || "Card"}</span>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Status: <span className="capitalize">{order.paymentStatus}</span>
+              </p>
             </div>
           </div>
         </div>
