@@ -600,3 +600,19 @@ alter view v_best_sellers set (security_invoker = true);
 alter publication supabase_realtime add table orders;
 alter publication supabase_realtime add table order_items;
 alter publication supabase_realtime add table products;
+
+
+
+create view v_customer_summary as
+select
+  customer_phone,
+  max(customer_name) as customer_name,
+  max(customer_email) as customer_email,
+  count(*) filter (where status <> 'cancelled') as completed_order_count,
+  sum(total) filter (where status <> 'cancelled') as lifetime_value,
+  min(created_at) as first_order_at,
+  max(created_at) as last_order_at
+from orders
+group by customer_phone;
+
+alter view v_customer_summary set (security_invoker = true);

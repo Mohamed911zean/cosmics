@@ -1,3 +1,28 @@
+// src/stores/useAuthStore.ts
+//
+// FIX for: "every time I switch tabs and come back, the dashboard page
+// reloads/refreshes and loses my in-progress form / re-fetches everything."
+//
+// ROOT CAUSE: Supabase's supabase.auth.onAuthStateChange() fires a
+// TOKEN_REFRESHED event automatically whenever the browser tab regains
+// focus/visibility (it silently re-validates the session in the
+// background — this is normal, expected Supabase behavior, not a bug in
+// Supabase itself). The previous version of this store treated EVERY
+// event from that listener identically: it always did `set({ isLoading:
+// true })` and re-fetched the user's role from `profiles`, even though
+// nothing about the user actually changed. Because AdminRoute/PrivateRoute
+// show a full loading screen whenever `isLoading` is true, that caused the
+// entire dashboard page tree to unmount and remount on every tab switch —
+// wiping any unsaved form state and re-triggering every page's mount effects
+// (refetching products, categories, orders, etc. all over again).
+//
+// THE FIX: only treat SIGNED_IN, SIGNED_OUT, and USER_UPDATED as real auth
+// changes that should touch `isLoading`/refetch the role. TOKEN_REFRESHED
+// (and other session-maintenance events) are still used to silently keep
+// the `user` object up to date (in case the access token/claims changed),
+// but must NEVER flip isLoading or force a role refetch — so no downstream
+// component re-renders/unmounts because of it.
+
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { User } from '@supabase/supabase-js'
@@ -164,13 +189,47 @@ export const useAuthStore = create<AuthState>()(
           set({ user, role, isAuthenticated: true, isLoading: false })
         })
 
-        const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data } = supabase.auth.onAuthStateChange((event, session) => {
           const user = session?.user || null
+
+          // A real sign-out (or a session that's gone for any reason):
+          // always clear everything, regardless of which event fired.
           if (!user) {
             set({ user: null, role: null, isAuthenticated: false, isLoading: false })
             return
           }
 
+          // TOKEN_REFRESHED fires automatically whenever the tab regains
+          // focus/visibility, even though the logged-in user hasn't
+          // changed at all. Treating it like a fresh login (flipping
+          // isLoading, re-fetching the role, etc.) is what caused the
+          // whole dashboard to "reload" every time you switched tabs and
+          // came back. We just quietly refresh the `user` object (in case
+          // the token/claims changed) without touching isLoading or
+          // re-fetching the role, so nothing downstream re-renders.
+          if (event === 'TOKEN_REFRESHED') {
+            const current = get()
+            if (current.user?.id === user.id) {
+              set({ user }) // no isLoading flip, no role refetch, no unmount cascade
+            }
+            return
+          }
+
+          // INITIAL_SESSION on a tab that already has our persisted role
+          // cached and matches the same user: don't show a loading flash
+          // either — just confirm quietly.
+          if (event === 'INITIAL_SESSION') {
+            const current = get()
+            if (current.user?.id === user.id && current.role) {
+              set({ user, isAuthenticated: true, isLoading: false })
+              return
+            }
+          }
+
+          // Real auth changes: SIGNED_IN, SIGNED_OUT (handled above via
+          // !user), USER_UPDATED, or a genuinely different user id. These
+          // are the only cases that should show a loading state and
+          // re-fetch the role from the database.
           set({ isLoading: true })
           window.setTimeout(async () => {
             const role = await get().fetchRole(user.id)

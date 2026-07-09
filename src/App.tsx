@@ -43,6 +43,7 @@ import DashboardCustomers from "@/pages/dashboard/Customers"
 import AllProducts from "@/pages/dashboard/Products"
 import DashboardAccount from "@/pages/dashboard/Account"
 import Categories from "@/pages/dashboard/Categories"
+import Analytics from "@/pages/dashboard/Analytics"
 
 // Utils
 import { useAuthStore } from "@/stores/useAuthStore"
@@ -104,6 +105,7 @@ export default function App() {
               <Route path="products" element={<AllProducts />} />
               <Route path="products/add" element={<AddProduct />} />
               <Route path="products/best-sellers" element={<BestSellers />} />
+              <Route path="analytics" element={<Analytics/>} />
               <Route path="account" element={<DashboardAccount />} />
 
               <Route element={<SuperAdminRoute />}>
