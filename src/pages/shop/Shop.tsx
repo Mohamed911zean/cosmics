@@ -9,7 +9,6 @@ import {
     X,
     Eye,
     Star,
-    Sparkles,
 } from "lucide-react"
 import { Link, useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -140,6 +139,7 @@ function CategoryPill({
         </button>
     )
 }
+
 
 function ActiveFilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
     return (

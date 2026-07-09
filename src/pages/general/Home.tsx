@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 import { Link, useNavigate } from "react-router-dom"
-import { ArrowRight, ShoppingBag, ChevronRight, Play, Sparkles, Heart, ShieldCheck, Leaf } from "lucide-react"
+import { ArrowRight, ChevronRight, Play, Sparkles, Heart, ShieldCheck, Leaf } from "lucide-react"
 import {
   Carousel,
   CarouselContent,
@@ -22,12 +22,15 @@ const iconMap: Record<string, React.ReactNode> = {
 }
 
 export default function Home() {
-  const navigate = useNavigate()
-  const { featuredProducts, services, brand } = useProductStore()
+ 
+ const { services } = useProductStore()
+  {/*
+   const navigate = useNavigate()
+  
   const addToCart = useCartStore((state) => state.addItem)
   const { toggleItem, isInWishlist } = useWishlistStore()
 
-  const handleAddToCart = (e: React.MouseEvent, product: any) => {
+   const handleAddToCart = (e: React.MouseEvent, product: any) => {
     e.preventDefault()
     e.stopPropagation()
     addToCart({
@@ -60,7 +63,7 @@ export default function Home() {
       icon: inWishlist ? "💔" : "❤️"
     })
   }
-
+*/}
   return (
     <main className="bg-ivory text-foreground font-sans selection:bg-accent selection:text-foreground">
 
