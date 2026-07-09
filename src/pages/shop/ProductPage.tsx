@@ -6,8 +6,10 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { FeaturedProducts } from '@/components/shop/FeaturedProducts'
 import { StockNotifyForm } from '@/components/shop/StockNotifyForm'
-import { useCartStore, useProductStore, useWishlistStore } from '@/stores'
-import type { Product } from '@/stores'
+import { useCartStore } from '@/stores'
+import { useProductStore, type Product } from '@/stores/ecommerceStores/useProductStore'
+import { useWishlistStore } from '@/stores/ecommerceStores/useWishlistStore'
+import { shallow } from 'zustand/shallow'
 
 export function ProductPage() {
   const { id } = useParams()
@@ -18,25 +20,38 @@ export function ProductPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   const addToCart = useCartStore((state) => state.addItem)
-  const { toggleItem, isInWishlist } = useWishlistStore()
+  const toggleItem = useWishlistStore((state) => state.toggleItem)
+  const isInWishlist = useWishlistStore((state) => state.isInWishlist)
+  const getProductById = useProductStore((state) => state.getProductById)
   const fetchProductById = useProductStore((state) => state.fetchProductById)
 
   useEffect(() => {
     if (!id) return
 
+    // First check if we already have the product in our store!
+    const existingProduct = getProductById(id)
+    if (existingProduct) {
+      setProduct(existingProduct)
+      setSelectedImage(0)
+      setQuantity(1)
+      setIsLoading(false)
+      return
+    }
+
+    // If not, then fetch it from db
     setIsLoading(true)
     fetchProductById(id)
-      .then((nextProduct) => {
+      .then((nextProduct: Product | null) => {
         setProduct(nextProduct)
         setSelectedImage(0)
         setQuantity(1)
       })
-      .catch((error) => {
+      .catch((error: Error) => {
         console.error(error)
         toast.error('Failed to load product')
       })
       .finally(() => setIsLoading(false))
-  }, [id, fetchProductById])
+  }, [id]) // Only re-run when id changes, not fetchProductById/getProductById!
 
   if (isLoading) {
     return <div className="pt-40 min-h-screen text-center text-muted-foreground">Loading product...</div>

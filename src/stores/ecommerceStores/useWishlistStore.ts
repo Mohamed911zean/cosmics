@@ -15,6 +15,7 @@ export interface WishlistItem {
 interface WishlistState {
   items: WishlistItem[]
   isLoading: boolean
+  lastFetchTimestamp: number | null // Timestamp when we last fetched from db
   addItem: (item: WishlistItem) => Promise<void>
   removeItem: (id: string) => Promise<void>
   toggleItem: (item: WishlistItem) => Promise<void>
@@ -23,7 +24,7 @@ interface WishlistState {
   setItems: (items: WishlistItem[]) => void
   getItemCount: () => number
   setUser: (user: unknown) => void
-  fetchWishlist: () => Promise<void>
+  fetchWishlist: (force?: boolean) => Promise<void> // Add force param
 }
 
 const wishlistSelect = `
@@ -56,6 +57,7 @@ function toWishlistItem(product: ReturnType<typeof mapProduct>): WishlistItem {
 export const useWishlistStore = create<WishlistState>()((set, get) => ({
   items: [],
   isLoading: false,
+  lastFetchTimestamp: null, // Initialize last fetch timestamp
 
   addItem: async (item) => {
     const userId = requireUserId()
@@ -94,20 +96,28 @@ export const useWishlistStore = create<WishlistState>()((set, get) => ({
 
   isInWishlist: (id) => get().items.some((item) => item.id === id),
 
-  clearWishlist: () => set({ items: [] }),
+  clearWishlist: () => set({ items: [], lastFetchTimestamp: null }), // Reset last fetch too
 
   setItems: (items) => set({ items }),
 
   getItemCount: () => get().items.length,
 
   setUser: (user) => {
-    if (!user) set({ items: [] })
+    if (!user) set({ items: [], lastFetchTimestamp: null }) // Reset last fetch when user logs out
   },
 
-  fetchWishlist: async () => {
+  fetchWishlist: async (force = false) => {
     const user = useAuthStore.getState().user
     if (!user) {
       set({ items: [] })
+      return
+    }
+
+    const now = Date.now()
+    const CACHE_TTL = 5 * 60 * 1000 // 5 minutes in ms
+    const lastFetch = get().lastFetchTimestamp
+    // If we already fetched within cache TTL and not force, skip!
+    if (!force && lastFetch !== null && now - lastFetch < CACHE_TTL) {
       return
     }
 
@@ -128,6 +138,6 @@ export const useWishlistStore = create<WishlistState>()((set, get) => ({
       .filter(Boolean)
       .map((product) => toWishlistItem(mapProduct(product as unknown as ProductRow)))
 
-    set({ items, isLoading: false })
+    set({ items, isLoading: false, lastFetchTimestamp: Date.now() })
   },
 }))

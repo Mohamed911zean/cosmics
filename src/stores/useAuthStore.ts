@@ -27,6 +27,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
+import { useWishlistStore } from './ecommerceStores/useWishlistStore'
 
 type UserRole = 'user' | 'admin' | 'superadmin' | null
 
@@ -49,6 +50,14 @@ interface AuthState {
 function normalizeRole(role: unknown): UserRole {
   if (role === 'admin' || role === 'superadmin') return role
   return 'user'
+}
+
+async function fetchUserWishlist() {
+  try {
+    await useWishlistStore.getState().fetchWishlist()
+  } catch (error) {
+    console.warn('Failed to fetch wishlist after auth change:', error)
+  }
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -99,6 +108,7 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
           isLoading: false,
         })
+        fetchUserWishlist()
         return true
       },
 
@@ -132,6 +142,7 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
           isLoading: false,
         })
+        fetchUserWishlist()
         return true
       },
 
@@ -187,6 +198,7 @@ export const useAuthStore = create<AuthState>()(
           const role = await get().fetchRole(user.id)
           if (!active) return
           set({ user, role, isAuthenticated: true, isLoading: false })
+          fetchUserWishlist()
         })
 
         const { data } = supabase.auth.onAuthStateChange((event, session) => {
@@ -196,6 +208,7 @@ export const useAuthStore = create<AuthState>()(
           // always clear everything, regardless of which event fired.
           if (!user) {
             set({ user: null, role: null, isAuthenticated: false, isLoading: false })
+            useWishlistStore.getState().clearWishlist()
             return
           }
 
@@ -222,6 +235,7 @@ export const useAuthStore = create<AuthState>()(
             const current = get()
             if (current.user?.id === user.id && current.role) {
               set({ user, isAuthenticated: true, isLoading: false })
+              fetchUserWishlist()
               return
             }
           }
@@ -234,6 +248,7 @@ export const useAuthStore = create<AuthState>()(
           window.setTimeout(async () => {
             const role = await get().fetchRole(user.id)
             set({ user, role, isAuthenticated: true, isLoading: false })
+            fetchUserWishlist()
           }, 0)
         })
 
