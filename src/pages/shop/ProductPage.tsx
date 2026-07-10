@@ -9,7 +9,6 @@ import { StockNotifyForm } from '@/components/shop/StockNotifyForm'
 import { useCartStore } from '@/stores'
 import { useProductStore, type Product } from '@/stores/ecommerceStores/useProductStore'
 import { useWishlistStore } from '@/stores/ecommerceStores/useWishlistStore'
-import { shallow } from 'zustand/shallow'
 
 export function ProductPage() {
   const { id } = useParams()
