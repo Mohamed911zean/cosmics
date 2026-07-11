@@ -90,7 +90,7 @@ export default function Orders() {
                       </span>
                     </td>
                     <td className="px-6 py-4 font-semibold text-foreground">{customer}</td>
-                    <td className="px-6 py-4 font-bold text-foreground">{EGP.format(order.total)}</td>
+                    <td className="px-6 py-4 font-bold text-foreground">{formatEGP(order.total)}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${status.bg} ${status.text}`}>
                         <span className={`w-1.5 h-1.5 rounded-full  ${status.dot}`} />
