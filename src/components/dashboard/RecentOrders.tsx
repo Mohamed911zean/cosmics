@@ -14,12 +14,12 @@ type RecentOrdersProps = {
 }
 
 const statusStyles: Record<string, { bg: string; text: string; dot: string }> = {
-  Delivered: { bg: "bg-success", text: "text-success", dot: "bg-success" },
-  Shipped: { bg: "bg-primary", text: "text-primary", dot: "bg-primary" },
-  Processing: { bg: "bg-accent", text: "text-accent", dot: "bg-accent" },
-  Pending: { bg: "bg-accent", text: "text-accent", dot: "bg-accent" },
-  Return: { bg: "bg-primary", text: "text-primary", dot: "bg-primary" },
-  "In Progress": { bg: "bg-primary", text: "text-primary", dot: "bg-primary" },
+  Delivered: { bg: "bg-success", text: "text-white", dot: "bg-green" },
+  Shipped: { bg: "bg-primary", text: "text-white", dot: "bg-blue" },
+  Processing: { bg: "bg-accent", text: "text-white", dot: "bg-white" },
+  Pending: { bg: "bg-accent", text: "text-white", dot: "bg-white" },
+  Return: { bg: "bg-primary", text: "text-white", dot: "bg-white" },
+  "In Progress": { bg: "bg-primary", text: "text-white", dot: "bg-white" },
 }
 
 const paymentStyles: Record<string, string> = {

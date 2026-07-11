@@ -10,13 +10,13 @@ import { toast } from "sonner"
 import { formatEGP } from "@/lib/currency"
 
 const categoryColors: Record<string, string> = {
-  Skincare: "bg-primary text-primary",
-  Makeup: "bg-primary text-primary",
-  Haircare: "bg-primary text-primary",
-  Fragrance: "bg-accent text-accent",
-  "Body Care": "bg-success text-success",
-  "Anti-Aging": "bg-primary text-primary",
-  "Sun Protection": "bg-primary text-primary",
+  Skincare: "bg-primary text-green",
+  Makeup: "bg-primary text-green",
+  Haircare: "bg-primary text-green",
+  Fragrance: "bg-accent text-primary",
+  "Body Care": "bg-success text-white",
+  "Anti-Aging": "bg-primary text-white",
+  "Sun Protection": "bg-primary text-accent",
 }
 
 export default function Products() {

@@ -102,9 +102,9 @@ export default function OrderDetails() {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'delivered': return 'bg-success text-success'
-      case 'shipped': return 'bg-primary text-primary'
-      case 'processing': return 'bg-accent text-accent'
+      case 'delivered': return 'bg-success text-white'
+      case 'shipped': return 'bg-primary text-green'
+      case 'processing': return 'bg-accent text-blue'
       default: return 'bg-muted text-foreground'
     }
   }

@@ -5,13 +5,8 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { uploadToCloudinary } from "@/lib/cloudinary"
-import {
-  fetchBrandsForDashboard,
-  createBrand,
-  updateBrand,
-  deleteBrand,
-  type BrandRow,
-} from "@/lib/products"
+import { createBrand, updateBrand, deleteBrand, type BrandRow } from "@/lib/products"
+import { useDashboardCacheStore } from "@/stores/useDashboardCashStore"
 
 type BrandWithCount = BrandRow & { productCount: number }
 
@@ -28,8 +23,14 @@ const emptyForm: FormState = {
 }
 
 export default function Brands() {
-  const [brands, setBrands] = useState<BrandWithCount[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  // Reading from the shared cache instead of local state + fetch-on-mount —
+  // same fix as Categories.tsx. Stops the loading flash every time you
+  // navigate back to Brands within the cache TTL window.
+  const brands = useDashboardCacheStore((s) => s.brands) ?? []
+  const isLoading = useDashboardCacheStore((s) => s.brandsLoading) && brands.length === 0
+  const loadBrands = useDashboardCacheStore((s) => s.loadBrands)
+  const invalidateBrands = useDashboardCacheStore((s) => s.invalidateBrands)
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingBrand, setEditingBrand] = useState<BrandWithCount | null>(null)
   const [form, setForm] = useState<FormState>(emptyForm)
@@ -39,22 +40,17 @@ export default function Brands() {
   const [isSaving, setIsSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const loadBrands = async () => {
-    setIsLoading(true)
-    try {
-      const data = await fetchBrandsForDashboard()
-      setBrands(data)
-    } catch (error) {
+  useEffect(() => {
+    loadBrands().catch((error) => {
       console.error("Failed to load brands:", error)
       toast.error("Failed to load brands")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    })
+  }, [loadBrands])
 
-  useEffect(() => {
-    loadBrands()
-  }, [])
+  const refreshAfterMutation = async () => {
+    invalidateBrands()
+    await loadBrands()
+  }
 
   const openAddModal = () => {
     setEditingBrand(null)
@@ -130,7 +126,7 @@ export default function Brands() {
       }
 
       closeModal()
-      await loadBrands()
+      await refreshAfterMutation()
     } catch (error: any) {
       console.error("Failed to save brand:", error)
       toast.error(error.message || "Failed to save brand")
@@ -151,7 +147,7 @@ export default function Brands() {
     try {
       await deleteBrand(brand.id)
       toast.success("Brand deleted")
-      await loadBrands()
+      await refreshAfterMutation()
     } catch (error: any) {
       console.error("Failed to delete brand:", error)
       toast.error(error.message || "Failed to delete brand")
@@ -163,9 +159,7 @@ export default function Brands() {
   const toggleFeatured = async (brand: BrandWithCount) => {
     try {
       await updateBrand(brand.id, { isFeatured: !brand.is_featured })
-      setBrands((prev) =>
-        prev.map((b) => (b.id === brand.id ? { ...b, is_featured: !b.is_featured } : b))
-      )
+      await refreshAfterMutation()
       toast.success(brand.is_featured ? "Removed from featured brands" : "Marked as featured brand")
     } catch (error) {
       toast.error("Failed to update brand")

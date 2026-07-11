@@ -5,13 +5,8 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { uploadToCloudinary } from "@/lib/cloudinary"
-import {
-  fetchCategoriesForDashboard,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-  type CategoryRow,
-} from "@/lib/products"
+import { createCategory, updateCategory, deleteCategory, type CategoryRow } from "@/lib/products"
+import { useDashboardCacheStore } from "@/stores/useDashboardCashStore"
 
 type CategoryWithCount = CategoryRow & { productCount: number }
 
@@ -30,8 +25,16 @@ const emptyForm: FormState = {
 }
 
 export default function Categories() {
-  const [categories, setCategories] = useState<CategoryWithCount[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  // Reading from the shared cache instead of local state + fetch-on-mount.
+  // If you visited this page recently (within CACHE_TTL_MS), loadCategories()
+  // resolves instantly with no spinner because the cache is still fresh —
+  // this is what stops the loading flash every time you click back to
+  // Categories in the sidebar.
+  const categories = useDashboardCacheStore((s) => s.categories) ?? []
+  const isLoading = useDashboardCacheStore((s) => s.categoriesLoading) && categories.length === 0
+  const loadCategories = useDashboardCacheStore((s) => s.loadCategories)
+  const invalidateCategories = useDashboardCacheStore((s) => s.invalidateCategories)
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<CategoryWithCount | null>(null)
   const [form, setForm] = useState<FormState>(emptyForm)
@@ -41,22 +44,20 @@ export default function Categories() {
   const [isSaving, setIsSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const loadCategories = async () => {
-    setIsLoading(true)
-    try {
-      const data = await fetchCategoriesForDashboard()
-      setCategories(data)
-    } catch (error) {
+  useEffect(() => {
+    loadCategories().catch((error) => {
       console.error("Failed to load categories:", error)
       toast.error("Failed to load categories")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    })
+  }, [loadCategories])
 
-  useEffect(() => {
-    loadCategories()
-  }, [])
+  // After any create/update/delete, invalidate the cache so this page (and
+  // any other page reading categories) refetches fresh data next time,
+  // instead of showing stale data for up to 60 seconds.
+  const refreshAfterMutation = async () => {
+    invalidateCategories()
+    await loadCategories()
+  }
 
   const openAddModal = () => {
     setEditingCategory(null)
@@ -134,7 +135,7 @@ export default function Categories() {
       }
 
       closeModal()
-      await loadCategories()
+      await refreshAfterMutation()
     } catch (error: any) {
       console.error("Failed to save category:", error)
       toast.error(error.message || "Failed to save category")
@@ -155,7 +156,7 @@ export default function Categories() {
     try {
       await deleteCategory(category.id)
       toast.success("Category deleted")
-      await loadCategories()
+      await refreshAfterMutation()
     } catch (error: any) {
       console.error("Failed to delete category:", error)
       toast.error(error.message || "Failed to delete category")
@@ -167,9 +168,7 @@ export default function Categories() {
   const toggleActive = async (category: CategoryWithCount) => {
     try {
       await updateCategory(category.id, { isActive: !category.is_active })
-      setCategories((prev) =>
-        prev.map((c) => (c.id === category.id ? { ...c, is_active: !c.is_active } : c))
-      )
+      await refreshAfterMutation()
       toast.success(category.is_active ? "Category hidden from shop" : "Category now visible in shop")
     } catch (error) {
       toast.error("Failed to update category")

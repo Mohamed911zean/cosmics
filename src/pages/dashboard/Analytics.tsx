@@ -26,20 +26,15 @@ import {
   Loader2,
   DollarSign,
 } from "lucide-react"
-import {
-  fetchRevenueSummary,
-  fetchProductPerformance,
-  fetchStockHealth,
-  fetchCategoryPerformance,
-  fetchCustomerSummary,
-  fetchDemandSignals,
-  type RevenueSummary,
-  type ProductPerformanceRow,
-  type StockHealth,
-  type CategoryPerformance,
-  type CustomerSummary,
-  type DemandSignal,
+import type {
+  RevenueSummary,
+  ProductPerformanceRow,
+  StockHealth,
+  CategoryPerformance,
+  CustomerSummary,
+  DemandSignal,
 } from "@/lib/analytics"
+import { useDashboardCacheStore } from "@/stores/useDashboardCashStore"
 
 const EGP = new Intl.NumberFormat("en-EG", {
   style: "currency",
@@ -140,49 +135,29 @@ function EmptyState({ message }: { message: string }) {
 const PIE_COLORS = ["#3b2a60", "#d3c5f6", "#c9a227", "#8b7ab8", "#e8dff9"]
 
 export default function Analytics() {
-  const [revenue, setRevenue] = useState<RevenueSummary | null>(null)
-  const [products, setProducts] = useState<ProductPerformanceRow[]>([])
-  const [stockHealth, setStockHealth] = useState<StockHealth | null>(null)
-  const [categories, setCategories] = useState<CategoryPerformance[]>([])
-  const [customers, setCustomers] = useState<CustomerSummary | null>(null)
-  const [demand, setDemand] = useState<DemandSignal[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  // Reading from the shared cache instead of fetching 6 endpoints fresh on
+  // every mount. Same fix as Categories/Brands — this is the page that was
+  // most noticeable in the "every navigation reloads everything" complaint,
+  // since it fires 6 parallel queries every single time you click into it.
+  const analytics = useDashboardCacheStore((s) => s.analytics)
+  const isLoading = useDashboardCacheStore((s) => s.analyticsLoading) && !analytics
+  const loadAnalytics = useDashboardCacheStore((s) => s.loadAnalytics)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    let active = true
-    setIsLoading(true)
     setError(null)
+    loadAnalytics().catch((err) => {
+      console.error("Failed to load analytics:", err)
+      setError("Couldn't load analytics data. Try refreshing.")
+    })
+  }, [loadAnalytics])
 
-    Promise.all([
-      fetchRevenueSummary(),
-      fetchProductPerformance(),
-      fetchStockHealth(),
-      fetchCategoryPerformance(),
-      fetchCustomerSummary(),
-      fetchDemandSignals(),
-    ])
-      .then(([rev, prod, stock, cats, cust, dem]) => {
-        if (!active) return
-        setRevenue(rev)
-        setProducts(prod)
-        setStockHealth(stock)
-        setCategories(cats)
-        setCustomers(cust)
-        setDemand(dem)
-      })
-      .catch((err) => {
-        console.error("Failed to load analytics:", err)
-        if (active) setError("Couldn't load analytics data. Try refreshing.")
-      })
-      .finally(() => {
-        if (active) setIsLoading(false)
-      })
-
-    return () => {
-      active = false
-    }
-  }, [])
+  const revenue = analytics?.revenue ?? null
+  const products = analytics?.products ?? []
+  const stockHealth = analytics?.stockHealth ?? null
+  const categories = analytics?.categories ?? []
+  const customers = analytics?.customers ?? null
+  const demand = analytics?.demand ?? []
 
   if (isLoading) {
     return (
@@ -190,6 +165,7 @@ export default function Analytics() {
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
           <p className="text-muted-foreground font-medium">Loading analytics...</p>
+
         </div>
       </div>
     )
