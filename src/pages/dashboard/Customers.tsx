@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react"
 import { Users, UserPlus, Globe, HeartHandshake, MapPin, Mail, Loader2, Phone } from "lucide-react"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
+import { formatEGP } from "@/lib/currency"
 
 const avatarGradients = [
   "from-primary to-primary",
@@ -72,7 +73,7 @@ export default function Customers() {
   const kpis = [
     { label: "Total Customers", value: customers.length.toString(), icon: Users },
     { label: "Total Orders", value: allOrders.length.toString(), icon: UserPlus },
-    { label: "Total Revenue", value: `$${getAllOrdersTotalRevenue().toFixed(2)}`, icon: HeartHandshake },
+    { label: "Total Revenue", value: formatEGP(getAllOrdersTotalRevenue()), icon: HeartHandshake },
     { label: "Cities", value: new Set(customers.map(c => c.city || "")).size.toString(), icon: Globe },
   ]
 
@@ -161,7 +162,7 @@ export default function Customers() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="font-bold text-foreground">${customer.total.toFixed(2)}</span>
+                    <span className="font-bold text-foreground">{formatEGP(customer.total)}</span>
                   </td>
                 </tr>
               ))}

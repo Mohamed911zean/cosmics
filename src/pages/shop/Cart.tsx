@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import { toast } from "sonner"
 import { useCartStore } from "@/stores"
+import { formatEGP } from "@/lib/currency"
 
 export function Cart() {
     const { items, removeItem, updateQuantity, getSubtotal, getTax, getTotal } = useCartStore()
@@ -103,12 +104,12 @@ export function Cart() {
                                                 <Plus className="w-3 h-3" />
                                             </button>
                                         </div>
-                                        <p className="text-sm font-light text-foreground/60">${item.price.toFixed(2)} / ea</p>
+                                        <p className="text-sm font-light text-foreground/60">{formatEGP(item.price)} / ea</p>
                                     </div>
                                 </div>
 
                                 <div className="flex flex-col items-center sm:items-end gap-4 shrink-0">
-                                    <p className="text-2xl font-light tracking-tight">${(item.price * item.quantity).toFixed(2)}</p>
+                                    <p className="text-2xl font-light tracking-tight">{formatEGP(item.price * item.quantity)}</p>
                                     <button
                                         onClick={() => handleRemoveItem(item.id, item.name)}
                                         className="text-foreground/20 hover:text-destructive transition-all duration-300 p-3 hover:bg-destructive/10 rounded-sm group/delete"
@@ -133,7 +134,7 @@ export function Cart() {
                             <div className="space-y-5">
                                 <div className="flex justify-between text-xs tracking-widest text-foreground/40 font-bold uppercase">
                                     <span>Subtotal ({items.length} items)</span>
-                                    <span>${subtotal.toFixed(2)}</span>
+                                    <span>{formatEGP(subtotal)}</span>
                                 </div>
                                 <div className="flex justify-between text-xs tracking-widest text-foreground/40 font-bold uppercase">
                                     <span>Shipping</span>
@@ -141,11 +142,11 @@ export function Cart() {
                                 </div>
                                 <div className="flex justify-between text-xs tracking-widest text-foreground/40 font-bold uppercase">
                                     <span>Estimated Tax</span>
-                                    <span>${tax.toFixed(2)}</span>
+                                    <span>{formatEGP(tax)}</span>
                                 </div>
                                 <div className="pt-8 border-t border-border/50 flex justify-between text-2xl sm:text-3xl font-serif">
                                     <span>Total</span>
-                                    <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">${total.toFixed(2)}</span>
+                                    <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">{formatEGP(total)}</span>
                                 </div>
                             </div>
 

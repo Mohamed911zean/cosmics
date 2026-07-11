@@ -1,9 +1,9 @@
-
 import { useEffect, useState } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { ArrowLeft, MapPin, Mail, Phone, Calendar, Package, Truck, CheckCircle, Clock } from "lucide-react"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 import { fetchOrderById, updateOrderStatus, subscribeToOrderUpdates, type OrderStatus } from "@/lib/orders"
+import { formatEGP } from "@/lib/currency"
 import { toast } from "sonner"
 
 const statusOptions: OrderStatus[] = ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled", "refunded"]
@@ -184,8 +184,8 @@ export default function OrderDetails() {
                     <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-foreground">${(item.price * item.quantity).toFixed(2)}</p>
-                    <p className="text-sm text-muted-foreground">${item.price.toFixed(2)} each</p>
+                    <p className="font-medium text-foreground">{formatEGP(item.price * item.quantity)}</p>
+                    <p className="text-sm text-muted-foreground">{formatEGP(item.price)} each</p>
                   </div>
                 </div>
               ))}
@@ -194,19 +194,19 @@ export default function OrderDetails() {
               <div className="flex flex-col gap-2 max-w-xs ml-auto">
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Subtotal</span>
-                  <span>${order.subtotal.toFixed(2)}</span>
+                  <span>{formatEGP(order.subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Shipping</span>
-                  <span>${order.shippingFee.toFixed(2)}</span>
+                  <span>{formatEGP(order.shippingFee)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Discount</span>
-                  <span>-${order.discountTotal.toFixed(2)}</span>
+                  <span>-{formatEGP(order.discountTotal)}</span>
                 </div>
                 <div className="flex justify-between text-base font-bold text-foreground pt-2 border-t border-border">
                   <span>Total</span>
-                  <span>${order.total.toFixed(2)}</span>
+                  <span>{formatEGP(order.total)}</span>
                 </div>
               </div>
             </div>

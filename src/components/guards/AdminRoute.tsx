@@ -5,6 +5,8 @@ import { useAuthStore } from '@/stores/useAuthStore'
 export function AdminRoute() {
     const { user, role, isLoading } = useAuthStore()
 
+    console.log('AdminRoute - user:', !!user, 'role:', role, 'isLoading:', isLoading)
+
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">

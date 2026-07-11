@@ -306,6 +306,7 @@ async function ensureBrand(name: string) {
 
 export interface UpsertProductInput {
   name: string
+  brandId?: string
   brandName?: string
   categoryId?: string
   description?: string
@@ -319,7 +320,14 @@ export interface UpsertProductInput {
 }
 
 export async function createProduct(input: UpsertProductInput): Promise<CatalogProduct> {
-  const brandId = input.brandName ? await ensureBrand(input.brandName) : null
+  // Prefer a direct brandId (picked from the Brands dropdown) over brandName
+  // (which auto-creates a brand from free text — kept for backward
+  // compatibility, but the dashboard form now always sends brandId).
+  const brandId = input.brandId
+    ? input.brandId
+    : input.brandName
+      ? await ensureBrand(input.brandName)
+      : null
   const slug = `${slugify(input.name)}-${Date.now()}`
 
   const { data, error } = await supabase
@@ -361,7 +369,12 @@ export async function createProduct(input: UpsertProductInput): Promise<CatalogP
 }
 
 export async function updateProduct(id: string, input: Partial<UpsertProductInput>): Promise<CatalogProduct> {
-  const brandId = input.brandName !== undefined ? await ensureBrand(input.brandName) : undefined
+  const brandId =
+    input.brandId !== undefined
+      ? input.brandId
+      : input.brandName !== undefined
+        ? await ensureBrand(input.brandName)
+        : undefined
   const updates: Record<string, unknown> = {}
 
   if (input.name !== undefined) updates.name = input.name
@@ -534,5 +547,114 @@ export async function deleteCategory(id: string) {
   // deleting a category never deletes or breaks its products — they
   // just become "Uncategorized" until reassigned.
   const { error } = await supabase.from('categories').delete().eq('id', id)
+  if (error) throw error
+}
+
+// ============================================================
+// BRANDS — dashboard management (list with product counts, create,
+// update, delete). Every product must be linked to a brand via
+// brand_id, matching the same pattern as categories above.
+// ============================================================
+
+export interface BrandRow {
+  id: string
+  name: string
+  slug: string
+  logo_url: string | null
+  description: string | null
+  is_featured: boolean
+}
+
+export interface UpsertBrandInput {
+  name: string
+  logoUrl?: string
+  description?: string
+  isFeatured?: boolean
+}
+
+export async function fetchBrandsForDashboard(): Promise<(BrandRow & { productCount: number })[]> {
+  const { data: brandsData, error: brandError } = await supabase
+    .from('brands')
+    .select('id,name,slug,logo_url,description,is_featured')
+    .order('name', { ascending: true })
+
+  if (brandError) throw brandError
+
+  const { data: countData, error: countError } = await supabase
+    .from('products')
+    .select('brand_id')
+    .not('brand_id', 'is', null)
+
+  if (countError) throw countError
+
+  const counts = new Map<string, number>()
+  for (const row of countData || []) {
+    const key = row.brand_id as string
+    counts.set(key, (counts.get(key) || 0) + 1)
+  }
+
+  return (brandsData || []).map((b) => ({
+    ...b,
+    productCount: counts.get(b.id) || 0,
+  }))
+}
+
+// Simple list for dropdowns (AddProduct form) — no product counts needed there.
+export async function fetchBrandsForDropdown(): Promise<BrandRow[]> {
+  const { data, error } = await supabase
+    .from('brands')
+    .select('id,name,slug,logo_url,description,is_featured')
+    .order('name', { ascending: true })
+
+  if (error) throw error
+  return (data || []) as BrandRow[]
+}
+
+export async function createBrand(input: UpsertBrandInput): Promise<BrandRow> {
+  const slug = slugify(input.name)
+
+  const { data, error } = await supabase
+    .from('brands')
+    .insert({
+      name: input.name,
+      slug,
+      logo_url: input.logoUrl || null,
+      description: input.description || null,
+      is_featured: input.isFeatured ?? false,
+    })
+    .select('id,name,slug,logo_url,description,is_featured')
+    .single()
+
+  if (error) throw error
+  return data as BrandRow
+}
+
+export async function updateBrand(id: string, input: Partial<UpsertBrandInput>): Promise<BrandRow> {
+  const updates: Record<string, unknown> = {}
+
+  if (input.name !== undefined) {
+    updates.name = input.name
+    updates.slug = slugify(input.name)
+  }
+  if (input.logoUrl !== undefined) updates.logo_url = input.logoUrl || null
+  if (input.description !== undefined) updates.description = input.description || null
+  if (input.isFeatured !== undefined) updates.is_featured = input.isFeatured
+
+  const { data, error } = await supabase
+    .from('brands')
+    .update(updates)
+    .eq('id', id)
+    .select('id,name,slug,logo_url,description,is_featured')
+    .single()
+
+  if (error) throw error
+  return data as BrandRow
+}
+
+export async function deleteBrand(id: string) {
+  // Products referencing this brand have brand_id set to NULL automatically
+  // (the FK is "on delete set null" in the schema), same safety behavior as
+  // deleteCategory above — deleting a brand never deletes its products.
+  const { error } = await supabase.from('brands').delete().eq('id', id)
   if (error) throw error
 }

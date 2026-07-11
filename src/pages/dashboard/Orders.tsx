@@ -1,7 +1,7 @@
-
 import { useEffect } from "react"
 import { ShoppingBag, CheckCircle, Clock, Package, Loader2 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { formatEGP } from "@/lib/currency"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 
@@ -90,7 +90,7 @@ export default function Orders() {
                       </span>
                     </td>
                     <td className="px-6 py-4 font-semibold text-foreground">{customer}</td>
-                    <td className="px-6 py-4 font-bold text-foreground">${order.total.toFixed(2)}</td>
+                    <td className="px-6 py-4 font-bold text-foreground">{EGP.format(order.total)}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${status.bg} ${status.text}`}>
                         <span className={`w-1.5 h-1.5 rounded-full  ${status.dot}`} />

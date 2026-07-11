@@ -43,6 +43,7 @@ import DashboardCustomers from "@/pages/dashboard/Customers"
 import AllProducts from "@/pages/dashboard/Products"
 import DashboardAccount from "@/pages/dashboard/Account"
 import Categories from "@/pages/dashboard/Categories"
+import Brands from "@/pages/dashboard/Brands"
 import Analytics from "@/pages/dashboard/Analytics"
 
 // Utils
@@ -79,15 +80,18 @@ export default function App() {
           <Route path="/shipping" element={<Shipping />} />
           <Route path="/faq" element={<FAQ />} />
 
+          {/* Guest-browsable: anyone can look around and add to cart
+              without an account. Login is only required at checkout. */}
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/cart" element={<Cart />} />
+
           <Route element={<PrivateRoute />}>
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/orders/:id" element={<OrderDetail />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/account" element={<Account />} />
-            <Route path="/product/:id" element={<ProductPage />} />
             <Route path="/order-success" element={<OrderSuccess />} />
           </Route>
         </Route>
@@ -102,10 +106,11 @@ export default function App() {
               <Route path="orders/:id" element={<OrderDetails />} />
               <Route path="customers" element={<DashboardCustomers />} />
               <Route path="categories" element={<Categories />} />
+              <Route path="brands" element={<Brands />} />
+              <Route path="analytics" element={<Analytics />} />
               <Route path="products" element={<AllProducts />} />
               <Route path="products/add" element={<AddProduct />} />
               <Route path="products/best-sellers" element={<BestSellers />} />
-              <Route path="analytics" element={<Analytics/>} />
               <Route path="account" element={<DashboardAccount />} />
 
               <Route element={<SuperAdminRoute />}>

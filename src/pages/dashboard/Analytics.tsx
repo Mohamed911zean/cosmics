@@ -256,7 +256,7 @@ export default function Analytics() {
                 />
                 <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}`} width={50} />
                 <Tooltip
-                  formatter={(value) => [money(Number(value)), "Revenue"]}
+                  formatter={(value: number) => [money(value), "Revenue"]}
                   labelFormatter={(d) => d}
                 />
                 <Line type="monotone" dataKey="revenue" stroke="#3b2a60" strokeWidth={2} dot={false} />
@@ -303,7 +303,7 @@ export default function Analytics() {
                     width={110}
                     tickFormatter={(v: string) => (v.length > 16 ? v.slice(0, 16) + "…" : v)}
                   />
-                  <Tooltip formatter={(value, key) => [key === "revenue" ? money(Number(value)) : value, key === "revenue" ? "Revenue" : "Units sold"]} />
+                  <Tooltip formatter={(value: number, key: string) => [key === "revenue" ? money(value) : value, key === "revenue" ? "Revenue" : "Units sold"]} />
                   <Bar dataKey="salesCount" fill="#3b2a60" radius={[0, 6, 6, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -371,7 +371,7 @@ export default function Analytics() {
                       <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => money(Number(value))} />
+                  <Tooltip formatter={(value: number) => money(value)} />
                 </PieChart>
               </ResponsiveContainer>
               <ul className="flex-1 space-y-2 w-full">

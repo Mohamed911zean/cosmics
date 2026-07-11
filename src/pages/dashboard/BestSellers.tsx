@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { TrendingUp, DollarSign, ShoppingBag, Award, Tag, Loader2 } from "lucide-react"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
+import { formatEGP } from "@/lib/currency"
 
 const categoryColors: Record<string, string> = {
     Skincare: "bg-primary text-primary",
@@ -43,9 +44,9 @@ export default function BestSellers() {
     const topProduct = bestSellers[0]
 
     const kpis = [
-        { label: "Total Revenue", value: `$${totalRevenue.toFixed(2)}`, icon: DollarSign },
+        { label: "Total Revenue", value: formatEGP(totalRevenue), icon: DollarSign },
         { label: "Units Sold", value: totalUnitsSold.toString(), icon: ShoppingBag },
-        { label: "Top Product", value: topProduct?.name?.split(" - ")[0] || "No Sales", icon: Award },
+        { label: "Top Product", value: topProduct?.name || "No Sales", icon: Award },
         { label: "Total Orders", value: allOrders.length.toString(), icon: TrendingUp },
     ]
 
@@ -153,7 +154,7 @@ export default function BestSellers() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="font-bold text-success text-base">
-                                                    ${product.revenue.toFixed(2)}
+                                                    {formatEGP(product.revenue)}
                                                 </div>
                                                 <div className="text-xs text-muted-foreground mt-0.5">
                                                     {revenuePercentage.toFixed(1)}% of total

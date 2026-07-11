@@ -1,9 +1,10 @@
-
 import { motion } from "framer-motion"
 import { User, Package, ShoppingBag, LogOut, Mail, UserCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuthStore, useCartStore, useOrderStore } from "@/stores"
 import { Link, useNavigate } from "react-router-dom"
+import { formatEGP } from "@/lib/currency"
+
 
 
 import { useState } from "react"
@@ -172,7 +173,7 @@ export function Account() {
                                                             <p className="text-xs text-foreground/50">{new Date(order.date).toLocaleDateString()}</p>
                                                         </div>
                                                         <div className="text-right">
-                                                            <p className="font-medium">${order.total.toFixed(2)}</p>
+                                                            <p className="font-medium">{formatEGP(order.total)}</p>
                                                             <p className="text-[10px] uppercase font-bold text-accent">{order.status}</p>
                                                         </div>
                                                     </div>
@@ -198,7 +199,7 @@ export function Account() {
                                             </div>
                                             <p className="text-foreground/50">No orders placed yet.</p>
                                             <Button asChild variant="link" className="mt-2 text-accent">
-                                                <Link to="/collections">Start Shopping</Link>
+                                                <Link to="/shop">Start Shopping</Link>
                                             </Button>
                                         </div>
                                     )}
@@ -232,7 +233,7 @@ export function Account() {
                                                         <p className="text-sm text-foreground/50">{item.category}</p>
                                                         <div className="flex items-center justify-between mt-2">
                                                             <p className="text-sm">Qty: {item.quantity}</p>
-                                                            <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                                                            <p className="font-medium">{formatEGP(item.price * item.quantity)}</p>
                                                         </div>
                                                     </div>
                                                 </div>

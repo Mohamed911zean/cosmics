@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom"
 import { useCartStore, useWishlistStore, useUIStore, useProductStore, useAuthStore } from "@/stores"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
+import { formatEGP } from "@/lib/currency"
 
 export function Navbar() {
   const { products } = useProductStore()
@@ -153,7 +154,7 @@ export function Navbar() {
 
           <Link
             to="/shop"
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${isActive('/collections') ? 'text-foreground' : 'text-taupe'
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${isActive('/shop') ? 'text-foreground' : 'text-taupe'
               }`}
           >
             <Grid3x3 className="w-5 h-5" />
@@ -255,7 +256,7 @@ export function Navbar() {
                           {product.category}
                         </span>
                         <h3 className="text-xl font-serif">{product.name}</h3>
-                        <p className="text-accent font-medium">${product.price.toFixed(2)}</p>
+                        <p className="text-accent font-medium">{formatEGP(product.price)}</p>
                       </div>
                       <ChevronRight className="ml-auto w-5 h-5 text-taupe opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>

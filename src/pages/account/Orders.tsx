@@ -1,4 +1,3 @@
-
 import { useEffect } from "react"
 import { motion } from "framer-motion"
 import { Package, Clock, CheckCircle2, Link as LinkIcon } from "lucide-react"
@@ -6,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Link, useNavigate } from "react-router-dom"
 import { useOrderStore, useAuthStore } from "@/stores"
 import { subscribeToUserOrders } from "@/lib/orders"
+import { formatEGP } from "@/lib/currency"
+
 
 export function Orders() {
     const navigate = useNavigate()
@@ -92,7 +93,7 @@ export function Orders() {
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Total Amount</p>
-                                    <p className="text-sm font-serif font-medium">${order.total.toFixed(2)}</p>
+                                    <p className="text-sm font-serif font-medium">{formatEGP(order.total)}</p>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Status</p>
@@ -126,9 +127,9 @@ export function Orders() {
                                                 </div>
                                                 <div className="flex-1">
                                                     <h4 className="font-medium text-sm text-foreground/90">{item.name}</h4>
-                                                    <p className="text-xs text-foreground/60">Qty: {item.quantity} × ${item.price.toFixed(2)}</p>
+                                                    <p className="text-xs text-foreground/60">Qty: {item.quantity} × {formatEGP(item.price)}</p>
                                                 </div>
-                                                <p className="text-sm font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                                                <p className="text-sm font-medium">{formatEGP(item.price * item.quantity)}</p>
                                             </div>
                                         ))}
                                     </div>

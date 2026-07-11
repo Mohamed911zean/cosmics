@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
@@ -14,6 +13,8 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { fetchOrderById, subscribeToOrderUpdates, type Order } from "@/lib/orders"
+import { formatEGP } from "@/lib/currency"
+
 
 const statusSteps = [
   { status: "pending", label: "Order Placed", icon: Clock },
@@ -208,10 +209,10 @@ export function OrderDetail() {
                       </div>
                       <div className="text-right">
                         <p className="font-medium text-foreground">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          {formatEGP(item.price * item.quantity)}
                         </p>
                         <p className="text-sm text-foreground/50">
-                          ${item.price.toFixed(2)} each
+                          {formatEGP(item.price)} each
                         </p>
                       </div>
                     </div>
@@ -223,19 +224,19 @@ export function OrderDetail() {
                   <div className="space-y-3 max-w-xs ml-auto">
                     <div className="flex justify-between text-sm text-foreground/60">
                       <span>Subtotal</span>
-                      <span>${order.subtotal.toFixed(2)}</span>
+                      <span>{formatEGP(order.subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-sm text-foreground/60">
                       <span>Shipping</span>
-                      <span>${order.shippingFee.toFixed(2)}</span>
+                      <span>{formatEGP(order.shippingFee)}</span>
                     </div>
                     <div className="flex justify-between text-sm text-foreground/60">
                       <span>Discount</span>
-                      <span>-${order.discountTotal.toFixed(2)}</span>
+                      <span>-{formatEGP(order.discountTotal)}</span>
                     </div>
                     <div className="flex justify-between text-lg font-medium pt-3 border-t border-border/30">
                       <span>Total</span>
-                      <span>${order.total.toFixed(2)}</span>
+                      <span>{formatEGP(order.total)}</span>
                     </div>
                   </div>
                 </div>

@@ -1,70 +1,36 @@
-import { useEffect } from "react"
 import { motion } from "framer-motion"
-import { Trash2, ShoppingCart, Heart, Loader2 } from "lucide-react"
+import { Trash2, ShoppingCart, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import { toast } from "sonner"
-import { useCartStore } from "@/stores"
-import { useWishlistStore, type WishlistItem } from "@/stores/ecommerceStores/useWishlistStore"
+import { useWishlistStore, useCartStore } from "@/stores"
+import { formatEGP } from "@/lib/currency"
+
 
 export function Wishlist() {
-    const items = useWishlistStore((state) => state.items)
-    const removeItem = useWishlistStore((state) => state.removeItem)
-    const fetchWishlist = useWishlistStore((state) => state.fetchWishlist)
-    const isLoading = useWishlistStore((state) => state.isLoading)
+    const { items, removeItem } = useWishlistStore()
     const addToCart = useCartStore((state) => state.addItem)
 
-    useEffect(() => {
-        fetchWishlist(true) // Force refresh when user is on wishlist page!
-    }, [])
-
     const handleRemoveItem = (id: string, name: string) => {
-        removeItem(id)
-        toast.error(`${name} removed from wishlist`)
-    }
+    removeItem(id)
+    toast.error(`${name} removed from wishlist`)
+  }
 
-    const handleAddToCart = (item: WishlistItem) => {
-        addToCart({
-            id: item.id,
-            productId: item.id,
-            name: item.name,
-            price: item.price,
-            image: item.image,
-            category: item.category,
-        })
+  const handleAddToCart = (item: any) => {
+    addToCart({
+      id: item.id,
+      productId: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      category: item.category,
+    })
         toast.success(`${item.name} added to bag`, {
             action: {
                 label: "Checkout",
                 onClick: () => window.location.href = "/cart"
             },
         })
-    }
-
-    if (isLoading) {
-        return (
-            <div className="pt-48 pb-32 text-center min-h-screen bg-gradient-to-b from-background to-secondary/20">
-                <div className="container mx-auto px-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="max-w-md mx-auto space-y-10"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 0.2, duration: 0.6 }}
-                            className="w-32 h-32 bg-gradient-to-br from-secondary/80 to-secondary/30 flex items-center justify-center mx-auto transition-all duration-700 backdrop-blur-sm border border-border/20"
-                        >
-                            <Loader2 className="w-12 h-12 text-primary animate-spin" />
-                        </motion.div>
-                        <div className="space-y-4">
-                            <h1 className="text-4xl md:text-5xl font-serif bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">Loading wishlist...</h1>
-                        </div>
-                    </motion.div>
-                </div>
-            </div>
-        )
     }
 
     if (items.length === 0) {
@@ -111,7 +77,7 @@ export function Wishlist() {
                 </motion.h1>
 
                 <div className="grid grid-cols-1 gap-8">
-                    {items.map((item: WishlistItem, index: number) => (
+                    {items.map((item, index) => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, y: 20 }}
@@ -135,7 +101,7 @@ export function Wishlist() {
                                             {item.name}
                                         </Link>
                                     </h3>
-                                    <p className="text-lg font-light text-foreground/80">${item.price.toFixed(2)}</p>
+                                    <p className="text-lg font-light text-foreground/80">{formatEGP(item.price)}</p>
                                 </div>
 
                                 <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">

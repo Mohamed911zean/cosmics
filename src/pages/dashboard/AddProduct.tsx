@@ -1,10 +1,18 @@
 import { useState, useEffect } from "react"
 import { Package, Upload, X, Loader2 } from "lucide-react"
 import { useProductStore } from "@/stores/ecommerceStores/useProductStore"
-import { uploadToCloudinary, uploadMultipleToCloudinary } from "@/lib/cloudinary"
+import { uploadToCloudinary } from "@/lib/cloudinary"
 import { toast } from "sonner"
 import { useNavigate, useSearchParams } from "react-router-dom"
-import { createProduct, updateProduct, fetchProductById, type UpsertProductInput, type ProductStatus } from "@/lib/products"
+import {
+  createProduct,
+  updateProduct,
+  fetchProductById,
+  fetchBrandsForDropdown,
+  type UpsertProductInput,
+  type ProductStatus,
+  type BrandRow,
+} from "@/lib/products"
 
 export default function AddProduct() {
   const { categories, fetchCategories } = useProductStore()
@@ -14,7 +22,7 @@ export default function AddProduct() {
   const isEditMode = !!productId
 
   const [formData, setFormData] = useState({
-    brand: "",
+    brandId: "",
     name: "",
     price: "",
     categoryId: "",
@@ -23,12 +31,11 @@ export default function AddProduct() {
     lowStockThreshold: "5",
   })
 
+  const [brands, setBrands] = useState<BrandRow[]>([])
+  const [isLoadingBrands, setIsLoadingBrands] = useState(true)
   const [mainImage, setMainImage] = useState<File | null>(null)
   const [mainImagePreview, setMainImagePreview] = useState<string>("")
   const [existingMainImageUrl, setExistingMainImageUrl] = useState<string>("")
-  const [additionalImages, setAdditionalImages] = useState<File[]>([])
-  const [additionalPreviews, setAdditionalPreviews] = useState<string[]>([])
-  const [existingAdditionalImageUrls, setExistingAdditionalImageUrls] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [isLoadingProduct, setIsLoadingProduct] = useState(false)
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
@@ -46,6 +53,19 @@ export default function AddProduct() {
       .finally(() => setIsLoadingCategories(false))
   }, [fetchCategories])
 
+  // Load brands from Supabase on mount. Every product must be linked to a
+  // real brand row now (brand_id), not a free-text name.
+  useEffect(() => {
+    setIsLoadingBrands(true)
+    fetchBrandsForDropdown()
+      .then(setBrands)
+      .catch((error) => {
+        console.error("Failed to load brands:", error)
+        toast.error("Failed to load brands")
+      })
+      .finally(() => setIsLoadingBrands(false))
+  }, [])
+
   // Load product data if in edit mode
   useEffect(() => {
     if (isEditMode && productId) {
@@ -54,14 +74,9 @@ export default function AddProduct() {
         try {
           const product = await fetchProductById(productId)
           if (product) {
-            // Split name into brand and product name (assuming "Brand - Product" format)
-            const nameParts = product.name.split(" - ")
-            const brand = nameParts.length > 1 ? nameParts[0] : ""
-            const productName = nameParts.length > 1 ? nameParts.slice(1).join(" - ") : product.name
-
             setFormData({
-              brand: brand,
-              name: productName,
+              brandId: product.brandId || "",
+              name: product.name,
               price: product.price.toString(),
               categoryId: product.categoryId || "",
               description: product.description || "",
@@ -69,7 +84,6 @@ export default function AddProduct() {
               lowStockThreshold: product.low_stock_threshold.toString(),
             })
             setExistingMainImageUrl(product.image)
-            setExistingAdditionalImageUrls(product.images || [])
           }
         } catch (error) {
           console.error("Failed to load product:", error)
@@ -95,27 +109,6 @@ export default function AddProduct() {
     }
   }
 
-  const handleAdditionalImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || [])
-    if (files.length + additionalImages.length + existingAdditionalImageUrls.length > 4) {
-      toast.error("Maximum 4 additional images allowed")
-      return
-    }
-
-    setAdditionalImages([...additionalImages, ...files])
-    const newPreviews = files.map(file => URL.createObjectURL(file))
-    setAdditionalPreviews([...additionalPreviews, ...newPreviews])
-  }
-
-  const removeAdditionalImage = (index: number, isExisting: boolean = false) => {
-    if (isExisting) {
-      setExistingAdditionalImageUrls(existingAdditionalImageUrls.filter((_, i) => i !== index))
-    } else {
-      setAdditionalImages(additionalImages.filter((_, i) => i !== index))
-      setAdditionalPreviews(additionalPreviews.filter((_, i) => i !== index))
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -125,7 +118,7 @@ export default function AddProduct() {
       return
     }
 
-    if (!formData.brand || !formData.name || !formData.price || !formData.categoryId) {
+    if (!formData.brandId || !formData.name || !formData.price || !formData.categoryId) {
       toast.error("Please fill all required fields")
       return
     }
@@ -133,7 +126,6 @@ export default function AddProduct() {
     setIsUploading(true)
     try {
       let mainImageUrl = existingMainImageUrl
-      let additionalUrls = [...existingAdditionalImageUrls]
 
       // Upload main image if a new one was selected
       if (mainImage) {
@@ -141,19 +133,13 @@ export default function AddProduct() {
         mainImageUrl = uploaded.secure_url
       }
 
-      // Upload additional images if any were selected
-      if (additionalImages.length > 0) {
-        const uploads = await uploadMultipleToCloudinary(additionalImages)
-        additionalUrls = [...additionalUrls, ...uploads.map(upload => upload.secure_url)]
-      }
-
       const productData: UpsertProductInput = {
-        name: `${formData.brand} - ${formData.name}`,
-        brandName: formData.brand,
+        name: formData.name,
+        brandId: formData.brandId,
         price: parseFloat(formData.price),
         categoryId: formData.categoryId,
         description: formData.description,
-        imageUrls: [mainImageUrl, ...additionalUrls],
+        imageUrls: [mainImageUrl],
         stockQuantity: parseInt(formData.stockQuantity),
         lowStockThreshold: parseInt(formData.lowStockThreshold),
         status: "active" as ProductStatus,
@@ -207,17 +193,30 @@ export default function AddProduct() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">
-                Brand Name <span className="text-primary">*</span>
+                Brand <span className="text-primary">*</span>
               </label>
-              <input
-                type="text"
-                name="brand"
-                value={formData.brand}
+              <select
+                name="brandId"
+                value={formData.brandId}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2.5 rounded-lg border border-border focus:border-success focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
-                placeholder="e.g. Luminous"
+                className="w-full px-4 py-2.5 rounded-lg border border-border focus:border-success focus:ring-2 focus:ring-emerald-200 outline-none transition-all disabled:opacity-50"
+                disabled={isLoadingBrands}
                 required
-              />
+              >
+                <option value="">
+                  {isLoadingBrands ? "Loading brands..." : "Select Brand"}
+                </option>
+                {brands.map((brand) => (
+                  <option key={brand.id} value={brand.id}>
+                    {brand.name}
+                  </option>
+                ))}
+              </select>
+              {!isLoadingBrands && brands.length === 0 && (
+                <p className="text-xs text-destructive mt-1.5">
+                  No brands found. Add one from Dashboard → Brands first.
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">
@@ -239,7 +238,7 @@ export default function AddProduct() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">
-                Price ($) <span className="text-primary">*</span>
+                Price (EGP) <span className="text-primary">*</span>
               </label>
               <input
                 type="number"
@@ -362,53 +361,6 @@ export default function AddProduct() {
             </div>
           </div>
 
-          {/* Additional Images */}
-          <div>
-            <label className="block text-sm font-semibold text-foreground mb-2">
-              Additional Images (Optional, max 4)
-            </label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {existingAdditionalImageUrls.map((url, index) => (
-                <div key={`existing-${index}`} className="relative">
-                  <img src={url} alt={`Additional ${index + 1}`} className="w-full h-32 object-cover rounded-lg" />
-                  <button
-                    type="button"
-                    onClick={() => removeAdditionalImage(index, true)}
-                    className="absolute top-2 right-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center hover:bg-primary"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-              {additionalPreviews.map((preview, index) => (
-                <div key={`new-${index}`} className="relative">
-                  <img src={preview} alt={`Additional ${index + 1}`} className="w-full h-32 object-cover rounded-lg" />
-                  <button
-                    type="button"
-                    onClick={() => removeAdditionalImage(index)}
-                    className="absolute top-2 right-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center hover:bg-primary"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-              {existingAdditionalImageUrls.length + additionalImages.length < 4 && (
-                <label className="border-2 border-dashed border-border rounded-lg h-32 flex items-center justify-center cursor-pointer hover:border-success transition-colors">
-                  <div className="text-center">
-                    <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-1" />
-                    <span className="text-xs text-muted-foreground">Upload</span>
-                  </div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleAdditionalImagesChange}
-                    className="hidden"
-                  />
-                </label>
-              )}
-            </div>
-          </div>
         </div>
 
         {/* Footer */}

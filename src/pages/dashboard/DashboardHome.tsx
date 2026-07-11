@@ -5,6 +5,7 @@ import { RecentOrders } from "@/components/dashboard/RecentOrders"
 import { RecentCustomers } from "@/components/dashboard/RecentCustomers"
 import { useOrderStore } from "@/stores/ecommerceStores/useOrderStore"
 import { useProductStore } from "@/stores"
+import { formatEGP } from "@/lib/currency"
 
 export default function DashboardHome() {
   const {
@@ -27,7 +28,7 @@ export default function DashboardHome() {
     const customersCount = new Set(allOrders.map(o => o.shippingDetails.email)).size
     const productsCount = allProducts.length
     return [
-      { label: "Total Revenue", value: `$${totalRevenue.toFixed(2)}`, icon: DollarSign },
+      { label: "Total Revenue", value: formatEGP(totalRevenue), icon: DollarSign },
       { label: "Orders", value: ordersCount.toString(), icon: ShoppingCart },
       { label: "Customers", value: customersCount.toString(), icon: MessageCircle },
       { label: "Products", value: productsCount.toString(), icon: Eye },
@@ -39,13 +40,13 @@ export default function DashboardHome() {
     return sorted.map((order) => {
       const name =
         order.items.length === 1
-          ? String(order.items[0].name).split(" - ")[0]
+          ? String(order.items[0].name)
           : `${order.items.length} items`
       const payment = order.status === "processing" ? "Due" : "Paid"
       return {
         id: order.id,
         name,
-        price: `$${order.total.toFixed(2)}`,
+        price: formatEGP(order.total),
         payment,
         status: order.status,
       }

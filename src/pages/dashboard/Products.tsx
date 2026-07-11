@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react"
 import { Package, Layers, TrendingUp, ShoppingBag, Tag, Edit, Trash2, Loader2, Plus, Minus } from "lucide-react"
 import { DashboardKpiCards } from "@/components/dashboard/DashboardKpiCards"
@@ -8,6 +7,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import { formatEGP } from "@/lib/currency"
 
 const categoryColors: Record<string, string> = {
   Skincare: "bg-primary text-primary",
@@ -72,7 +72,7 @@ export default function Products() {
   const kpis = [
     { label: "Total Products", value: allProducts.length.toString(), icon: Package },
     { label: "Categories", value: categories.length.toString(), icon: Layers },
-    { label: "Top Seller", value: topSeller?.name?.split(" - ")[0] || "No Sales", icon: TrendingUp },
+    { label: "Top Seller", value: topSeller?.name || "No Sales", icon: TrendingUp },
     { label: "Units Sold", value: totalUnitsSold.toString(), icon: ShoppingBag },
   ]
 
@@ -141,7 +141,7 @@ export default function Products() {
                         {product.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-bold text-foreground">${product.price}</td>
+                    <td className="px-6 py-4 font-bold text-foreground">{formatEGP(product.price)}</td>
                     <td className="px-6 py-4">
                       {editingStockId === product.id ? (
                         <div className="flex items-center gap-2">
@@ -214,7 +214,7 @@ export default function Products() {
                         <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                       ) : (
                         <span className="font-bold text-success">
-                          ${revenue.toFixed(2)}
+                          {formatEGP(revenue)}
                         </span>
                       )}
                     </td>

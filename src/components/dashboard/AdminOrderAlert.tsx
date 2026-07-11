@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useNotificationStore } from '@/stores/useNotificationStore';
 import { fetchOrderById, type Order } from '@/lib/orders';
+import { formatEGP } from '@/lib/currency';
 
 // External chime URL (replaceable). Short professional chime.
 const CHIME_URL = 'https://assets.mixkit.co/sfx/preview/mixkit-small-bell-ring-605.mp3';
@@ -32,10 +33,10 @@ function formatOrderSummary(order: Order) {
   const lines: string[] = [];
   if (order.items.length) {
     const first = order.items[0];
-    lines.push(`${first.name} — $${first.price.toFixed(2)}`);
+    lines.push(`${first.name} — ${formatEGP(first.price)}`);
     if (order.items.length > 1) lines.push(`+ ${order.items.length - 1} more item(s)`);
   }
-  lines.push(`Total: $${order.total.toFixed(2)}`);
+  lines.push(`Total: ${formatEGP(order.total)}`);
 
   if (order.shippingDetails.address) {
     lines.push(`Addr: ${order.shippingDetails.address}`);

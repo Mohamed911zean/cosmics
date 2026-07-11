@@ -232,11 +232,14 @@ export default function Home() {
                   {service.description}
                 </p>
 
-                <button className="group/button text-xs font-bold uppercase tracking-[0.25em] text-primary flex items-center gap-2 transition-colors">
+                <Link
+                  to="/about"
+                  className="group/button text-xs font-bold uppercase tracking-[0.25em] text-primary flex items-center gap-2 transition-colors"
+                >
                   Learn More
 
                   <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover/button:translate-x-1" />
-                </button>
+                </Link>
               </div>
             </motion.div>
           </CarouselItem>
@@ -478,7 +481,7 @@ export default function Home() {
           ))}
         </ul>
 
-        <Link to="/collections">
+        <Link to="/shop">
           <button className="group flex items-center gap-2 rounded-full bg-primary px-10 py-5 text-white shadow-xl shadow-primary/20 transition-all duration-300 hover:scale-105 hover:bg-foreground">
             Explore The Marketplace
 

@@ -6,7 +6,9 @@ import { toast } from "sonner"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuthStore, useCartStore, useOrderStore } from "@/stores"
 import { placeOrder as placeOrderSupabase, type PlaceOrderInput } from "@/lib/orders"
+import { formatEGP } from "@/lib/currency"
 import { sendTelegramOrderNotification } from "@/lib/telegram"
+
 
 export function Checkout() {
     const navigate = useNavigate()
@@ -333,7 +335,7 @@ export function Checkout() {
                                 ) : (
                                     <span className="flex items-center gap-3">
                                         <Lock className="w-4 h-4" />
-                                        Place Order • ${total.toFixed(2)}
+                                        Place Order • {formatEGP(total)}
                                     </span>
                                 )}
                             </Button>
@@ -359,7 +361,7 @@ export function Checkout() {
                                         <div className="flex-1 space-y-1">
                                             <h4 className="font-medium text-sm text-foreground/90">{item.name}</h4>
                                             <p className="text-[10px] text-foreground/60 uppercase tracking-widest font-bold">Qty: {String(item.quantity).padStart(2, '0')}</p>
-                                            <p className="text-sm font-medium mt-2">${(item.price * item.quantity).toFixed(2)}</p>
+                                            <p className="text-sm font-medium mt-2">{formatEGP(item.price * item.quantity)}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -368,7 +370,7 @@ export function Checkout() {
                             <div className="pt-6 border-t border-border/50 space-y-4">
                                 <div className="flex justify-between text-xs tracking-widest text-foreground/40 font-bold uppercase">
                                     <span>Subtotal</span>
-                                    <span>${subtotal.toFixed(2)}</span>
+                                    <span>{formatEGP(subtotal)}</span>
                                 </div>
                                 <div className="flex justify-between text-xs tracking-widest text-foreground/40 font-bold uppercase">
                                     <span>Shipping</span>
@@ -376,11 +378,11 @@ export function Checkout() {
                                 </div>
                                 <div className="flex justify-between text-xs tracking-widest text-foreground/40 font-bold uppercase">
                                     <span>Tax</span>
-                                    <span>${tax.toFixed(2)}</span>
+                                    <span>{formatEGP(tax)}</span>
                                 </div>
                                 <div className="flex justify-between pt-4 border-t border-border/50 text-xl sm:text-2xl font-serif">
                                     <span>Total</span>
-                                    <span>${total.toFixed(2)}</span>
+                                    <span>{formatEGP(total)}</span>
                                 </div>
                             </div>
 
