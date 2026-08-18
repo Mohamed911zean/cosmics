@@ -26,14 +26,6 @@ import {
   Loader2,
   DollarSign,
 } from "lucide-react"
-import type {
-  RevenueSummary,
-  ProductPerformanceRow,
-  StockHealth,
-  CategoryPerformance,
-  CustomerSummary,
-  DemandSignal,
-} from "@/lib/analytics"
 import { useDashboardCacheStore } from "@/stores/useDashboardCashStore"
 
 const EGP = new Intl.NumberFormat("en-EG", {
